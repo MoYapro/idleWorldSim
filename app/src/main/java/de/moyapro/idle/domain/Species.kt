@@ -4,14 +4,14 @@ import kotlin.math.pow
 
 class Species {
     private var milionsOfIndividuals: Double = 1.0
-    private val traits: MutableList<Trait> = ArrayList()
+    private val traits: MutableList<Trait> = mutableListOf()
 
-    fun generate(seconds: Int = 1): Double {
+    fun generate(seconds: Int = 1): Resources {
         var result = milionsOfIndividuals.toDouble()
         for (trait in traits) {
             result = trait.influence(result)
         }
-        return result * seconds
+        return Resources(result * seconds)
     }
 
     fun evolve(trait: Trait): Species {
