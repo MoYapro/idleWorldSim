@@ -23,4 +23,9 @@ class Species {
         this.milionsOfIndividuals *= 1.1.pow(seconds)
         return this
     }
+
+    fun die(seconds: Int = 1): Species {
+        this.milionsOfIndividuals *= .95.pow(seconds)
+        return this
+    }
 }
