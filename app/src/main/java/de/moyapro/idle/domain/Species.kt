@@ -10,9 +10,7 @@ class Species(
 
     fun generationAndComsumption(seconds: Int = 1): Resources {
         var baseGeneration = baseGeneration()
-        for (trait in traits) {
-            baseGeneration = trait.influence(baseGeneration)
-        }
+        traits.forEach { baseGeneration = it.influence(baseGeneration) }
         return baseGeneration.times(individualsInMillons * seconds)
     }
 
@@ -22,7 +20,9 @@ class Species(
     }
 
     fun grow(seconds: Int = 1): Species {
-        this.individualsInMillons *= 1.1.pow(seconds)
+        var growthRate = 1.1
+        traits.forEach { if(it is GrowthTrait) growthRate = it.influence(growthRate) }
+        this.individualsInMillons *= growthRate.pow(seconds)
         return this
     }
 

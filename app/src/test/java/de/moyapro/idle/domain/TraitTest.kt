@@ -12,6 +12,8 @@ internal class TraitTest{
 
     @Test
     fun increasedGrowthTrait(){
-        assertThat(Species().evolve(GrowthTrait()))
+        assertThat(
+            Species().evolve(GrowthTrait()).grow().individualsInMillons)
+            .isGreaterThan(Species().grow().individualsInMillons)
     }
 }

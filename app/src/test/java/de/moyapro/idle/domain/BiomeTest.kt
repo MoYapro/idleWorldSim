@@ -49,14 +49,9 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
-        val usualGrothResult = Biome(resources = Resources(water = 100_000)).settle(Species()).generate().getSpecies()[0].individualsInMillons
-        val cappedGrothResult = Biome(resources = Resources(water = 0)).settle(Species()).generate().getSpecies()[0].individualsInMillons
-        assertThat(cappedGrothResult).isLessThan(usualGrothResult)
-    }
-
-    @Test
-    fun foo() {
-        val cappedGrothResult = Biome(resources = Resources(water = 0)).settle(Species()).generate().getSpecies()[0].individualsInMillons
+        val usualGrowthResult = Biome(resources = Resources(water = 100_000)).settle(Species()).generate().getSpecies()[0].individualsInMillons
+        val cappedGrowthResult = Biome(resources = Resources(water = 0)).settle(Species()).generate().getSpecies()[0].individualsInMillons
+        assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
     }
 
     @Test

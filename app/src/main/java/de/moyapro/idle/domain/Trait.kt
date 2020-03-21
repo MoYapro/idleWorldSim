@@ -2,7 +2,9 @@
 
 package de.moyapro.idle.domain
 
-sealed class Trait(private val level: Int = 1) {
+import kotlin.math.pow
+
+sealed class Trait(val level: Int = 1) {
     abstract fun influence(resources: Resources): Resources
 }
 
@@ -10,6 +12,11 @@ class GrowthTrait() : Trait() {
     override fun influence(resources: Resources): Resources {
         return resources
     }
+
+    fun influence(growthRate: Double): Double {
+        return growthRate.pow(level + 1)
+    }
+
 }
 
 class EnergySaver() : Trait() {
