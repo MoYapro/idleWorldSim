@@ -1,18 +1,17 @@
 package de.moyapro.idle.domain
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class ResourceConsumptionAndGenerationTest {
     @Test
     fun generateDefault() {
-        assertEquals(1.0, Species().generationAndComsumption().evolutionPoints, "Should generate in default settings")
+        assertThat(Species().generationAndComsumption().evolutionPoints).isEqualTo(1.0)
     }
 
     @Test
     fun generateForSomeTime() {
-        assertEquals(2.0, Species().generationAndComsumption(2).evolutionPoints, "Should generate for multiple seconds")
+        assertThat(Species().generationAndComsumption(2).evolutionPoints).isEqualTo(2.0)
     }
 
     @Test
@@ -24,6 +23,6 @@ internal class ResourceConsumptionAndGenerationTest {
     @Test
     fun generateSpeciesWithTraits() {
         val species:Species = Species().evolve(EvolutionBooster()).evolve(EvolutionBooster())
-        assertEquals(1.3225, species.generationAndComsumption().evolutionPoints, .000001, "Should calculate generation including trait")
+        assertThat(species.generationAndComsumption().evolutionPoints).isEqualTo(1.3225)
     }
 }
