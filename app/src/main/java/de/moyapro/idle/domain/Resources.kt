@@ -6,15 +6,29 @@ data class Resources(
     var water: Int = 1000,
     var minerals: Int = 1000
 ) {
-    fun add(otherResource: Resources): Resources {
+    fun plus(otherResource: Resources): Resources {
         this.evolutionPoints += otherResource.evolutionPoints
         this.water += otherResource.water
         return this
     }
 
-    fun hasShortage(generatedResources: Resources): Boolean {
-        return energy < generatedResources.energy
-                || water < generatedResources.water
-                || minerals < generatedResources.minerals
+    fun canProvide(resources: Resources): Boolean {
+        // negative value in resources means consumption
+        return energy + resources.energy >= 0
+                && water + resources.water >= 0
+                && minerals + resources.minerals >= 0
+    }
+
+    fun times(individualsInMillons: Double = 1.0): Resources {
+        return when (individualsInMillons) {
+            1.0 -> this
+            else -> Resources(
+                evolutionPoints * individualsInMillons,
+                (energy * individualsInMillons).toInt(),
+                (water * individualsInMillons).toInt(),
+                (minerals * individualsInMillons).toInt()
+            )
+        }
+
     }
 }

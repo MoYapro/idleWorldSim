@@ -12,11 +12,12 @@ data class Biome(
     fun generate(seconds: Int = 1): Biome {
         species.shuffled().forEach {
             val generatedResources = it.generationAndComsumption(seconds)
-            if (resources.hasShortage(generatedResources)) {
-                it.die(seconds)
-            } else {
-                resources.add(generatedResources)
+            if (resources.canProvide(generatedResources)) {
+                resources.plus(generatedResources)
                 it.grow()
+            } else {
+                println("die")
+                it.die(seconds)
             }
         }
         return this

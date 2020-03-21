@@ -32,7 +32,7 @@ internal class BiomeTest {
         biome.generate()
         assertNotEquals(
             initialSpeciesSize,
-            biome.getSpecies()[0].milionsOfIndividuals,
+            biome.getSpecies()[0].individualsInMillons,
             "Should update speciesSize when generating in biome"
         )
     }
@@ -48,20 +48,25 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
-        val usualGrothResult =
-            Biome(resources = Resources(water = 100_000)).settle(Species()).generate()
-                .getSpecies()[0].milionsOfIndividuals
-        val cappedGrothResult = Biome(resources = Resources(water = 0)).settle(Species()).generate()
-            .getSpecies()[0].milionsOfIndividuals
+        val usualGrothResult = Biome(resources = Resources(water = 100_000)).settle(Species()).generate().getSpecies()[0].individualsInMillons
+        val cappedGrothResult = Biome(resources = Resources(water = 0)).settle(Species()).generate().getSpecies()[0].individualsInMillons
         assertThat(cappedGrothResult).isLessThan(usualGrothResult)
     }
 
     @Test
+    fun foo() {
+        val cappedGrothResult = Biome(resources = Resources(water = 0)).settle(Species()).generate().getSpecies()[0].individualsInMillons
+    }
+
+    @Test
     fun speciesShouldNotConsumeOnResourceShortage() {
-        val initialWaterLevel = 100_000
-        val newWaterLevel =
-            Biome(resources = Resources(water = 0)).settle(Species()).generate().resources.water
-        assertThat(initialWaterLevel).isEqualTo(newWaterLevel)
+        val initialResources = Resources(energy = 10, water = -1, minerals = 10)
+        val resourcesAfterGeneration =
+            Biome(resources = initialResources)
+                .settle(Species())
+                .generate()
+                .resources
+        assertThat(initialResources).isEqualTo(resourcesAfterGeneration)
     }
 
     @Test
