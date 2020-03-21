@@ -2,7 +2,7 @@ package de.moyapro.idle.domain
 
 data class Biome(
     val name: String = "DefaultBiome",
-    val resources: Resources = Resources(),
+    var resources: Resources = Resources(),
     private val species: MutableCollection<Species> = mutableListOf()
 ) {
     fun getSpecies(): List<Species> {
@@ -13,7 +13,7 @@ data class Biome(
         species.shuffled().forEach {
             val generatedResources = it.generationAndComsumption(seconds)
             if (resources.canProvide(generatedResources)) {
-                resources.plus(generatedResources)
+                resources = resources.plus(generatedResources)
                 it.grow()
             } else {
                 println("die")

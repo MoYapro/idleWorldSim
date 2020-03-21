@@ -17,13 +17,13 @@ internal class ResourceConsumptionAndGenerationTest {
 
     @Test
     fun generateDependingOnNumberOfIndividuals() {
-        assertThat(Resources(evolutionPoints = 2.0, energy = -2, water = -2, minerals = -2))
-            .isEqualTo(Species(individualsInMillons = 2.0).generationAndComsumption())
+        assertThat(Species(individualsInMillons = 2.0).generationAndComsumption())
+            .isEqualTo(Resources(evolutionPoints = 2.0, energy = -2000, water = -2000, minerals = -2000))
     }
 
     @Test
     fun generateSpeciesWithTraits() {
-        val species:Species = Species().evolve(Trait()).evolve(Trait())
+        val species:Species = Species().evolve(EvolutionBooster()).evolve(EvolutionBooster())
         assertEquals(1.3225, species.generationAndComsumption().evolutionPoints, .000001, "Should calculate generation including trait")
     }
 }

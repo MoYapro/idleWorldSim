@@ -9,11 +9,11 @@ class Species(
     private val traits: MutableList<Trait> = mutableListOf()
 
     fun generationAndComsumption(seconds: Int = 1): Resources {
-        var result = 1.0
+        var baseGeneration = baseGeneration()
         for (trait in traits) {
-            result = trait.influence(result)
+            baseGeneration = trait.influence(baseGeneration)
         }
-        return Resources(evolutionPoints = result * seconds, water = -1, minerals = -1, energy = -1).times(individualsInMillons)
+        return baseGeneration.times(individualsInMillons * seconds)
     }
 
     fun evolve(trait: Trait): Species {
