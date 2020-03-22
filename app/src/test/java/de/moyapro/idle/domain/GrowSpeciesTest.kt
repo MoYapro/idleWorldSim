@@ -1,6 +1,8 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.util.defaultOffset
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 
 class SpeciesGrowAndDieTest {
@@ -12,7 +14,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun growForSomeTime() {
-        assertThat(Species().grow(10).generationAndComsumption().evolutionPoints).isEqualTo(2.59374246)
+        assertThat(Species().grow(10).generationAndComsumption().evolutionPoints).isEqualTo(2.59374246, defaultOffset())
     }
 
     @Test
@@ -22,7 +24,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun dieForSomeTime() {
-        assertThat(Species().die(10).generationAndComsumption().evolutionPoints).isEqualTo(0.59873694)
+        assertThat(Species().die(10).generationAndComsumption().evolutionPoints).isEqualTo(0.59873694, defaultOffset())
     }
 
 }

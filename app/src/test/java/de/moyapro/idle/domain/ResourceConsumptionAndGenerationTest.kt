@@ -1,6 +1,8 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.util.defaultOffset
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 
 internal class ResourceConsumptionAndGenerationTest {
@@ -23,6 +25,6 @@ internal class ResourceConsumptionAndGenerationTest {
     @Test
     fun generateSpeciesWithTraits() {
         val species:Species = Species().evolve(EvolutionBooster()).evolve(EvolutionBooster())
-        assertThat(species.generationAndComsumption().evolutionPoints).isEqualTo(1.3225)
+        assertThat(species.generationAndComsumption().evolutionPoints).isEqualTo(1.3225, defaultOffset())
     }
 }
