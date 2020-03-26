@@ -79,5 +79,16 @@ internal class BiomeTest {
         assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
     }
 
-
+    @Test
+    fun speciesCanEatEachOther() {
+        val initialResources = Resources(energy = 0, water = 0, minerals = 0)
+        val eater = Species("Eater")
+        val food = Species("Food")
+        val biome = Biome(resources = initialResources).settle(eater).generate()
+            .settle(food)
+        eater.evolve(Eater())
+        biome.generate()
+        assertThat(eater.individualsInMillons).isGreaterThan(1.0)
+        assertThat(food.individualsInMillons).isLessThan(1.0)
+    }
 }
