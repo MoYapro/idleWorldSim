@@ -31,6 +31,12 @@ class WaterSaver() : Trait() {
     }
 }
 
+class MineralSaver() : Trait() {
+    override fun influence(resources: Resources): Resources {
+        return resources.times(ResourceFactor(mineralsFactor = .9))
+    }
+}
+
 class EvolutionBooster() : Trait() {
     override fun influence(resources: Resources): Resources {
         return resources.times(ResourceFactor(evolutionPointsFactor = 1.15))
