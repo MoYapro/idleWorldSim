@@ -12,64 +12,64 @@ internal class ResourcesTest {
 
     @Test
     fun cannotProvideWater() {
-        assertThat(Resources(water = 1).canProvide(Resources(water = -2))).isFalse()
+        assertThat(Resources(water = 1.0).canProvide(Resources(water = 2.0))).isFalse()
     }
 
     @Test
     fun cannotProvideEnergy() {
-        assertThat(Resources(energy = 1).canProvide(Resources(energy = -2))).isFalse()
+        assertThat(Resources(energy = 1.0).canProvide(Resources(energy = 2.0))).isFalse()
     }
 
     @Test
     fun cannotProvideMinerals() {
-        assertThat(Resources(minerals = 1).canProvide(Resources(minerals = -2))).isFalse()
+        assertThat(Resources(minerals = 1.0).canProvide(Resources(minerals = 2.0))).isFalse()
     }
 
     @Test
     fun canProvideWater() {
-        assertThat(Resources(water = 10).canProvide(Resources(water = -2))).isTrue()
+        assertThat(Resources(water = 10.0).canProvide(Resources(water = 2.0))).isTrue()
     }
 
     @Test
     fun canProvideMinerals() {
-        assertThat(Resources(minerals = 10).canProvide(Resources(minerals = -2))).isTrue()
+        assertThat(Resources(minerals = 10.0).canProvide(Resources(minerals = 2.0))).isTrue()
     }
 
     @Test
     fun canProvideEnergy() {
-        assertThat(Resources(energy = 10).canProvide(Resources(energy = -2))).isTrue()
+        assertThat(Resources(energy = 10.0).canProvide(Resources(energy = 2.0))).isTrue()
     }
 
     @Test
     fun plus() {
         assertThat(
-            Resources(1.0, 1, 1, 1)
-                .plus(Resources(2.1, 2, 2, 2))
+            Resources(1.0, 1.0, 1.0, 1.0)
+                + Resources(2.1, 2.0, 2.0, 2.0)
         ).isEqualTo(
-            Resources(3.1, 3, 3, 3)
+            Resources(3.1, 3.0, 3.0, 3.0)
         )
     }
 
     @Test
     fun minus() {
         assertThat(
-            Resources(2.1, 2, 2, 2)
-                .plus(Resources(-1.0, -1, -1, -1))
+            Resources(2.1, 2.0, 2.0, 2.0)
+                + Resources(-1.0, -1.0, -1.0, -1.0)
         ).isEqualTo(
-            Resources(1.1, 1, 1, 1)
+            Resources(1.1, 1.0, 1.0, 1.0)
         )
     }
 
     @Test
     fun timesScalar() {
-        assertThat(Resources(5.0, 5, 5, 5).times(3.0))
-            .isEqualTo(Resources(15.0, 15, 15, 15))
+        assertThat(Resources(5.0, 5.0, 5.0, 5.0).times(3.0))
+            .isEqualTo(Resources(15.0, 15.0, 15.0, 15.0))
     }
 
     @Test
     fun timesResourceFactors() {
-        assertThat(Resources(5.0, 5, 5, 5).times(ResourceFactor(3.0, 3.0, 3.0, 3.0 )))
-            .isEqualTo(Resources(15.0, 15, 15, 15))
+        assertThat(Resources(5.0, 5.0, 5.0, 5.0).times(ResourceFactor(3.0, 3.0, 3.0, 3.0 )))
+            .isEqualTo(Resources(15.0, 15.0, 15.0, 15.0))
     }
 
 

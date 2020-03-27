@@ -1,17 +1,23 @@
 package de.moyapro.idle.domain
 
-import kotlin.math.pow
-
 class Species(
-    private val name: String = "DefaultSpecies",
-    var individualsInMillons: Double = 1.0
+    val name: String = "DefaultSpecies"
 ) {
+    companion object {
+        fun needsPerIndividual() = Resources(-1.0, 1.0, 1.0, 1.0)
+    }
+
     private val traits: MutableList<Trait> = mutableListOf()
 
-    fun generationAndComsumption(seconds: Int = 1, otherSpecies: List<Species> = listOf()): Resources {
-        var baseGeneration = baseGeneration()
-        traits.forEach { baseGeneration = it.influence(baseGeneration, otherSpecies) }
-        return baseGeneration.times(individualsInMillons * seconds)
+    fun getPopulationIn(biome: Biome) : Double {
+        return biome.resources.getPopulation(this)
+    }
+
+    fun process(resources: Resources) : Resources {
+        val needs = needsPerIndividual() * (resources.populations[this] ?: 0.0)
+        val consumption = Consumption (this, needs, resources)
+        traits.forEach { it.influence(consumption) }
+        return grow(consumption)
     }
 
     fun evolve(trait: Trait): Species {
@@ -19,19 +25,13 @@ class Species(
         return this
     }
 
-    fun grow(seconds: Int = 1): Species {
+    private fun grow(consumption: Consumption): Resources {
         var growthRate = 1.1
         traits.forEach { if(it is GrowthTrait) growthRate = it.influence(growthRate) }
-        this.individualsInMillons *= growthRate.pow(seconds)
-        return this
-    }
-
-    fun die(seconds: Int = 1): Species {
-        this.individualsInMillons *= .95.pow(seconds)
-        return this
-    }
-
-    fun getStatusText(): String {
-        return "$name: ${individualsInMillons}M -> ${generationAndComsumption()}"
+        return if (consumption.supply.canProvide(consumption.needs))
+            consumption.supply.minus(consumption.needs)
+                .setPopulation(this, consumption.getPopulation(this) * growthRate)
+        else
+            consumption.supply.copy().setPopulation(this, consumption.getPopulation(this) * 0.95)
     }
 }
