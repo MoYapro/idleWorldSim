@@ -11,7 +11,7 @@ data class Biome(
 
     fun generate(seconds: Int = 1): Biome {
         species.shuffled().forEach {
-            val generatedResources = it.generationAndComsumption(seconds, it)
+            val generatedResources = it.generationAndComsumption(seconds, species.toList())
             if (resources.canProvide(generatedResources)) {
                 resources = resources.plus(generatedResources)
                 it.grow()

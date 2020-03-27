@@ -8,9 +8,9 @@ class Species(
 ) {
     private val traits: MutableList<Trait> = mutableListOf()
 
-    fun generationAndComsumption(seconds: Int = 1, species: Species = Species()): Resources {
+    fun generationAndComsumption(seconds: Int = 1, otherSpecies: List<Species> = listOf()): Resources {
         var baseGeneration = baseGeneration()
-        traits.forEach { baseGeneration = it.influence(baseGeneration, species) }
+        traits.forEach { baseGeneration = it.influence(baseGeneration, otherSpecies) }
         return baseGeneration.times(individualsInMillons * seconds)
     }
 

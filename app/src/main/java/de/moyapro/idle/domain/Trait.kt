@@ -5,11 +5,11 @@ package de.moyapro.idle.domain
 import kotlin.math.pow
 
 sealed class Trait(val level: Int = 1) {
-    abstract fun influence(resources: Resources, species: Species = Species()): Resources
+    abstract fun influence(resources: Resources, otherSpecies: List<Species> = listOf()): Resources
 }
 
 class GrowthTrait() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
         return resources
     }
 
@@ -20,32 +20,32 @@ class GrowthTrait() : Trait() {
 }
 
 class EnergySaver() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
         return resources.times(ResourceFactor(energyFactor = .9))
     }
 }
 
 class WaterSaver() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
         return resources.times(ResourceFactor(waterFactor = .9))
     }
 }
 
 class MineralSaver() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
         return resources.times(ResourceFactor(mineralsFactor = .9))
     }
 }
 
 class EvolutionBooster() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
         return resources.times(ResourceFactor(evolutionPointsFactor = 1.15))
     }
 }
 
 class Eater() : Trait() {
-    override fun influence(resources: Resources, species: Species): Resources {
-        return resources.times(ResourceFactor(0.0, 0.0, 0.0, 0.0))
+    override fun influence(resources: Resources, otherSpecies: List<Species>): Resources {
+        return Resources(0.0, 0, 0, 0)
     }
 }
 
