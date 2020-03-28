@@ -2,7 +2,6 @@
 
 package de.moyapro.idle.domain
 
-import kotlin.math.ln
 import kotlin.math.pow
 
 sealed class Trait(val level: Int = 1) {
@@ -11,31 +10,30 @@ sealed class Trait(val level: Int = 1) {
 
 class GrowthTrait() : Trait() {
     override fun influence(consumption: Consumption) = Unit
-
     fun influence(growthRate: Double) = growthRate.pow(level + 1)
 }
 
 class EnergySaver() : Trait() {
     override fun influence(consumption: Consumption) {
-        consumption.times(ResourceFactor(energyFactor = .9))
+        consumption.times(energyFactor = .9)
     }
 }
 
 class WaterSaver() : Trait() {
     override fun influence(consumption: Consumption) {
-        consumption.times(ResourceFactor(waterFactor = .9))
+        consumption.times(waterFactor = .9)
     }
 }
 
 class MineralSaver() : Trait() {
     override fun influence(consumption: Consumption) {
-        consumption.times(ResourceFactor(mineralsFactor = .9))
+        consumption.times(mineralsFactor = .9)
     }
 }
 
 class EvolutionBooster() : Trait() {
     override fun influence(consumption: Consumption) {
-        consumption.times(ResourceFactor(evolutionPointsFactor = 1.15))
+        consumption.times(evolutionPointsFactor = 1.15)
     }
 }
 
