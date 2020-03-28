@@ -23,7 +23,10 @@ internal class DoubleToShortDecimalStrTest {
     fun toShortDecimalStr1K() {
         assertThat(1000.0.toShortDecimalStr()).isEqualTo("1.0K")
     }
-
+    @Test
+    fun toShortDecimalStr1_7K() {
+        assertThat(1716.4.toShortDecimalStr()).isEqualTo("1.7K")
+    }
     @Test
     fun toShortDecimalStr1M() {
         assertThat(1E6.toShortDecimalStr()).isEqualTo("1.0M")
