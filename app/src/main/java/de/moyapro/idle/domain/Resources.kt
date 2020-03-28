@@ -9,7 +9,7 @@ data class Resources(
 ) {
     fun getPopulation(species: Species) = populations[species] ?: 0.0
 
-    fun setPopulation(species: Species, population: Double) : Resources {
+    fun setPopulation(species: Species, population: Double = 1.0) : Resources {
         this.populations[species] = if (population < 1E-6) 0.0 else population
         return this
     }
