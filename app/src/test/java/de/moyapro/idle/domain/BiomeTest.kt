@@ -52,7 +52,7 @@ internal class BiomeTest {
     fun speciesShouldShrinkOnResourceShortage() {
         val species1 = Species()
         val species2 = Species()
-        val usualGrowthResult = Biome(resources = Resources(water = 100_000.0)).settle(species1).process().resources.getPopulation(species1)
+        val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
         val cappedGrowthResult = Biome(resources = Resources(water = 0.0)).settle(species2).process().resources.getPopulation(species2)
         assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
     }
