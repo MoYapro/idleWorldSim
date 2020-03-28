@@ -3,11 +3,8 @@ package de.moyapro.idle.domain
 class Species(
     val name: String = "DefaultSpecies"
 ) {
-    companion object {
-        fun needsPerIndividual() = Resources(-1.0, 1.0, 1.0, 1.0)
-    }
-
     private val traits: MutableList<Trait> = mutableListOf()
+    private fun needsPerIndividual() = Resources(-1.0, 1.0, 1.0, 1.0)
 
     fun getPopulationIn(biome: Biome): Double {
         return biome.resources.getPopulation(this)
