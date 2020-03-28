@@ -9,15 +9,17 @@ class Species(
 
     private val traits: MutableList<Trait> = mutableListOf()
 
-    fun getPopulationIn(biome: Biome) : Double {
+    fun getPopulationIn(biome: Biome): Double {
         return biome.resources.getPopulation(this)
     }
 
-    fun process(resources: Resources) : Resources {
-        val needs = needsPerIndividual() * (resources.populations[this] ?: 0.0)
-        val consumption = Consumption (this, needs, resources)
+    fun process(supply: Resources): Resources {
+        val needs = needsPerIndividual() * (supply.populations[this] ?: 0.0)
+        val consumption = Consumption(this, needs, supply)
         traits.forEach { it.influence(consumption) }
-        return grow(consumption)
+        @Suppress("UnnecessaryVariable") // intentionaly to demonstrate meaning of return value // may be removed in the future
+        val leftovers = grow(consumption)
+        return leftovers
     }
 
     fun evolve(trait: Trait): Species {
@@ -27,11 +29,13 @@ class Species(
 
     private fun grow(consumption: Consumption): Resources {
         var growthRate = 1.1
-        traits.forEach { if(it is GrowthTrait) growthRate = it.influence(growthRate) }
-        return if (consumption.supply.canProvide(consumption.needs))
-            consumption.supply.minus(consumption.needs)
-                .setPopulation(this, consumption.getPopulation(this) * growthRate)
-        else
-            consumption.supply.copy().setPopulation(this, consumption.getPopulation(this) * 0.95)
+        val hungerRate = .95
+        traits.filterIsInstance<GrowthTrait>().forEach { growthRate = it.influence(growthRate) }
+        return if (consumption.isProvided()) {
+            val leftovers = consumption.consume()
+            leftovers.updatePopulation(consumption.consumer, growthRate)
+            leftovers
+        } else
+            consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
     }
 }

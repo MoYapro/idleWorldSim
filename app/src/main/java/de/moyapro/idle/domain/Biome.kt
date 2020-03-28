@@ -9,7 +9,8 @@ data class Biome(
 ) {
     fun process(): Biome {
         speciesList.shuffled().forEach {
-            this.resources = it.process(this.resources)
+            val leftovers = it.process(this.resources)
+            this.resources = leftovers
         }
         return this
     }

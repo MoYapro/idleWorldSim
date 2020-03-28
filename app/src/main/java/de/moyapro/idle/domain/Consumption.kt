@@ -19,4 +19,12 @@ data class Consumption(
     }
 
     fun getPopulation(species: Species = consumer) = supply.getPopulation(species)
+
+    fun consume(): Resources {
+        return supply.minus(needs)
+    }
+
+    fun isProvided(): Boolean {
+        return supply.canProvide(needs)
+    }
 }

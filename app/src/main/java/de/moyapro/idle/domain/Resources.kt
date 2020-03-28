@@ -66,4 +66,8 @@ data class Resources(
                 && water >= resources.water
                 && minerals >= resources.minerals
     }
+
+    fun updatePopulation(species: Species, growthRate: Double): Resources {
+        return setPopulation(species, getPopulation(species) * growthRate)
+    }
 }
