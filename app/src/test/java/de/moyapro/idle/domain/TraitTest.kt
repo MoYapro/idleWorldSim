@@ -11,25 +11,37 @@ internal class TraitTest{
     }
 
     @Test
-    fun increasedGrowthTrait(){
+    fun increasedGrowthTrait() {
+        val species = Species()
+        val resources = Resources()
+        resources.setPopulation(species, 1.0)
         assertThat(
-            Species().evolve(GrowthTrait()).grow().individualsInMillons)
-            .isGreaterThan(Species().grow().individualsInMillons)
+            species.process(resources).getPopulation(species))
+            .isLessThan(species.evolve(GrowthTrait()).process(resources).getPopulation(species))
     }
 
     @Test
     fun energySaver() {
-        assertThat(Species().evolve(EnergySaver()).generationAndComsumption().energy).isGreaterThan(Species().generationAndComsumption().energy)
+        val species = Species()
+        val resources = Resources()
+        resources.setPopulation(species, 1.0)
+        assertThat(species.process(resources).energy).isLessThan(species.evolve(EnergySaver()).process(resources).energy)
     }
 
     @Test
     fun waterSaver() {
-        assertThat(Species().evolve(WaterSaver()).generationAndComsumption().water).isGreaterThan(Species().generationAndComsumption().water)
+        val species = Species()
+        val resources = Resources()
+        resources.setPopulation(species, 1.0)
+        assertThat(species.process(resources).water).isLessThan(species.evolve(WaterSaver()).process(resources).water)
     }
 
     @Test
     fun mineralSaver() {
-        assertThat(Species().evolve(MineralSaver()).generationAndComsumption().minerals).isGreaterThan(Species().generationAndComsumption().minerals
+        val species = Species()
+        val resources = Resources()
+        resources.setPopulation(species, 1.0)
+        assertThat(species.process(resources).minerals).isLessThan(species.evolve(MineralSaver()).process(resources).minerals
         )
     }
 }

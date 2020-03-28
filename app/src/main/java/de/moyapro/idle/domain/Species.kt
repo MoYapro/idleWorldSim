@@ -1,17 +1,22 @@
 package de.moyapro.idle.domain
 
-import kotlin.math.pow
-
 class Species(
-    private val name: String = "DefaultSpecies",
-    var individualsInMillons: Double = 1.0
+    val name: String = "DefaultSpecies"
 ) {
     private val traits: MutableList<Trait> = mutableListOf()
+    private fun needsPerIndividual() = Resources(-1.0, 1.0, 1.0, 1.0)
 
-    fun generationAndComsumption(seconds: Int = 1): Resources {
-        var baseGeneration = baseGeneration()
-        traits.forEach { baseGeneration = it.influence(baseGeneration) }
-        return baseGeneration.times(individualsInMillons * seconds)
+    fun getPopulationIn(biome: Biome): Double {
+        return biome.resources.getPopulation(this)
+    }
+
+    fun process(supply: Resources): Resources {
+        val needs = needsPerIndividual() * (supply.populations[this] ?: 0.0)
+        val consumption = Consumption(this, needs, supply)
+        traits.forEach { it.influence(consumption) }
+        @Suppress("UnnecessaryVariable") // intentionaly to demonstrate meaning of return value // may be removed in the future
+        val leftovers = grow(consumption)
+        return leftovers
     }
 
     fun evolve(trait: Trait): Species {
@@ -19,19 +24,15 @@ class Species(
         return this
     }
 
-    fun grow(seconds: Int = 1): Species {
+    private fun grow(consumption: Consumption): Resources {
         var growthRate = 1.1
-        traits.forEach { if(it is GrowthTrait) growthRate = it.influence(growthRate) }
-        this.individualsInMillons *= growthRate.pow(seconds)
-        return this
-    }
-
-    fun die(seconds: Int = 1): Species {
-        this.individualsInMillons *= .95.pow(seconds)
-        return this
-    }
-
-    fun getStatusText(): String {
-        return "$name: ${individualsInMillons}M -> ${generationAndComsumption()}"
+        val hungerRate = .95
+        traits.filterIsInstance<GrowthTrait>().forEach { growthRate = it.influence(growthRate) }
+        return if (consumption.isProvided()) {
+            val leftovers = consumption.consume()
+            leftovers.updatePopulation(consumption.consumer, growthRate)
+            leftovers
+        } else
+            consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
     }
 }

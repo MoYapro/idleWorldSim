@@ -2,47 +2,72 @@ package de.moyapro.idle.domain
 
 data class Resources(
     val evolutionPoints: Double = 0.0,
-    val energy: Int = 1000,
-    val water: Int = 1000,
-    val minerals: Int = 1000
+    val energy: Double = 1000.0,
+    val water: Double = 1000.0,
+    val minerals: Double = 1000.0,
+    val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
-    fun plus(otherResource: Resources): Resources {
+    fun getPopulation(species: Species) = populations[species] ?: 0.0
+
+    fun setPopulation(species: Species, population: Double = 1.0) : Resources {
+        this.populations[species] = if (population < 1E-6) 0.0 else population
+        return this
+    }
+
+    override fun toString() : String {
+        return "Resources(evp=$evolutionPoints, nrg=$energy, h20=$water, ore=$minerals)"
+    }
+
+    operator fun plus(otherResource: Resources) = Resources(
+        this.evolutionPoints + otherResource.evolutionPoints,
+        this.energy + otherResource.energy,
+        this.water + otherResource.water,
+        this.minerals + otherResource.minerals,
+        (this.populations.asSequence() + otherResource.populations.asSequence())
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (_, values) -> values.sum() }
+            .toMutableMap()
+    )
+
+    operator fun minus(otherResource: Resources) = Resources(
+        this.evolutionPoints - otherResource.evolutionPoints,
+        this.energy - otherResource.energy,
+        this.water - otherResource.water,
+        this.minerals - otherResource.minerals,
+        (this.populations.asSequence() + otherResource.populations.asSequence())
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (_, values) ->
+                if (values.size == 1) values[0] else values[0] - values[1]
+            }
+            .toMutableMap()
+    )
+
+    operator fun times(scalar: Double) = Resources(
+        this.evolutionPoints * scalar,
+        this.energy * scalar,
+        this.water * scalar,
+        this.minerals * scalar,
+        this.populations
+    )
+
+    operator fun times(factor: ResourceFactor): Resources {
         return Resources(
-            this.evolutionPoints + otherResource.evolutionPoints,
-            this.energy + otherResource.energy,
-            this.water + otherResource.water,
-            this.minerals + otherResource.minerals
+            this.evolutionPoints * factor.evolutionPointsFactor,
+            this.energy * factor.energyFactor,
+            this.water * factor.waterFactor,
+            this.minerals * factor.mineralsFactor,
+            this.populations
         )
     }
 
     fun canProvide(resources: Resources): Boolean {
-        // negative value in resources means consumption
-        return energy + resources.energy >= 0
-                && water + resources.water >= 0
-                && minerals + resources.minerals >= 0
+        // negative value in resources means production
+        return energy >= resources.energy
+                && water >= resources.water
+                && minerals >= resources.minerals
     }
 
-    fun times(individualsInMillons: Double = 1.0): Resources {
-        return when (individualsInMillons) {
-            1.0 -> this
-            else -> Resources(
-                evolutionPoints * individualsInMillons,
-                (energy * individualsInMillons).toInt(),
-                (water * individualsInMillons).toInt(),
-                (minerals * individualsInMillons).toInt()
-            )
-        }
+    fun updatePopulation(species: Species, growthRate: Double): Resources {
+        return setPopulation(species, getPopulation(species) * growthRate)
     }
-
-    fun times(factor: ResourceFactor): Resources {
-        return Resources(
-            this.evolutionPoints * factor.evolutionPointsFactor,
-            (this.energy * factor.energyFactor).toInt(),
-            (this.water * factor.waterFactor).toInt(),
-            (this.minerals * factor.mineralsFactor).toInt()
-        )
-    }
-
 }
-
-fun baseGeneration() = Resources(1.0, -1000, -1000, -1000)

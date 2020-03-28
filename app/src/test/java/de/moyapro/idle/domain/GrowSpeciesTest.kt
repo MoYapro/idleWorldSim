@@ -9,22 +9,18 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun grow() {
-        assertThat(Species().grow().generationAndComsumption().evolutionPoints).isEqualTo(1.1)
-    }
-
-    @Test
-    fun growForSomeTime() {
-        assertThat(Species().grow(10).generationAndComsumption().evolutionPoints).isEqualTo(2.59374246, defaultOffset())
+        val species = Species()
+        assertThat(species.process(
+            Resources().setPopulation(species, 1.0)
+        ).getPopulation(species)).isEqualTo(1.1)
     }
 
     @Test
     fun die() {
-        assertThat(Species().die().generationAndComsumption().evolutionPoints).isEqualTo(.95)
+        val species = Species()
+        assertThat(species.process(
+            Resources(0.0, 0.0, 0.0, 0.0)
+                .setPopulation(species, 1.0)
+        ).getPopulation(species)).isEqualTo(.95)
     }
-
-    @Test
-    fun dieForSomeTime() {
-        assertThat(Species().die(10).generationAndComsumption().evolutionPoints).isEqualTo(0.59873694, defaultOffset())
-    }
-
 }

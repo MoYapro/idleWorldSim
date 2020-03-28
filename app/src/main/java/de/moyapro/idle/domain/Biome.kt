@@ -1,30 +1,23 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.util.toShortDecimalStr
+
 data class Biome(
     val name: String = "DefaultBiome",
     var resources: Resources = Resources(),
-    private val species: MutableCollection<Species> = mutableListOf()
+    private val speciesList: MutableCollection<Species> = mutableListOf()
 ) {
-    fun getSpecies(): List<Species> {
-        return species.toList()
-    }
-
-    fun generate(seconds: Int = 1): Biome {
-        species.shuffled().forEach {
-            val generatedResources = it.generationAndComsumption(seconds)
-            if (resources.canProvide(generatedResources)) {
-                resources = resources.plus(generatedResources)
-                it.grow()
-            } else {
-                println("die")
-                it.die(seconds)
-            }
+    fun process(): Biome {
+        speciesList.shuffled().forEach {
+            val leftovers = it.process(this.resources)
+            this.resources = leftovers
         }
         return this
     }
 
     fun settle(species: Species): Biome {
-        this.species.add(species)
+        this.speciesList.add(species)
+        this.resources.setPopulation(species, 1.0)
         return this
     }
 
@@ -32,10 +25,15 @@ data class Biome(
         val sb = StringBuilder("BiomeStatus: $name")
         sb.append("\n")
         sb.append(resources)
-        species.forEach {
+        speciesList.forEach {
             sb.append("\n")
-            sb.append(it.getStatusText())
+            sb.append(getStatusText(it))
         }
         return sb.toString()
+    }
+
+    private fun getStatusText(species: Species): String {
+        return species.name + ": " + (species.getPopulationIn(this)*1E6).toShortDecimalStr() +
+                " -> " + (species.process(this.resources).getPopulation(species)*1E6).toShortDecimalStr()
     }
 }
