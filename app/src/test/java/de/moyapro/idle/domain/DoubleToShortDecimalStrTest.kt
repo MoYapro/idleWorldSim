@@ -1,5 +1,6 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.util.toShortDecimalStr
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,7 +17,7 @@ internal class DoubleToShortDecimalStrTest {
 
     @Test
     fun toShortDecimalStrLess1K() {
-        assertThat(999.9999.toShortDecimalStr()).isEqualTo("999.9999")
+        assertThat(999.9999.toShortDecimalStr()).isEqualTo("999.99")
     }
 
     @Test
@@ -25,7 +26,7 @@ internal class DoubleToShortDecimalStrTest {
     }
     @Test
     fun toShortDecimalStr1_7K() {
-        assertThat(1716.4.toShortDecimalStr()).isEqualTo("1.7K")
+        assertThat(1716.4.toShortDecimalStr()).isEqualTo("1.71K")
     }
     @Test
     fun toShortDecimalStr1M() {
