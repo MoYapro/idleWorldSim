@@ -62,13 +62,13 @@ internal class ResourcesTest {
 
     @Test
     fun timesScalar() {
-        assertThat(Resources(5.0, 5.0, 5.0, 5.0).times(3.0))
+        assertThat(Resources(5.0, 5.0, 5.0, 5.0) * 3.0)
             .isEqualTo(Resources(15.0, 15.0, 15.0, 15.0))
     }
 
     @Test
     fun timesResourceFactors() {
-        assertThat(Resources(5.0, 5.0, 5.0, 5.0).times(ResourceFactor(3.0, 3.0, 3.0, 3.0 )))
+        assertThat(Resources(5.0, 5.0, 5.0, 5.0) * ResourceFactor(3.0, 3.0, 3.0, 3.0 ))
             .isEqualTo(Resources(15.0, 15.0, 15.0, 15.0))
     }
 
