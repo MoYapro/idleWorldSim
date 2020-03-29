@@ -44,4 +44,18 @@ internal class TraitTest{
         assertThat(species.process(resources).minerals).isLessThan(species.evolve(MineralSaver()).process(resources).minerals
         )
     }
+
+    @Test
+    fun predatorsCanOnlyEatSomeSpecies() {
+        val gras = Species("Gras")
+        val sheep = Species("Sheep")
+        val wolf = Species("Wolf").evolve(Predator(sheep))
+        val biome = Biome()
+            .settle(gras)
+            .settle(wolf)
+            .process()
+
+        assertThat(biome.resources.getPopulation(gras)).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources.getPopulation(wolf)).`as`("Wolf cannot eat anything").isLessThan(1.0)
+    }
 }

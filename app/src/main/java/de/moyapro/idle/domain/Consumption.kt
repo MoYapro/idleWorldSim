@@ -14,8 +14,9 @@ data class Consumption(
         energyFactor: Double = 1.0,
         waterFactor: Double = 1.0,
         mineralsFactor: Double = 1.0
-    ) {
+    ): Consumption {
         needs = needs.times(ResourceFactor(evolutionPointsFactor, energyFactor, waterFactor, mineralsFactor))
+        return this
     }
 
     fun getPopulation(species: Species = consumer) = supply.getPopulation(species)

@@ -10,12 +10,17 @@ class Species(
         return biome.resources.getPopulation(this)
     }
 
-    fun process(supply: Resources): Resources {
-        val needs = needsPerIndividual() * (supply.populations[this] ?: 0.0)
-        val consumption = Consumption(this, needs, supply)
-        traits.forEach { it.influence(consumption) }
+    fun process(totalSupplyFromBiome: Resources): Resources {
+        val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
+        val availableSupply = traits.filterIsInstance<SupplyModifyingTrait>()
+            .fold(totalSupplyFromBiome)
+            { modifiedSupply, trait -> trait.influence(modifiedSupply) }
+        val baseConsumption = Consumption(this, needs, availableSupply)
+        val modifiedConsumption = traits
+            .fold(baseConsumption)
+            { consumption, trait -> trait.influence(consumption) }
         @Suppress("UnnecessaryVariable") // intentionaly to demonstrate meaning of return value // may be removed in the future
-        val leftovers = grow(consumption)
+        val leftovers = grow(modifiedConsumption)
         return leftovers
     }
 
