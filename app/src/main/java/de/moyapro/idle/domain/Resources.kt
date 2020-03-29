@@ -2,17 +2,8 @@ package de.moyapro.idle.domain
 
 import de.moyapro.idle.domain.Resource.*
 
-enum class Resource(val displayName: String) {
-    EvolutionPoints("evolution points"),
-    Energy("energy"),
-    Water("water"),
-    Minerals("minerals"),
-    // must be always the last entry to have an ordinal value representing the number of resource types
-    Count("#")
-}
-
 data class Resources(
-    val quantities: DoubleArray = DoubleArray(Count.ordinal) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
+    val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
     val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
     operator fun get (species: Species) = getPopulation(species)
