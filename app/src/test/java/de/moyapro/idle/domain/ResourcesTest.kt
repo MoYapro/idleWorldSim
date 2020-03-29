@@ -39,7 +39,7 @@ internal class ResourcesTest {
 
     @Test
     fun canProvideEnergy() {
-        assertThat(Resources().setQuantity(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))).isTrue()
+        assertThat(Resources(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))).isTrue()
     }
 
     @Test

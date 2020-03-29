@@ -6,28 +6,28 @@ data class Resources(
     val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
     val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
-    operator fun get (species: Species) = getPopulation(species)
-    operator fun set (species: Species, population: Double) = setPopulation(species, population)
+    operator fun get(species: Species) = getPopulation(species)
+    operator fun set(species: Species, population: Double) = setPopulation(species, population)
 
-    fun getPopulation(species: Species) = populations.getOrDefault(species,  0.0)
+    fun getPopulation(species: Species) = populations.getOrDefault(species, 0.0)
 
-    fun setPopulation(species: Species, population: Double = 1.0) : Resources {
+    fun setPopulation(species: Species, population: Double = 1.0): Resources {
         this.populations[species] = if (population < 1E-6) 0.0 else population
         return this
     }
 
-    operator fun get (resource: Resource) = getQuantity(resource)
-    operator fun set (resource: Resource, quantity: Double) = setQuantity(resource, quantity)
+    operator fun get(resource: Resource) = getQuantity(resource)
+    operator fun set(resource: Resource, quantity: Double) = setQuantity(resource, quantity)
 
     fun getQuantity(resource: Resource) = quantities.getOrElse(resource.ordinal) { 0.0 }
 
-    fun setQuantity(resource: Resource, quantity: Double = 1.0) : Resources {
+    fun setQuantity(resource: Resource, quantity: Double = 1.0): Resources {
         if (resource.ordinal in this.quantities.indices)
             this.quantities[resource.ordinal] = quantity
         return this
     }
 
-    override fun toString() : String {
+    override fun toString(): String {
         return "Resources(${this.quantities.mapIndexed { index, quantity ->
             values()[index].displayName + '=' + quantity.toBigDecimal()
         }.joinToString(", ")})"
@@ -52,11 +52,11 @@ data class Resources(
     )
 
     operator fun times(scalar: Double) = Resources(
-        this.quantities.map { it*scalar }.toDoubleArray(),
+        this.quantities.map { it * scalar }.toDoubleArray(),
         this.populations
     )
 
-    operator fun times(factor: ResourceFactor) : Resources {
+    operator fun times(factor: ResourceFactor): Resources {
         return this.copy().let {
             it[EvolutionPoints] *= factor.evolutionPointsFactor
             it[Energy] *= factor.energyFactor
@@ -95,5 +95,9 @@ data class Resources(
         var result = quantities.contentHashCode()
         result = 31 * result + populations.hashCode()
         return result
+    }
+
+    constructor(resource: Resource, quantity: Double = 1.0) : this() {
+        setQuantity(resource, quantity)
     }
 }
