@@ -14,11 +14,12 @@ class Species(
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
         val availableSupply = traits.filterIsInstance<SupplyModifyingTrait>()
             .fold(totalSupplyFromBiome)
-            { modifiedSupply, trait -> trait.influence(modifiedSupply) }
+            { modifiedSupply, trait -> trait.influenceSupply(modifiedSupply) }
         val baseConsumption = Consumption(this, needs, availableSupply)
         val modifiedConsumption = traits
             .fold(baseConsumption)
             { consumption, trait -> trait.influence(consumption) }
+
         @Suppress("UnnecessaryVariable") // intentionaly to demonstrate meaning of return value // may be removed in the future
         val leftovers = grow(modifiedConsumption)
         return leftovers
@@ -30,12 +31,14 @@ class Species(
     }
 
     private fun grow(consumption: Consumption): Resources {
-        var growthRate = 1.1
+        var initialGrowthRate = 1.1
         val hungerRate = .95
-        traits.filterIsInstance<GrowthTrait>().forEach { growthRate = it.influence(growthRate) }
+        val modifiedGrowthRate = traits
+            .filterIsInstance<GrowthModifyingTrait>()
+            .fold(initialGrowthRate) { growthRate, trait -> trait.influenceGrowth(growthRate) }
         return if (consumption.isProvided()) {
             val leftovers = consumption.consume()
-            leftovers.updatePopulation(consumption.consumer, growthRate)
+            leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)
             leftovers
         } else
             consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)

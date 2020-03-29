@@ -13,13 +13,16 @@ sealed class Trait(val level: Int = 1) {
  * This may also introcude a factor so that only a fraction of all available resources can be consumed
  */
 abstract class SupplyModifyingTrait : Trait() {
-    abstract fun influence(supply: Resources): Resources
+    abstract fun influenceSupply(supply: Resources): Resources
 }
 
+abstract class GrowthModifyingTrait : Trait() {
+    abstract fun influenceGrowth(growthRate: Double): Double
+}
 
-class GrowthTrait : Trait() {
+class GrowthTrait : GrowthModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption = consumption
-    fun influence(growthRate: Double) = growthRate.pow(level + 1)
+    override fun influenceGrowth(growthRate: Double) = growthRate.pow(level + 1)
 }
 
 class EnergySaver : Trait() {
@@ -47,7 +50,7 @@ class EvolutionBooster : Trait() {
 }
 
 class Predator(private val prey: Species) : SupplyModifyingTrait() {
-    override fun influence(supply: Resources): Resources {
+    override fun influenceSupply(supply: Resources): Resources {
         return supply.times(0.0)
     }
 
