@@ -19,8 +19,7 @@ class SpeciesGrowAndDieTest {
     fun die() {
         val species = Species()
         assertThat(species.process(
-            Resources(0.0, 0.0, 0.0, 0.0)
-                .setPopulation(species, 1.0)
+            (Resources() * 0.0).setPopulation(species, 1.0)
         ).getPopulation(species)).isEqualTo(.95)
     }
 }

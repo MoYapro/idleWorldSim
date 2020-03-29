@@ -20,7 +20,7 @@ internal class BiomeTest {
         val biome = Biome().settle(Species()).process()
         assertNotEquals(
             0,
-            biome.resources.evolutionPoints,
+            biome.resources[Resource.EvolutionPoints],
             "Species should change resources in biome"
         )
     }
@@ -41,10 +41,10 @@ internal class BiomeTest {
     @Test
     fun speciesConsumeWater() {
         val initialWaterLevel = 100_000.0
-        val biome = Biome(resources = Resources(water = initialWaterLevel))
+        val biome = Biome(resources = Resources().setQuantity(Resource.Water, initialWaterLevel))
             .settle(Species())
             .process()
-        assertThat(biome.resources.water).isLessThan(initialWaterLevel)
+        assertThat(biome.resources[Resource.Water]).isLessThan(initialWaterLevel)
 
     }
 
@@ -53,13 +53,13 @@ internal class BiomeTest {
         val species1 = Species()
         val species2 = Species()
         val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
-        val cappedGrowthResult = Biome(resources = Resources(water = 0.0)).settle(species2).process().resources.getPopulation(species2)
+        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Resource.Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
         assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
     }
 
     @Test
     fun speciesShouldNotConsumeOnResourceShortage() {
-        val initialResources = Resources(energy = 10.0, water = -1.0, minerals = 10.0)
+        val initialResources = Resources(doubleArrayOf(0.0, 10.0, -1.0, 10.0))
         val resourcesAfterGeneration =
             Biome(resources = initialResources)
                 .settle(Species())
@@ -73,7 +73,7 @@ internal class BiomeTest {
         val biomeName = "DefaultBiome${Math.random()}"
         val expectedBiomeStatus = """
             BiomeStatus: $biomeName
-            Resources(evp=1.0, nrg=999.0, h20=999.0, ore=999.0)
+            Resources(evolution points=1.0, energy=999.0, water=999.0, minerals=999.0)
             Species1: 1.1M -> 1.21M
             Species2: 1.0M -> 1.1M
             """.trimIndent()
@@ -84,7 +84,7 @@ internal class BiomeTest {
 
     @Test
     fun speciesCanEatEachOther() {
-        val initialResources = Resources(energy = 2.0, water = 2.0, minerals = 2.0)
+        val initialResources = Resources(doubleArrayOf(0.0, 2.0, 2.0, 2.0))
         val predator = Species("Predator")
         val prey = Species("Prey")
         predator.evolve(Predator(prey))
@@ -98,7 +98,7 @@ internal class BiomeTest {
 
     @Test
     fun speciesEatsAnotherSpecies() {
-        val initialResources = Resources(energy = 3.0, water = 3.0, minerals = 3.0)
+        val initialResources = Resources(doubleArrayOf(0.0, 3.0, 3.0, 3.0))
         val predator = Species("Eater")
         val prey = Species("Food")
         val uninvolved = Species("Uninvolved")
