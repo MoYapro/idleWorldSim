@@ -12,10 +12,10 @@ class Species(
 
     fun process(totalSupplyFromBiome: Resources): Resources {
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
-        val availableSupply = traits.filterIsInstance<SupplyModifyingTrait>()
-            .fold(totalSupplyFromBiome)
-            { modifiedSupply, trait -> trait.influenceSupply(modifiedSupply) }
-        val baseConsumption = Consumption(this, needs, availableSupply)
+        val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
+        val availableConsumption = traits.filterIsInstance<SupplyModifyingTrait>()
+            .fold(baseConsumption)
+            { modifiedConsumption, trait -> trait.influence(modifiedConsumption) }
         val modifiedConsumption = traits
             .fold(baseConsumption)
             { consumption, trait -> trait.influence(consumption) }

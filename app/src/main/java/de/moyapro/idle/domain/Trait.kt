@@ -12,9 +12,7 @@ sealed class Trait(val level: Int = 1) {
  * Determin which of the available supply is consumeable/reachable by the current species
  * This may also introcude a factor so that only a fraction of all available resources can be consumed
  */
-abstract class SupplyModifyingTrait : Trait() {
-    abstract fun influenceSupply(supply: Resources): Resources
-}
+abstract class SupplyModifyingTrait : Trait()
 
 abstract class GrowthModifyingTrait : Trait() {
     abstract fun influenceGrowth(growthRate: Double): Double
@@ -50,17 +48,19 @@ class EvolutionBooster : Trait() {
 }
 
 class Predator(private val prey: Species) : SupplyModifyingTrait() {
-    override fun influenceSupply(supply: Resources): Resources {
-        return supply.times(0.0)
-    }
 
     override fun influence(consumption: Consumption): Consumption {
         val huntingEfficiency = 0.01
         val predatorPopulation = consumption.getPopulation()
         val preyPopulationNeeds = consumption.needs.getPopulation(prey)
-        consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
+        if (hasPray(consumption)) {
+            consumption.supply = consumption.supply.times(0.0)
+            consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
+        }
         return consumption
     }
+
+    private fun hasPray(consumption: Consumption) = consumption.supply.populations.entries.any { it.key == prey }
 }
 
 class ResourceFactor(
