@@ -1,5 +1,7 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.Resource.*
+
 enum class Resource(val displayName: String) {
     EvolutionPoints("evolution points"),
     Energy("energy"),
@@ -10,7 +12,7 @@ enum class Resource(val displayName: String) {
 }
 
 data class Resources(
-    val quantities: DoubleArray = DoubleArray(Resource.Count.ordinal) { if (it == Resource.EvolutionPoints.ordinal) 0.0 else 1000.0 },
+    val quantities: DoubleArray = DoubleArray(Count.ordinal) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
     val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
     operator fun get (species: Species) = getPopulation(species)
@@ -35,8 +37,8 @@ data class Resources(
     }
 
     override fun toString() : String {
-        return "Resources(${this.quantities.mapIndexed {
-                index, quantity -> Resource.values()[index].displayName + '=' + quantity.toBigDecimal()
+        return "Resources(${this.quantities.mapIndexed { index, quantity ->
+            values()[index].displayName + '=' + quantity.toBigDecimal()
         }.joinToString(", ")})"
     }
 
@@ -65,10 +67,10 @@ data class Resources(
 
     operator fun times(factor: ResourceFactor) : Resources {
         return this.copy().let {
-            it[Resource.EvolutionPoints] *= factor.evolutionPointsFactor
-            it[Resource.Energy] *= factor.energyFactor
-            it[Resource.Water] *= factor.waterFactor
-            it[Resource.Minerals] *= factor.mineralsFactor
+            it[EvolutionPoints] *= factor.evolutionPointsFactor
+            it[Energy] *= factor.energyFactor
+            it[Water] *= factor.waterFactor
+            it[Minerals] *= factor.mineralsFactor
             it
         }
     }

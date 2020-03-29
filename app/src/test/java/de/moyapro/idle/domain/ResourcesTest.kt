@@ -1,5 +1,6 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.Resource.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,33 +13,33 @@ internal class ResourcesTest {
 
     @Test
     fun cannotProvideWater() {
-        assertThat(Resources().setQuantity(Resource.Water, 1.0).canProvide(Resources().setQuantity(Resource.Water, 2.0))).isFalse()
+        assertThat(Resources().setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))).isFalse()
     }
 
 
     @Test
     fun cannotProvideEnergy() {
-        assertThat(Resources().setQuantity(Resource.Energy, 1.0).canProvide(Resources().setQuantity(Resource.Energy, 2.0))).isFalse()
+        assertThat(Resources().setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))).isFalse()
     }
 
     @Test
     fun cannotProvideMinerals() {
-        assertThat(Resources().setQuantity(Resource.Minerals, 1.0).canProvide(Resources().setQuantity(Resource.Minerals, 2.0))).isFalse()
+        assertThat(Resources().setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))).isFalse()
     }
 
     @Test
     fun canProvideWater() {
-        assertThat(Resources().setQuantity(Resource.Water, 10.0).canProvide(Resources().setQuantity(Resource.Water, 2.0))).isTrue()
+        assertThat(Resources().setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))).isTrue()
     }
 
     @Test
     fun canProvideMinerals() {
-        assertThat(Resources().setQuantity(Resource.Minerals, 10.0).canProvide(Resources().setQuantity(Resource.Minerals, 2.0))).isTrue()
+        assertThat(Resources().setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))).isTrue()
     }
 
     @Test
     fun canProvideEnergy() {
-        assertThat(Resources().setQuantity(Resource.Energy, 10.0).canProvide(Resources().setQuantity(Resource.Energy, 2.0))).isTrue()
+        assertThat(Resources().setQuantity(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))).isTrue()
     }
 
     @Test

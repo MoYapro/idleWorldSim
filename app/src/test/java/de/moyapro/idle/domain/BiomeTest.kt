@@ -1,5 +1,7 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.Resource.EvolutionPoints
+import de.moyapro.idle.domain.Resource.Water
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -20,7 +22,7 @@ internal class BiomeTest {
         val biome = Biome().settle(Species()).process()
         assertNotEquals(
             0,
-            biome.resources[Resource.EvolutionPoints],
+            biome.resources[EvolutionPoints],
             "Species should change resources in biome"
         )
     }
@@ -41,10 +43,10 @@ internal class BiomeTest {
     @Test
     fun speciesConsumeWater() {
         val initialWaterLevel = 100_000.0
-        val biome = Biome(resources = Resources().setQuantity(Resource.Water, initialWaterLevel))
+        val biome = Biome(resources = Resources().setQuantity(Water, initialWaterLevel))
             .settle(Species())
             .process()
-        assertThat(biome.resources[Resource.Water]).isLessThan(initialWaterLevel)
+        assertThat(biome.resources[Water]).isLessThan(initialWaterLevel)
 
     }
 
@@ -53,7 +55,7 @@ internal class BiomeTest {
         val species1 = Species()
         val species2 = Species()
         val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
-        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Resource.Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
+        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
         assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
     }
 
