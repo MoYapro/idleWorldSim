@@ -47,6 +47,7 @@ internal class TraitTest{
 
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
+        // this test is failing sometimes. it may depend on the order in which the species are processed
         val gras = Species("Gras")
         val sheep = Species("Sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep))
@@ -57,5 +58,12 @@ internal class TraitTest{
 
         assertThat(biome.resources.getPopulation(gras)).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
         assertThat(biome.resources.getPopulation(wolf)).`as`("Wolf cannot eat anything").isLessThan(1.0)
+    }
+
+    @Test
+    fun foldTest() {
+        val traits = listOf<Trait>()
+        val value = 1
+        assertThat(traits.fold(value) { v, _ -> v }).isEqualTo(value)
     }
 }
