@@ -51,7 +51,7 @@ class EvolutionBooster : Trait() {
 
 class Predator(private val prey: Species) : SupplyModifyingTrait() {
     override fun influenceSupply(supply: Resources): Resources {
-        return supply.times(0.0)
+        return supply * 0.0
     }
 
     override fun influence(consumption: Consumption): Consumption {
