@@ -5,45 +5,71 @@ package de.moyapro.idle.domain
 import kotlin.math.pow
 
 sealed class Trait(val level: Int = 1) {
-    abstract fun influence(consumption: Consumption)
+    abstract fun influence(consumption: Consumption): Consumption
 }
 
-class GrowthTrait() : Trait() {
-    override fun influence(consumption: Consumption) = Unit
-    fun influence(growthRate: Double) = growthRate.pow(level + 1)
+/**
+ * Determin which of the available supply is consumeable/reachable by the current species
+ * This may also introcude a factor so that only a fraction of all available resources can be consumed
+ */
+abstract class SupplyModifyingTrait : Trait()
+
+abstract class GrowthModifyingTrait : Trait() {
+    abstract fun influenceGrowth(growthRate: Double): Double
 }
 
-class EnergySaver() : Trait() {
-    override fun influence(consumption: Consumption) {
-        consumption.times(energyFactor = .9)
+class ConsumerTrait(val influencedResource: Resource) : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
+        return consumption
     }
 }
 
-class WaterSaver() : Trait() {
-    override fun influence(consumption: Consumption) {
-        consumption.times(waterFactor = .9)
+
+class GrowthTrait : GrowthModifyingTrait() {
+    override fun influence(consumption: Consumption): Consumption = consumption
+    override fun influenceGrowth(growthRate: Double) = growthRate.pow(level + 1)
+}
+
+class EnergySaver : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        return consumption.times(energyFactor = .9)
     }
 }
 
-class MineralSaver() : Trait() {
-    override fun influence(consumption: Consumption) {
-        consumption.times(mineralsFactor = .9)
+class WaterSaver : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        return consumption.times(waterFactor = .9)
     }
 }
 
-class EvolutionBooster() : Trait() {
-    override fun influence(consumption: Consumption) {
-        consumption.times(evolutionPointsFactor = 1.15)
+class MineralSaver : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        return consumption.times(mineralsFactor = .9)
     }
 }
 
-class Predator(private val prey: Species) : Trait() {
-    override fun influence(consumption: Consumption) {
+class EvolutionBooster : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        return consumption.times(evolutionPointsFactor = 1.15)
+    }
+}
+
+class Predator(private val prey: Species) : SupplyModifyingTrait() {
+
+    override fun influence(consumption: Consumption): Consumption {
         val huntingEfficiency = 0.01
         val predatorPopulation = consumption.getPopulation()
         val preyPopulationNeeds = consumption.needs.getPopulation(prey)
-        consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
+        if (hasPray(consumption)) {
+            consumption.needs[Resource.Minerals] = 0.0
+            consumption.needs[Resource.Energy] = 0.0
+            consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
+        }
+        return consumption
     }
+
+    private fun hasPray(consumption: Consumption) = consumption.supply.populations.entries.any { it.key == prey }
 }
 
 class ResourceFactor(

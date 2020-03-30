@@ -19,7 +19,7 @@ internal class BiomeTest {
 
     @Test
     fun biomeResourceUpdateAfterGenerating() {
-        val biome = Biome().settle(Species()).process()
+        val biome = Biome().settle(DefaultSpecies()).process()
         assertNotEquals(
             0,
             biome.resources[EvolutionPoints],
@@ -29,7 +29,7 @@ internal class BiomeTest {
 
     @Test
     fun speciesGrowAndDie() {
-        val species = Species()
+        val species = DefaultSpecies()
         val biome = Biome().settle(species)
         val initialSpeciesSize = species.getPopulationIn(biome)
         biome.process()
@@ -44,7 +44,7 @@ internal class BiomeTest {
     fun speciesConsumeWater() {
         val initialWaterLevel = 100_000.0
         val biome = Biome(resources = Resources().setQuantity(Water, initialWaterLevel))
-            .settle(Species())
+            .settle(DefaultSpecies())
             .process()
         assertThat(biome.resources[Water]).isLessThan(initialWaterLevel)
 
@@ -52,8 +52,8 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
-        val species1 = Species()
-        val species2 = Species()
+        val species1 = DefaultSpecies()
+        val species2 = DefaultSpecies()
         val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
         val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
         assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
@@ -64,7 +64,7 @@ internal class BiomeTest {
         val initialResources = Resources(doubleArrayOf(0.0, 10.0, -1.0, 10.0))
         val resourcesAfterGeneration =
             Biome(resources = initialResources)
-                .settle(Species())
+                .settle(DefaultSpecies())
                 .process()
                 .resources
         assertThat(initialResources).isEqualTo(resourcesAfterGeneration)
@@ -79,16 +79,16 @@ internal class BiomeTest {
             Species1: 1.1M -> 1.21M
             Species2: 1.0M -> 1.1M
             """.trimIndent()
-        val biome = Biome(biomeName).settle(Species(name = "Species1")).process()
-            .settle(Species("Species2"))
+        val biome = Biome(biomeName).settle(DefaultSpecies(name = "Species1")).process()
+            .settle(DefaultSpecies("Species2"))
         assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
     }
 
     @Test
     fun speciesCanEatEachOther() {
         val initialResources = Resources(doubleArrayOf(0.0, 2.0, 2.0, 2.0))
-        val predator = Species("Predator")
-        val prey = Species("Prey")
+        val predator = DefaultSpecies("Predator")
+        val prey = DefaultSpecies("Prey")
         predator.evolve(Predator(prey))
         val biome = Biome(resources = initialResources)
             .settle(predator)
@@ -101,9 +101,9 @@ internal class BiomeTest {
     @Test
     fun speciesEatsAnotherSpecies() {
         val initialResources = Resources(doubleArrayOf(0.0, 3.0, 3.0, 3.0))
-        val predator = Species("Eater")
-        val prey = Species("Food")
-        val uninvolved = Species("Uninvolved")
+        val predator = DefaultSpecies("Eater")
+        val prey = DefaultSpecies("Food")
+        val uninvolved = DefaultSpecies("Uninvolved")
         predator.evolve(Predator(prey))
         val biome = Biome(resources = initialResources)
             .settle(predator)

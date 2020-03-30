@@ -46,7 +46,7 @@ internal class ResourcesTest {
     fun plus() {
         assertThat(
             Resources(doubleArrayOf(1.0, 1.0, 1.0, 1.0))
-                + Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
+                    + Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
         ).isEqualTo(
             Resources(doubleArrayOf(3.1, 3.0, 3.0, 3.0))
         )
@@ -56,7 +56,7 @@ internal class ResourcesTest {
     fun minus() {
         assertThat(
             Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
-                + Resources(doubleArrayOf(-1.0, -1.0, -1.0, -1.0))
+                    + Resources(doubleArrayOf(-1.0, -1.0, -1.0, -1.0))
         ).isEqualTo(
             Resources(doubleArrayOf(1.1, 1.0, 1.0, 1.0))
         )
@@ -70,7 +70,7 @@ internal class ResourcesTest {
 
     @Test
     fun timesResourceFactors() {
-        assertThat(Resources(doubleArrayOf(5.0, 5.0, 5.0, 5.0)) * ResourceFactor(3.0, 3.0, 3.0, 3.0 ))
+        assertThat(Resources(doubleArrayOf(5.0, 5.0, 5.0, 5.0)) * ResourceFactor(3.0, 3.0, 3.0, 3.0))
             .isEqualTo(Resources(doubleArrayOf(15.0, 15.0, 15.0, 15.0)))
     }
 

@@ -8,10 +8,10 @@ data class Biome(
     private val speciesList: MutableCollection<Species> = mutableListOf()
 ) {
     fun process(): Biome {
-        speciesList.shuffled().forEach {
-            val leftovers = it.process(this.resources)
-            this.resources = leftovers
-        }
+        this.resources = speciesList
+            .shuffled()
+            .fold(resources)
+            { leftOvers, species -> species.process(leftOvers) }
         return this
     }
 
@@ -33,7 +33,7 @@ data class Biome(
     }
 
     private fun getStatusText(species: Species): String {
-        return species.name + ": " + (species.getPopulationIn(this)*1E6).toShortDecimalStr() +
-                " -> " + (species.process(this.resources).getPopulation(species)*1E6).toShortDecimalStr()
+        return species.name + ": " + (species.getPopulationIn(this) * 1E6).toShortDecimalStr() +
+                " -> " + (species.process(this.resources).getPopulation(species) * 1E6).toShortDecimalStr()
     }
 }
