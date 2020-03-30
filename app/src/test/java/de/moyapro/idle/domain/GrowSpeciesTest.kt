@@ -1,5 +1,6 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.consumption.Resources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -7,7 +8,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun grow() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         assertThat(
             species.process(
                 Resources().setPopulation(species, 1.0)
@@ -17,7 +18,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun die() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         assertThat(
             species.process(
                 (Resources() * 0.0)

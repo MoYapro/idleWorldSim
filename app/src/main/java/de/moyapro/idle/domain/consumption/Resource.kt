@@ -1,4 +1,4 @@
-package de.moyapro.idle.domain
+package de.moyapro.idle.domain.consumption
 
 enum class Resource(val displayName: String) {
     EvolutionPoints("evolution points"),
