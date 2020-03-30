@@ -22,8 +22,8 @@ class Species(
         return grow(modifiedConsumption)
     }
 
-    fun evolve(trait: Trait): Species {
-        this.traits.add(trait)
+    fun evolve(vararg trait: Trait): Species {
+        this.traits.addAll(trait)
         return this
     }
 
