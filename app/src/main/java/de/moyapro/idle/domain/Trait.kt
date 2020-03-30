@@ -18,9 +18,10 @@ abstract class GrowthModifyingTrait : Trait() {
     abstract fun influenceGrowth(growthRate: Double): Double
 }
 
-class MineralEater : Trait() {
+class ConsumerTrait(val influencedResource: Resource) : Trait() {
     override fun influence(consumption: Consumption): Consumption {
-        consumption.usableSupply[Resource.Minerals] = consumption.supply[Resource.Minerals]
+        consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
+        return consumption
     }
 }
 

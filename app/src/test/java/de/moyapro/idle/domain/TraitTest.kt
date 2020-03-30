@@ -1,9 +1,10 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.Resource.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class TraitTest{
+internal class TraitTest {
 
     @Test
     fun createGrowthTrait() {
@@ -16,7 +17,8 @@ internal class TraitTest{
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(
-            species.process(resources).getPopulation(species))
+            species.process(resources).getPopulation(species)
+        )
             .isLessThan(species.evolve(GrowthTrait()).process(resources).getPopulation(species))
     }
 
@@ -25,7 +27,7 @@ internal class TraitTest{
         val species = Species()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
-        assertThat(species.process(resources).energy).isLessThan(species.evolve(EnergySaver()).process(resources).energy)
+        assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver()).process(resources)[Energy])
     }
 
     @Test
@@ -33,7 +35,7 @@ internal class TraitTest{
         val species = Species()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
-        assertThat(species.process(resources).water).isLessThan(species.evolve(WaterSaver()).process(resources).water)
+        assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver()).process(resources)[Water])
     }
 
     @Test
@@ -41,14 +43,15 @@ internal class TraitTest{
         val species = Species()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
-        assertThat(species.process(resources).minerals).isLessThan(species.evolve(MineralSaver()).process(resources).minerals
+        assertThat(species.process(resources)[Minerals]).isLessThan(
+            species.evolve(MineralSaver()).process(resources)[Minerals]
         )
     }
 
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = Species("Gras")
+        val gras = Species("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(ConsumerTrait(Energy))
         val sheep = Species("Sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep))
         val biome = Biome()
