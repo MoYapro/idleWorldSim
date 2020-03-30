@@ -13,7 +13,7 @@ internal class TraitTest {
 
     @Test
     fun increasedGrowthTrait() {
-        val species = Species()
+        val species = DefaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(
@@ -24,7 +24,7 @@ internal class TraitTest {
 
     @Test
     fun energySaver() {
-        val species = Species()
+        val species = DefaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver()).process(resources)[Energy])
@@ -32,7 +32,7 @@ internal class TraitTest {
 
     @Test
     fun waterSaver() {
-        val species = Species()
+        val species = DefaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver()).process(resources)[Water])
@@ -40,7 +40,7 @@ internal class TraitTest {
 
     @Test
     fun mineralSaver() {
-        val species = Species()
+        val species = DefaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Minerals]).isLessThan(
@@ -48,17 +48,17 @@ internal class TraitTest {
         )
     }
 
-    //    @Test
+    @Test
     fun predatorsNeedWater() {
-        val wolf = Species("Wolf").evolve(Predator(Species("uninwolved")))
+        val wolf = DefaultSpecies("Wolf").evolve(Predator(DefaultSpecies("uninwolved")))
         assertThat(Biome().settle(wolf).process().resources[wolf]).`as`("Wolf needs water").isGreaterThan(1.0)
     }
 
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = Species("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(ConsumerTrait(Energy))
-        val sheep = Species("Sheep")
+        val gras = DefaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(ConsumerTrait(Energy))
+        val sheep = DefaultSpecies("Sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep))
         val biome = Biome()
             .settle(gras)

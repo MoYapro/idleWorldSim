@@ -7,7 +7,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun grow() {
-        val species = Species()
+        val species = DefaultSpecies()
         assertThat(
             species.process(
                 Resources().setPopulation(species, 1.0)
@@ -17,7 +17,7 @@ class SpeciesGrowAndDieTest {
 
     @Test
     fun die() {
-        val species = Species()
+        val species = DefaultSpecies()
         assertThat(
             species.process(
                 (Resources() * 0.0)
