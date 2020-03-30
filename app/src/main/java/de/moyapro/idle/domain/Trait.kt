@@ -18,6 +18,13 @@ abstract class GrowthModifyingTrait : Trait() {
     abstract fun influenceGrowth(growthRate: Double): Double
 }
 
+class MineralEater : Trait() {
+    override fun influence(consumption: Consumption): Consumption {
+        consumption.usableSupply[Resource.Minerals] = consumption.supply[Resource.Minerals]
+    }
+}
+
+
 class GrowthTrait : GrowthModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption = consumption
     override fun influenceGrowth(growthRate: Double) = growthRate.pow(level + 1)
@@ -54,7 +61,7 @@ class Predator(private val prey: Species) : SupplyModifyingTrait() {
         val predatorPopulation = consumption.getPopulation()
         val preyPopulationNeeds = consumption.needs.getPopulation(prey)
         if (hasPray(consumption)) {
-            consumption.supply = consumption.supply * 0.0
+            consumption.needs = consumption.needs * 0.0
             consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
         }
         return consumption

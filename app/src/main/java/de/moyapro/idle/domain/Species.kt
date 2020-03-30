@@ -17,12 +17,9 @@ class Species(
             .fold(baseConsumption)
             { modifiedConsumption, trait -> trait.influence(modifiedConsumption) }
         val modifiedConsumption = traits
-            .fold(baseConsumption)
+            .fold(availableConsumption)
             { consumption, trait -> trait.influence(consumption) }
-
-        @Suppress("UnnecessaryVariable") // intentionally to demonstrate meaning of return value // may be removed in the future
-        val leftovers = grow(modifiedConsumption)
-        return leftovers
+        return grow(modifiedConsumption)
     }
 
     fun evolve(trait: Trait): Species {
@@ -43,4 +40,9 @@ class Species(
         } else
             consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
     }
+
+    override fun toString(): String {
+        return "Species[$name]"
+    }
+
 }
