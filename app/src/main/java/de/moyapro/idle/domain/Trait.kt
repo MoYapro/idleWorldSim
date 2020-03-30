@@ -62,7 +62,7 @@ class Predator(private val prey: Species) : SupplyModifyingTrait() {
         val predatorPopulation = consumption.getPopulation()
         val preyPopulationNeeds = consumption.needs.getPopulation(prey)
         if (hasPray(consumption)) {
-            consumption.needs = consumption.needs * 0.0
+            consumption.needs *= 0.0
             consumption.needs.setPopulation(prey, preyPopulationNeeds + predatorPopulation * huntingEfficiency)
         }
         return consumption

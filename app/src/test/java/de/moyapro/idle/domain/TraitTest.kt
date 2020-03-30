@@ -48,6 +48,12 @@ internal class TraitTest {
         )
     }
 
+    //    @Test
+    fun predatorsNeedWater() {
+        val wolf = Species("Wolf").evolve(Predator(Species("uninwolved")))
+        assertThat(Biome().settle(wolf).process().resources[wolf]).`as`("Wolf needs water").isGreaterThan(1.0)
+    }
+
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed

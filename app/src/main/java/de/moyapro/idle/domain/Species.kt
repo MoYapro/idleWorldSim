@@ -3,7 +3,7 @@ package de.moyapro.idle.domain
 class Species(
     val name: String = "DefaultSpecies"
 ) {
-    private val traits: MutableList<Trait> = mutableListOf()
+    private val traits: MutableList<Trait> = mutableListOf(ConsumerTrait(Resource.Water), ConsumerTrait(Resource.Minerals), ConsumerTrait(Resource.Energy))
     private fun needsPerIndividual() = Resources(doubleArrayOf(-1.0, 1.0, 1.0, 1.0))
 
     fun getPopulationIn(biome: Biome): Double {
