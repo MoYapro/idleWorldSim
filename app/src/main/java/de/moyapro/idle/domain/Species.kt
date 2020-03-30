@@ -20,7 +20,7 @@ class Species(
             .fold(baseConsumption)
             { consumption, trait -> trait.influence(consumption) }
 
-        @Suppress("UnnecessaryVariable") // intentionaly to demonstrate meaning of return value // may be removed in the future
+        @Suppress("UnnecessaryVariable") // intentionally to demonstrate meaning of return value // may be removed in the future
         val leftovers = grow(modifiedConsumption)
         return leftovers
     }
@@ -31,7 +31,7 @@ class Species(
     }
 
     private fun grow(consumption: Consumption): Resources {
-        var initialGrowthRate = 1.1
+        val initialGrowthRate = 1.1
         val hungerRate = .95
         val modifiedGrowthRate = traits
             .filterIsInstance<GrowthModifyingTrait>()
