@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 internal class EvolutionConditionTest {
     @Test
-    fun CanEvolveWithoutCondition() {
+    fun canEvolveWithoutCondition() {
         assertThat(
             Species("canEvolve")
                 .canEvolve(EnergySaver(), EvolutionConditions())
@@ -15,7 +15,7 @@ internal class EvolutionConditionTest {
     }
 
     @Test
-    fun CanEvolveWithUnmatchedCondition() {
+    fun canEvolveWithUnmatchedCondition() {
         assertThat(
             Species("canEvolve")
                 .canEvolve(EnergySaver(), EvolutionConditions().add(EvolutionCondition(required = WaterSaver(), evolveTo = MineralSaver())))
@@ -24,7 +24,7 @@ internal class EvolutionConditionTest {
     }
 
     @Test
-    fun CannotEvolveWithConditionNotTrue() {
+    fun cannotEvolveWithConditionNotTrue() {
         assertThat(
             Species("canNotEvolve")
                 .canEvolve(EnergySaver(), EvolutionConditions().add(EvolutionCondition(required = WaterSaver(), evolveTo = EnergySaver())))
@@ -33,7 +33,7 @@ internal class EvolutionConditionTest {
     }
 
     @Test
-    fun CanEvolveWithConditionTrue() {
+    fun canEvolveWithConditionTrue() {
         assertThat(
             Species("canEvolve")
                 .evolve(WaterSaver())
