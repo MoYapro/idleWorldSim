@@ -23,8 +23,10 @@ class Species(
         return grow(modifiedConsumption)
     }
 
-    fun evolve(vararg trait: Trait): Species {
-        this.traits.addAll(trait)
+    fun canEvolve(evolveTo: Trait, conditions: EvolutionConditions? = null): Boolean = conditions?.fulfilledBy(evolveTo, traits) ?: true
+
+    fun evolve(vararg trait: Trait, conditions: EvolutionConditions? = null): Species {
+        this.traits.addAll(trait.filter { this.canEvolve(it, conditions) })
         return this
     }
 
@@ -43,7 +45,6 @@ class Species(
     override fun toString(): String {
         return "Species[$name]"
     }
-
 }
 
 fun defaultSpecies(name: String = "DefaultSpecies"): Species {
