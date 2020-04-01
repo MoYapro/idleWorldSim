@@ -1,4 +1,6 @@
-package de.moyapro.idle.domain
+package de.moyapro.idle.domain.consumption
+
+import de.moyapro.idle.domain.Species
 
 data class Consumption(
     val consumer: Species,
@@ -6,11 +8,6 @@ data class Consumption(
     var supply: Resources,
     var usableSupply: Resources = Resources(DoubleArray(Resource.values().size))
 ) {
-
-    operator fun times(factor: ResourceFactor) {
-        needs = needs.times(factor)
-    }
-
     /**
      * use value objects for resources
      */
@@ -20,7 +17,7 @@ data class Consumption(
         waterFactor: Double = 1.0,
         mineralsFactor: Double = 1.0
     ): Consumption {
-        needs = needs.times(ResourceFactor(evolutionPointsFactor, energyFactor, waterFactor, mineralsFactor))
+        needs *= ResourceFactor(evolutionPointsFactor, energyFactor, waterFactor, mineralsFactor)
         return this
     }
 

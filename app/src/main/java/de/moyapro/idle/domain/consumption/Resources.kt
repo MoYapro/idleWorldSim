@@ -1,6 +1,7 @@
-package de.moyapro.idle.domain
+package de.moyapro.idle.domain.consumption
 
-import de.moyapro.idle.domain.Resource.*
+import de.moyapro.idle.domain.Species
+import de.moyapro.idle.domain.consumption.Resource.*
 
 data class Resources(
     val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },

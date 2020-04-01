@@ -1,6 +1,8 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.domain.Resource.*
+import de.moyapro.idle.domain.consumption.Resource.*
+import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idle.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,7 +15,7 @@ internal class TraitTest {
 
     @Test
     fun increasedGrowthTrait() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(
@@ -24,7 +26,7 @@ internal class TraitTest {
 
     @Test
     fun energySaver() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver()).process(resources)[Energy])
@@ -32,7 +34,7 @@ internal class TraitTest {
 
     @Test
     fun waterSaver() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver()).process(resources)[Water])
@@ -40,7 +42,7 @@ internal class TraitTest {
 
     @Test
     fun mineralSaver() {
-        val species = DefaultSpecies()
+        val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Minerals]).isLessThan(
@@ -50,7 +52,7 @@ internal class TraitTest {
 
     @Test
     fun predatorsNeedWater() {
-        val sheep = DefaultSpecies("sheep")
+        val sheep = defaultSpecies("sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep), ConsumerTrait(Water))
         assertThat(
             Biome().settle(wolf).settle(sheep)
@@ -62,8 +64,10 @@ internal class TraitTest {
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = DefaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(ConsumerTrait(Energy))
-        val sheep = DefaultSpecies("Sheep")
+        val gras = defaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(
+            ConsumerTrait(Energy)
+        )
+        val sheep = defaultSpecies("Sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep))
         val biome = Biome()
             .settle(gras)
