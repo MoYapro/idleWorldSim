@@ -27,5 +27,8 @@ open class Feature(private var traits: List<Trait>) {
         return this.traits.minus(otherFeature.traits).isEmpty()
     }
 
+    override fun toString(): String {
+        return "Feature[${traits.joinToString(",") { it.toString() }}]"
+    }
 
 }

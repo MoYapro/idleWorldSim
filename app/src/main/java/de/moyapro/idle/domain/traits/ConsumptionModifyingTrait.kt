@@ -12,6 +12,12 @@ class ConsumerTrait(private val influencedResource: Resource) : ConsumptionModif
         consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
         return consumption
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (null == other || other !is ConsumerTrait) return false
+        return this.influencedResource == other.influencedResource
+    }
+
 }
 
 object EnergySaver : ConsumptionModifyingTrait() {

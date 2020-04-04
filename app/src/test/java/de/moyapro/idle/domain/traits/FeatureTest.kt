@@ -2,8 +2,7 @@ package de.moyapro.idle.domain.traits
 
 import de.moyapro.idle.domain.Species
 import de.moyapro.idle.domain.consumption.Consumption
-import de.moyapro.idle.domain.consumption.Resource.Minerals
-import de.moyapro.idle.domain.consumption.Resource.Water
+import de.moyapro.idle.domain.consumption.Resource.*
 import de.moyapro.idle.domain.consumption.Resources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -62,6 +61,35 @@ internal class FeatureTest {
         val trait1 = EnergySaver
         val trait2 = Predator(Species("Sheep"))
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+    }
+
+    @Test
+    fun differentPredatorsAreNotEqual() {
+        val trait1 = Predator(Species("Gras"))
+        val trait2 = Predator(Species("Sheep"))
+        assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+    }
+
+    @Test
+    fun samePredatorsAreEqual() {
+        val sheep = Species("Sheep")
+        val trait1 = Predator(sheep)
+        val trait2 = Predator(sheep)
+        assertThat(Feature(trait1) == Feature(trait2)).isTrue()
+    }
+
+    @Test
+    fun differentConsumersAreNotEqual() {
+        val trait1 = ConsumerTrait(Water)
+        val trait2 = ConsumerTrait(Minerals)
+        assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+    }
+
+    @Test
+    fun sameConsumersAreEqual() {
+        val trait1 = ConsumerTrait(Energy)
+        val trait2 = ConsumerTrait(Energy)
+        assertThat(Feature(trait1) == Feature(trait2)).isTrue()
     }
 
     @Test

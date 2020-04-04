@@ -27,4 +27,9 @@ class Predator(private val prey: Species) : SupplyModifyingTrait() {
     }
 
     private fun hasPrey(consumption: Consumption) = consumption.supply.populations.entries.any { it.key == prey }
+
+    override fun equals(other: Any?): Boolean {
+        if (null == other || other !is Predator) return false
+        return this.prey == other.prey
+    }
 }
