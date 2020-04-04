@@ -8,6 +8,7 @@ import de.moyapro.idle.domain.consumption.Resources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
+@Suppress("UsePropertyAccessSyntax")
 internal class FeatureTest {
 
     @Test
@@ -35,10 +36,38 @@ internal class FeatureTest {
         val usableWater = Feature(ConsumerTrait(Water))
             .influence(Consumption(Species("Consumer"), needs, supply))
             .usableSupply[Water]
-
         assertThat(usableWater).isGreaterThan(0.0)
-
-
     }
+
+
+    @Test
+    fun emptyFeaturesAreEqualTest() {
+        assertThat(Feature()).isEqualTo(Feature())
+    }
+
+    @Test
+    fun nullDoesNotEqualAnyFeatures() {
+        assertThat(Feature() == null).isFalse()
+    }
+
+    @Test
+    fun featuresWithTheSameTraitAreEqual() {
+        val trait = EnergySaver
+        assertThat(Feature(trait) == Feature(trait)).isTrue()
+    }
+
+    @Test
+    fun featuresWithTheDifferentTraitsAreNotEqual() {
+        val trait1 = EnergySaver
+        val trait2 = Predator(Species("Sheep"))
+        assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+    }
+
+    @Test
+    fun featuresWithTheSameTraitsAreEqual() {
+        val traits = listOf(EnergySaver, MineralSaver(), GrowthTrait)
+        assertThat(Feature(traits) == Feature(traits)).isTrue()
+    }
+
 
 }

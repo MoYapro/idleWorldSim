@@ -14,13 +14,13 @@ class ConsumerTrait(private val influencedResource: Resource) : ConsumptionModif
     }
 }
 
-class EnergySaver : ConsumptionModifyingTrait() {
+object EnergySaver : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(energyFactor = .9)
     }
 }
 
-class WaterSaver : ConsumptionModifyingTrait() {
+object WaterSaver : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(waterFactor = .9)
     }

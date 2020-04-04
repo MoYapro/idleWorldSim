@@ -6,6 +6,6 @@ abstract class GrowthModifyingTrait : Trait() {
     abstract fun influenceGrowth(growthRate: Double): Double
 }
 
-class GrowthTrait : GrowthModifyingTrait() {
+object GrowthTrait : GrowthModifyingTrait() {
     override fun influenceGrowth(growthRate: Double) = growthRate.pow(level + 1)
 }

@@ -10,7 +10,7 @@ internal class TraitTest {
 
     @Test
     fun createGrowthTrait() {
-        assertThat(GrowthTrait()).hasFieldOrPropertyWithValue("level", 1)
+        assertThat(GrowthTrait).hasFieldOrPropertyWithValue("level", 1)
     }
 
     @Test
@@ -21,7 +21,7 @@ internal class TraitTest {
         assertThat(
             species.process(resources).getPopulation(species)
         )
-            .isLessThan(species.evolve(GrowthTrait()).process(resources).getPopulation(species))
+            .isLessThan(species.evolve(GrowthTrait).process(resources).getPopulation(species))
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
-        assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver()).process(resources)[Energy])
+        assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver).process(resources)[Energy])
     }
 
     @Test
@@ -37,7 +37,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, 1.0)
-        assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver()).process(resources)[Water])
+        assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver).process(resources)[Water])
     }
 
     @Test

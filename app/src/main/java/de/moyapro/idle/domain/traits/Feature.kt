@@ -4,7 +4,8 @@ import de.moyapro.idle.domain.consumption.Consumption
 import de.moyapro.idle.util.applyTo
 
 /**
- * Collection of traits
+ * Collection of traits.
+ * Features containing the same traits are equal
  */
 open class Feature(private var traits: List<Trait>) {
     constructor(vararg traits: Trait) : this(listOf(*traits))
@@ -17,5 +18,14 @@ open class Feature(private var traits: List<Trait>) {
     fun influenceGrowth(growthRate: Double): Double {
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (null == other && other !is Feature) {
+            return false
+        }
+        val otherFeature = other as Feature
+        return this.traits.minus(otherFeature.traits).isEmpty()
+    }
+
 
 }
