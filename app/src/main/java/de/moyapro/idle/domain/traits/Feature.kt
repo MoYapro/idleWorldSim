@@ -7,8 +7,8 @@ import de.moyapro.idle.util.applyTo
  * Collection of traits.
  * Features containing the same traits are equal
  */
-open class Feature(private var traits: Set<Trait>) {
-    constructor(vararg traits: Trait) : this(setOf(*traits))
+open class Feature(private val name: String = "GenericFeature", private var traits: Set<Trait> = setOf()) {
+    constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
 
     fun influence(consumption: Consumption): Consumption {
         val availableConsumption = traits.applyTo(consumption, SupplyModifyingTrait::influence)
@@ -32,7 +32,7 @@ open class Feature(private var traits: Set<Trait>) {
     }
 
     override fun toString(): String {
-        return "Feature[${traits.joinToString(",") { it.toString() }}]"
+        return "Feature[$name - ${traits.joinToString(",") { it.toString() }}]"
     }
 
 }

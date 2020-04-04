@@ -20,7 +20,7 @@ class TreeOfLife<T : Feature>(private var feature: T) {
 
     override fun toString(): String {
         var s = "$feature"
-        if (!subtrees.isEmpty()) {
+        if (subtrees.isNotEmpty()) {
             s += " {" + subtrees.map { it.toString() } + " }"
         }
         return s

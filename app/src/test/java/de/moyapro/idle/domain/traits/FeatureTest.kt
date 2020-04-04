@@ -22,7 +22,7 @@ internal class FeatureTest {
 
     @Test
     fun createFeatureWithListOfTraits() {
-        assertThat(Feature(setOf(MineralSaver(), ConsumerTrait(Minerals)))).isNotNull
+        assertThat(Feature(traits = setOf(MineralSaver(), ConsumerTrait(Minerals)))).isNotNull
     }
 
 
@@ -101,7 +101,7 @@ internal class FeatureTest {
     @Test
     fun featuresWithTheSameTraitsAreEqual() {
         val traits = setOf(EnergySaver, MineralSaver(), GrowthTrait)
-        assertThat(Feature(traits) == Feature(traits)).isTrue()
-        assertThat(Feature(traits).hashCode() == Feature(traits).hashCode()).isTrue()
+        assertThat(Feature(traits = traits) == Feature(traits = traits)).isTrue()
+        assertThat(Feature(traits = traits).hashCode() == Feature(traits = traits).hashCode()).isTrue()
     }
 }
