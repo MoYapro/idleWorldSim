@@ -24,24 +24,15 @@ class TreeOfLife<T : Feature>(private var feature: T) {
         return s
     }
 
-    fun getEvolvableFeatures(feature: Feature): Set<T> {
-        println("\nsearching for $feature...")
-        return findSubtreeWithFeature(feature)?.getAllEvolvableFeatures() ?: setOf<T>()
-    }
+    fun getEvolvableFeatures(feature: Feature): Set<T> = findSubtreeWithFeature(feature)?.getAllEvolvableFeatures() ?: setOf<T>()
 
     private fun getAllEvolvableFeatures(): MutableSet<T> = children.map { it.feature }.toMutableSet()
 
-    private fun findSubtreeWithFeature(searchedFeature: Feature): TreeOfLife<T>? {
-        println("entering search in ${this.feature}")
-        return if (this.feature === searchedFeature)
+    private fun findSubtreeWithFeature(searchedFeature: Feature): TreeOfLife<T>? =
+        if (this.feature === searchedFeature)
             this
-        else {
+        else
             children.firstMapped({ child -> child.findSubtreeWithFeature(searchedFeature) }) { it != null }
-        }.let {
-            println("leaving search in ${this.feature} found ${it?.feature ?: "nothing"}")
-            it
-        }
-    }
 }
 
 fun <T, R> Collection<T>.firstMapped(block: (T) -> R?, condition: (R?) -> Boolean): R? {
