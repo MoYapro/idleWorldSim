@@ -11,8 +11,8 @@ import de.moyapro.idle.util.applyTo
 /**
  * Class representing a creature with some features consuming and producing resources according to those features
  */
-class Species(val name: String, private val features: MutableList<Feature> = mutableListOf()) {
-    constructor(name: String, feature: Feature) : this(name, mutableListOf(feature))
+class Species(val name: String, private val features: MutableSet<Feature> = mutableSetOf()) {
+    constructor(name: String, feature: Feature) : this(name, mutableSetOf(feature))
 
     private fun needsPerIndividual() = Resources(doubleArrayOf(-1.0, 1.0, 1.0, 1.0))
 

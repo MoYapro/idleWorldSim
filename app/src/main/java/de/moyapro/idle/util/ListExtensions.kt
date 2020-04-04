@@ -2,7 +2,7 @@ package de.moyapro.idle.util
 
 import kotlin.reflect.KFunction2
 
-inline fun <reified T : Any, V : Any, reified X : T> List<T>.applyTo(initialValue: V, influenceMethod: KFunction2<X, V, V>): V {
+inline fun <reified T : Any, V : Any, reified X : T> Collection<T>.applyTo(initialValue: V, influenceMethod: KFunction2<X, V, V>): V {
     var x = initialValue
     this.forEach {
         if (it is X) // since covariance is not allowed in extensionfunctions we use if to check if T is subclass of X
