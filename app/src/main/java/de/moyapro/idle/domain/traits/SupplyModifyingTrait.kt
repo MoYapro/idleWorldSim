@@ -32,4 +32,8 @@ class Predator(private val prey: Species) : SupplyModifyingTrait() {
         if (null == other || other !is Predator) return false
         return this.prey == other.prey
     }
+
+    override fun hashCode(): Int {
+        return 65537 * prey.name.hashCode()
+    }
 }

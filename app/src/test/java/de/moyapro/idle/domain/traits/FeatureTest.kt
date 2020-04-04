@@ -54,6 +54,7 @@ internal class FeatureTest {
     fun featuresWithTheSameTraitAreEqual() {
         val trait = EnergySaver
         assertThat(Feature(trait) == Feature(trait)).isTrue()
+        assertThat(Feature(trait).hashCode() == Feature(trait).hashCode()).isTrue()
     }
 
     @Test
@@ -61,6 +62,7 @@ internal class FeatureTest {
         val trait1 = EnergySaver
         val trait2 = Predator(Species("Sheep"))
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
@@ -68,6 +70,7 @@ internal class FeatureTest {
         val trait1 = Predator(Species("Gras"))
         val trait2 = Predator(Species("Sheep"))
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
@@ -76,6 +79,7 @@ internal class FeatureTest {
         val trait1 = Predator(sheep)
         val trait2 = Predator(sheep)
         assertThat(Feature(trait1) == Feature(trait2)).isTrue()
+        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
     }
 
     @Test
@@ -83,6 +87,7 @@ internal class FeatureTest {
         val trait1 = ConsumerTrait(Water)
         val trait2 = ConsumerTrait(Minerals)
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
+        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
@@ -90,11 +95,13 @@ internal class FeatureTest {
         val trait1 = ConsumerTrait(Energy)
         val trait2 = ConsumerTrait(Energy)
         assertThat(Feature(trait1) == Feature(trait2)).isTrue()
+        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
     }
 
     @Test
     fun featuresWithTheSameTraitsAreEqual() {
         val traits = listOf(EnergySaver, MineralSaver(), GrowthTrait)
         assertThat(Feature(traits) == Feature(traits)).isTrue()
+        assertThat(Feature(traits).hashCode() == Feature(traits).hashCode()).isTrue()
     }
 }

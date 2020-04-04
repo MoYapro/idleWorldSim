@@ -27,6 +27,10 @@ open class Feature(private var traits: List<Trait>) {
         return this.traits.minus(otherFeature.traits).isEmpty()
     }
 
+    override fun hashCode(): Int {
+        return traits.size * 23 + traits.fold(1) { sum, trait -> sum + 373 * trait.hashCode() }
+    }
+
     override fun toString(): String {
         return "Feature[${traits.joinToString(",") { it.toString() }}]"
     }

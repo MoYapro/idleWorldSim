@@ -18,6 +18,9 @@ class ConsumerTrait(private val influencedResource: Resource) : ConsumptionModif
         return this.influencedResource == other.influencedResource
     }
 
+    override fun hashCode(): Int {
+        return 5039 * influencedResource.ordinal
+    }
 }
 
 object EnergySaver : ConsumptionModifyingTrait() {
