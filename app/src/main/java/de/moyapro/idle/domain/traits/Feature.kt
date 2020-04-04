@@ -6,7 +6,7 @@ import de.moyapro.idle.util.applyTo
 /**
  * Collection of traits
  */
-class Feature(private var traits: List<Trait>) {
+open class Feature(private var traits: List<Trait>) {
     constructor(vararg traits: Trait) : this(listOf(*traits))
 
     fun influence(consumption: Consumption): Consumption {
