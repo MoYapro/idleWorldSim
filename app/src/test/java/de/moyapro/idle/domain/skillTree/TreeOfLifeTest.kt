@@ -26,24 +26,25 @@ internal class TreeOfLifeTest {
 
     @Test
     fun getEvolvableFeaturesForCurrentlyEvolvedFeatures1() {
-        val autotroph = Feature("Autotroph")
-        val photosynthese = Feature("Photosynthese")
+        val autotrophic = Feature("Autotrophic")
+        val photosynthesis = Feature("Photosynthesis")
         val vertebrate = Feature("Spinal Cord")
-        val plantEater = Feature("PlantEater")
-        val meateater = Feature("Meateater")
+        val herbivore = Feature("Herbivore")
+        val carnivore = Feature("Carnivore")
         val smallPlant = Feature("Small Plant")
         val largePlant = Feature("Large Plant")
-        val treeOfLife = TreeOfLife(autotroph)
-        val plants = treeOfLife.branchInto(photosynthese)
-        val animals = treeOfLife.branchInto(photosynthese)
+        val root = TreeOfLife(autotrophic)
+        val plants = root.branchInto(photosynthesis)
+        val animals = root.branchInto(vertebrate)
 
         val grass = plants.branchInto(smallPlant)
         val tree = plants.branchInto(largePlant)
-        val sheep = animals.branchInto(plantEater)
-        val wolf = animals.branchInto(meateater)
+        val sheep = animals.branchInto(herbivore)
+        val wolf = animals.branchInto(carnivore)
 
-        assertThat(treeOfLife.getEvolvableFeaures(autotroph)).isEqualTo(setOf(photosynthese, vertebrate))
-        assertThat(treeOfLife.getEvolvableFeaures(vertebrate)).isEqualTo(setOf(sheep, wolf))
-        assertThat(treeOfLife.getEvolvableFeaures(smallPlant)).isEqualTo(setOf<Feature>())
+        assertThat(root.getEvolvableFeatures(autotrophic)).isEqualTo(setOf(photosynthesis, vertebrate))
+        assertThat(root.getEvolvableFeatures(vertebrate)).isEqualTo(setOf(vertebrate, carnivore))
+        assertThat(root.getEvolvableFeatures(photosynthesis)).isEqualTo(setOf(smallPlant, largePlant))
+        assertThat(root.getEvolvableFeatures(smallPlant)).isEqualTo(setOf<Feature>())
     }
 }

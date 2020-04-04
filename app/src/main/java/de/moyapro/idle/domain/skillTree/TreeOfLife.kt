@@ -1,56 +1,50 @@
 package de.moyapro.idle.domain.skillTree
 
 import de.moyapro.idle.domain.traits.Feature
-import java.util.*
 
 /**
  * TreeOfLife representing the large scale features in the game.
- * These Features are independed of each other only having other feature as requirements.
- * More refinded evolution of more dependend feaures is implemented in bonsai tree with interdependend feaures
+ * These Features are independent of each other only having other feature as requirements.
+ * More refined evolution of more dependent features is implemented in bonsai tree with interdependent features
  */
 class TreeOfLife<T : Feature>(private var feature: T) {
-    var parent: TreeOfLife<T>? = null
-    var subtrees: MutableSet<TreeOfLife<T>> = mutableSetOf()
+    private var children: MutableSet<TreeOfLife<T>> = mutableSetOf()
+
     fun branchInto(feature: T): TreeOfLife<T> {
-        val subtree = TreeOfLife(feature)
-        subtree.parent = this
-        subtrees.add(subtree)
-        return subtree
+        val child = TreeOfLife(feature)
+        children.add(child)
+        return child
     }
 
     override fun toString(): String {
         var s = "$feature"
-        if (subtrees.isNotEmpty()) {
-            s += " {" + subtrees.map { it.toString() } + " }"
+        if (children.isNotEmpty()) {
+            s += " {" + children.map { it.toString() } + " }"
         }
         return s
     }
 
-    fun getEvolvableFeaures(root: Feature): Set<T> {
-        val subtree = findSubtreeWithFeature(root)
-        return if (subtree.isPresent) {
-            subtree.get().getAllEvolvableFeatures()
-        } else {
-            setOf()
-        }
+    fun getEvolvableFeatures(feature: Feature): Set<T> {
+        println("\nsearching for $feature...")
+        return findSubtreeWithFeature(feature)?.getAllEvolvableFeatures() ?: setOf<T>()
     }
 
-    private fun getAllEvolvableFeatures(): MutableSet<T> {
-        return subtrees.map { it.feature }.toMutableSet()
-    }
+    private fun getAllEvolvableFeatures(): MutableSet<T> = children.map { it.feature }.toMutableSet()
 
-    private fun findSubtreeWithFeature(searchedFeature: Feature): Optional<TreeOfLife<T>> {
-        if (this.feature == searchedFeature) {
-            return Optional.of(this)
-        } else {
-            for (subtree in subtrees) {
-                val found = subtree.findSubtreeWithFeature(searchedFeature)
-                if (found.isPresent) {
-                    return found
-                }
-            }
+    private fun findSubtreeWithFeature(searchedFeature: Feature): TreeOfLife<T>? {
+        println("entering search in ${this.feature}")
+        return if (this.feature === searchedFeature)
+            this
+        else {
+            children.firstMapped({ child -> child.findSubtreeWithFeature(searchedFeature) }) { it != null }
+        }.let {
+            println("leaving search in ${this.feature} found ${it?.feature ?: "nothing"}")
+            it
         }
-        return Optional.empty()
     }
 }
 
+fun <T, R> Collection<T>.firstMapped(block: (T) -> R?, condition: (R?) -> Boolean): R? {
+    forEach { el -> block.invoke(el).let { if (condition.invoke(it)) return it } }
+    return null
+}
