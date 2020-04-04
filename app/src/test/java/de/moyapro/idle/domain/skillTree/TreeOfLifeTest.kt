@@ -38,7 +38,7 @@ internal class TreeOfLifeTest {
         val feature4 = Feature()
         val feature5 = Feature()
         val feature6 = Feature()
-        val treeOfLife: TreeOfLife = TreeOfLife(evolvedRoot)
+        val treeOfLife = TreeOfLife(evolvedRoot)
         val branch1 = treeOfLife.branchInto(feature1)
         val branch2 = treeOfLife.branchInto(feature2)
 

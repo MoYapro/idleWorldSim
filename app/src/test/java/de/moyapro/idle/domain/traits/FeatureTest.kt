@@ -45,6 +45,7 @@ internal class FeatureTest {
         assertThat(Feature()).isEqualTo(Feature())
     }
 
+    @Suppress("SENSELESS_COMPARISON")
     @Test
     fun nullDoesNotEqualAnyFeatures() {
         assertThat(Feature() == null).isFalse()
@@ -68,6 +69,4 @@ internal class FeatureTest {
         val traits = listOf(EnergySaver, MineralSaver(), GrowthTrait)
         assertThat(Feature(traits) == Feature(traits)).isTrue()
     }
-
-
 }
