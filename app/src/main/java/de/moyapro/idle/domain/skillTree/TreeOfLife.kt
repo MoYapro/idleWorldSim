@@ -7,10 +7,13 @@ import de.moyapro.idle.domain.traits.Feature
  * These Features are independed of each other only having other feature as requirements.
  * More refinded evolution of more dependend feaures is implemented in bonsai tree with interdependend feaures
  */
-class TreeOfLife {
-    fun <T : Feature> root(root: T): TreeOfLifeNode<T> {
-        return TreeOfLifeNode(root)
+class TreeOfLife(root: Feature = Feature()) {
+    fun branchInto(feature: Feature): TreeOfLife {
+        return TreeOfLife(feature)
     }
 
+    fun getEvolvableFeaures(feature: Feature): Set<Feature> {
+        return setOf()
+    }
 }
 

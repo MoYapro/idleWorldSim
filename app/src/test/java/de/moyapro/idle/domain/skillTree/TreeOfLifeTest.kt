@@ -13,7 +13,7 @@ internal class TreeOfLifeTest {
 
     @Test
     fun createTreeOfLifeWithRootFeature() {
-        assertThat(TreeOfLife().root(Feature())).isNotNull
+        assertThat(TreeOfLife(Feature())).isNotNull
     }
 
     @Test
@@ -22,8 +22,7 @@ internal class TreeOfLifeTest {
         val feature1 = Feature()
         val feature2 = Feature()
         assertThat(
-            TreeOfLife()
-                .root(root)
+            TreeOfLife(root)
                 .branchInto(feature1)
                 .branchInto(feature2)
         ).isNotNull
@@ -38,17 +37,17 @@ internal class TreeOfLifeTest {
         val feature4 = Feature()
         val feature5 = Feature()
         val feature6 = Feature()
-        val treeOfLife: TreeOfLife = TreeOfLife().root(evolvedRoot)
+        val treeOfLife: TreeOfLife = TreeOfLife(evolvedRoot)
         val branch1 = treeOfLife.branchInto(feature1)
         val branch2 = treeOfLife.branchInto(feature2)
 
-        val branch1_1 = branch1.branchInfo(feature3)
-        val branch1_2 = branch1.branchInfo(feature4)
-        val branch2_1 = branch2.branchInfo(feature5)
-        val branch2_2 = branch2.branchInfo(feature6)
+        val branch1_1 = branch1.branchInto(feature3)
+        val branch1_2 = branch1.branchInto(feature4)
+        val branch2_1 = branch2.branchInto(feature5)
+        val branch2_2 = branch2.branchInto(feature6)
 
         assertThat(treeOfLife.getEvolvableFeaures(evolvedRoot)).isEqualTo(setOf(feature1, feature2))
         assertThat(treeOfLife.getEvolvableFeaures(feature2)).isEqualTo(setOf(feature5, feature6))
-        assertThat(treeOfLife.getEvolvableFeaures(feature4)).isEqualTo(setOf())
+        assertThat(treeOfLife.getEvolvableFeaures(feature4)).isEqualTo(setOf<Feature>())
     }
 }
