@@ -8,11 +8,6 @@ import org.junit.jupiter.api.Test
 internal class TreeOfLifeTest {
 
     @Test
-    fun createEmptyTreeOfLife() {
-        assertThat(TreeOfLife()).isNotNull
-    }
-
-    @Test
     fun createTreeOfLifeWithRootFeature() {
         assertThat(TreeOfLife(Feature())).isNotNull
     }
