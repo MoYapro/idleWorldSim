@@ -35,7 +35,7 @@ class Species(val name: String, private val features: MutableList<Feature> = mut
     private fun grow(consumption: Consumption): Resources {
         val initialGrowthRate = 1.1
         val hungerRate = .95
-        val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowth)
+        val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influence)
         return if (consumption.isProvided()) {
             val leftovers = consumption.consume()
             leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)

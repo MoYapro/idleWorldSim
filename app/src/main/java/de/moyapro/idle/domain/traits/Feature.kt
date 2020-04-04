@@ -14,7 +14,8 @@ class Feature(private var traits: List<Trait>) {
         return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
     }
 
-    fun influenceGrowth(growthRate: Double): Double {
+    // TODO: Double to ValueObject, e.g. GrowthRate
+    fun influence(growthRate: Double): Double {
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
 
