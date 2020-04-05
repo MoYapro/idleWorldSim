@@ -23,7 +23,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     fun process(totalSupplyFromBiome: Resources): Resources {
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
-        val modifiedConsumption = features.applyTo(baseConsumption, Feature::influence)
+        val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
         return grow(modifiedConsumption)
     }
 
@@ -35,7 +35,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     private fun grow(consumption: Consumption): Resources {
         val initialGrowthRate = 1.1
         val hungerRate = .95
-        val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowth)
+        val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowthRate)
         return if (consumption.isProvided()) {
             val leftovers = consumption.consume()
             leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)

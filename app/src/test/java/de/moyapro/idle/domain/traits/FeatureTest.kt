@@ -12,7 +12,7 @@ internal class FeatureTest {
 
     @Test
     fun createFeatureWithoutTraits() {
-        assertThat(Feature(MineralSaver(), ConsumerTrait(Minerals))).isNotNull
+        assertThat(Feature()).isNotNull
     }
 
     @Test
@@ -33,7 +33,7 @@ internal class FeatureTest {
         val supply = Resources()
             .setQuantity(Water, 100.0)
         val usableWater = Feature(ConsumerTrait(Water))
-            .influence(Consumption(Species("Consumer"), needs, supply))
+            .influenceConsumption(Consumption(Species("Consumer"), needs, supply))
             .usableSupply[Water]
         assertThat(usableWater).isGreaterThan(0.0)
     }

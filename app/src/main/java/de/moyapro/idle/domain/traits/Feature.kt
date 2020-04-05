@@ -10,12 +10,13 @@ import de.moyapro.idle.util.applyTo
 open class Feature(private val name: String = "GenericFeature", private var traits: Set<Trait> = setOf()) {
     constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
 
-    fun influence(consumption: Consumption): Consumption {
+    fun influenceConsumption(consumption: Consumption): Consumption {
         val availableConsumption = traits.applyTo(consumption, SupplyModifyingTrait::influence)
         return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
     }
 
-    fun influenceGrowth(growthRate: Double): Double {
+    // TODO: Double to ValueObject, e.g. GrowthRate
+    fun influenceGrowthRate(growthRate: Double): Double {
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
 
@@ -28,7 +29,7 @@ open class Feature(private val name: String = "GenericFeature", private var trai
         return traitsAreEqual(other) && nameEqual(other)
     }
 
-    private fun nameEqual(other: Feature) = name != other.name
+    private fun nameEqual(other: Feature) = name == other.name
 
     private fun traitsAreEqual(other: Feature) = this.traits.minus(other.traits).isEmpty()
 
