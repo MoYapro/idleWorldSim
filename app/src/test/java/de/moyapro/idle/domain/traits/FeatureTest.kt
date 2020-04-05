@@ -114,4 +114,9 @@ internal class FeatureTest {
     fun featureWithDifferentNameAreNotEqual() {
         assertThat(Feature("SomeName") == Feature("SomeOTHERName")).isFalse()
     }
+
+    @Test
+    fun featureWithSomeDifferentTraitsAreNotEqual() {
+        assertThat(Feature(MineralSaver) == Feature(MineralSaver, EnergySaver)).isFalse()
+    }
 }
