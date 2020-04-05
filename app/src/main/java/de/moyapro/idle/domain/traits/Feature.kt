@@ -25,11 +25,12 @@ open class Feature(private val name: String = "GenericFeature", private var trai
             return false
         }
         other as Feature
-
-        if (name != other.name) return false
-
-        return true
+        return traitsAreEqual(other) && nameEqual(other)
     }
+
+    private fun nameEqual(other: Feature) = name != other.name
+
+    private fun traitsAreEqual(other: Feature) = this.traits.minus(other.traits).isEmpty()
 
     override fun hashCode(): Int {
         return traits.size * 23 + traits.fold(1) { sum, trait -> sum + 373 * trait.hashCode() }
