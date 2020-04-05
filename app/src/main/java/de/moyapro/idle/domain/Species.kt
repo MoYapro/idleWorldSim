@@ -32,6 +32,12 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         return this
     }
 
+    fun evolve(vararg newFeatures: Feature): Species {
+        features.addAll(newFeatures)
+        return this
+    }
+
+
     private fun grow(consumption: Consumption): Resources {
         val initialGrowthRate = 1.1
         val hungerRate = .95
