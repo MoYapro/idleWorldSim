@@ -19,15 +19,6 @@ open class Feature(private val name: String = "GenericFeature", private var trai
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
 
-    // This will result in errors when comparing Features which contain no traits
-//    override fun equals(other: Any?): Boolean {
-//        if (null == other && other !is Feature) {
-//            return false
-//        }
-//        val otherFeature = other as Feature
-//        return this.traits.minus(otherFeature.traits).isEmpty()
-//    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (null == other && other !is Feature) {
