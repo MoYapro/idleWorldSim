@@ -34,7 +34,7 @@ internal class SpeciesTest {
             .isEqualTo(expectedTratis)
     }
 
-    @Test
+    //    @Test
     fun effectiveExcludingTraits() {
         val traits1 = setOf(ConsumerTrait(Resource.Minerals))
         val traits2 = setOf(GrowthTrait, MineralSaver)
