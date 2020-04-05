@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 internal class TreeOfLifeTest {
 
     @Test
-    fun createTreeOfLifeWithRootFeature() {
-        assertThat(TreeOfLife(Feature())).isNotNull
+    fun createEmptyTreeOfLife() {
+        assertThat(TreeOfLife.build(Feature())).isNotNull
     }
 
     @Test
@@ -17,11 +17,10 @@ internal class TreeOfLifeTest {
         val root = Feature()
         val feature1 = Feature()
         val feature2 = Feature()
-        assertThat(
-            TreeOfLife(root)
-                .branchInto(feature1)
-                .branchInto(feature2)
-        ).isNotNull
+        assertThat(TreeOfLife.build(root) {
+            branchInto(feature1)
+            branchInto(feature2)
+        }).isNotNull
     }
 
     @Test
@@ -33,18 +32,21 @@ internal class TreeOfLifeTest {
         val carnivore = Feature("Carnivore")
         val smallPlant = Feature("Small Plant")
         val largePlant = Feature("Large Plant")
-        val root = TreeOfLife(autotrophic)
-        val plants = root.branchInto(photosynthesis)
-        val animals = root.branchInto(vertebrate)
 
-        val grass = plants.branchInto(smallPlant)
-        val tree = plants.branchInto(largePlant)
-        val sheep = animals.branchInto(herbivore)
-        val wolf = animals.branchInto(carnivore)
+        val tree = TreeOfLife.build(autotrophic) {
+            branchInto(photosynthesis) {
+                branchInto(smallPlant)
+                branchInto(largePlant)
+            }
+            branchInto(vertebrate) {
+                branchInto(herbivore)
+                branchInto(carnivore)
+            }
+        }
 
-        assertThat(root.getEvolvableFeatures(autotrophic)).isEqualTo(setOf(photosynthesis, vertebrate))
-        assertThat(root.getEvolvableFeatures(vertebrate)).isEqualTo(setOf(vertebrate, carnivore))
-        assertThat(root.getEvolvableFeatures(photosynthesis)).isEqualTo(setOf(smallPlant, largePlant))
-        assertThat(root.getEvolvableFeatures(smallPlant)).isEqualTo(setOf<Feature>())
+        assertThat(tree.getEvolvableFeatures(autotrophic)).isEqualTo(setOf(photosynthesis, vertebrate))
+        assertThat(tree.getEvolvableFeatures(vertebrate)).isEqualTo(setOf(herbivore, carnivore))
+        assertThat(tree.getEvolvableFeatures(photosynthesis)).isEqualTo(setOf(smallPlant, largePlant))
+        assertThat(tree.getEvolvableFeatures(smallPlant)).isEqualTo(setOf<Feature>())
     }
 }

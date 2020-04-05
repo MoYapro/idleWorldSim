@@ -104,4 +104,14 @@ internal class FeatureTest {
         assertThat(Feature(traits = traits) == Feature(traits = traits)).isTrue()
         assertThat(Feature(traits = traits).hashCode() == Feature(traits = traits).hashCode()).isTrue()
     }
+
+    @Test
+    fun featureWithSameNameAreEqual() {
+        assertThat(Feature("SomeName") == Feature("SomeName")).isTrue()
+    }
+
+    @Test
+    fun featureWithDifferentNameAreNotEqual() {
+        assertThat(Feature("SomeName") == Feature("SomeOTHERName")).isFalse()
+    }
 }
