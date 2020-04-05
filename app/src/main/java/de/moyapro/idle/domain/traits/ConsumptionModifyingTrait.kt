@@ -21,6 +21,10 @@ class ConsumerTrait(private val influencedResource: Resource) : ConsumptionModif
     override fun hashCode(): Int {
         return 5039 * influencedResource.ordinal
     }
+
+    override fun toString(): String {
+        return "ConsumerTrait[${influencedResource}]"
+    }
 }
 
 object EnergySaver : ConsumptionModifyingTrait() {
@@ -35,13 +39,13 @@ object WaterSaver : ConsumptionModifyingTrait() {
     }
 }
 
-class MineralSaver : ConsumptionModifyingTrait() {
+object MineralSaver : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(mineralsFactor = .9)
     }
 }
 
-class EvolutionBooster : ConsumptionModifyingTrait() {
+object EvolutionBooster : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(evolutionPointsFactor = 1.15)
     }

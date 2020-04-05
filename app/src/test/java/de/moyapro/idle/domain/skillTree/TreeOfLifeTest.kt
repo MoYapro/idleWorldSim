@@ -49,4 +49,10 @@ internal class TreeOfLifeTest {
         assertThat(tree.getEvolvableFeatures(photosynthesis)).isEqualTo(setOf(smallPlant, largePlant))
         assertThat(tree.getEvolvableFeatures(smallPlant)).isEqualTo(setOf<Feature>())
     }
+
+    @Test
+    fun featuresHaveOrder() {
+
+    }
+
 }

@@ -46,7 +46,7 @@ internal class TraitTest {
         val resources = Resources()
         resources.setPopulation(species, 1.0)
         assertThat(species.process(resources)[Minerals]).isLessThan(
-            species.evolve(MineralSaver()).process(resources)[Minerals]
+            species.evolve(MineralSaver).process(resources)[Minerals]
         )
     }
 

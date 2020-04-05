@@ -22,7 +22,7 @@ internal class ResourceConsumptionTest {
 
     @Test
     fun generateSpeciesWithTraits() {
-        val species = defaultSpecies().evolve(EvolutionBooster()).evolve(EvolutionBooster())
-        assertThat(species.process(Resources(doubleArrayOf(0.0, 3.0, 3.0, 3.0)).setPopulation(species, 1.0))[EvolutionPoints]).isEqualTo(1.3225, defaultOffset())
+        val species = defaultSpecies().evolve(EvolutionBooster).evolve(EvolutionBooster)
+        assertThat(species.process(Resources(doubleArrayOf(0.0, 3.0, 3.0, 3.0)).setPopulation(species, 1.0))[EvolutionPoints]).isEqualTo(1.15, defaultOffset())
     }
 }

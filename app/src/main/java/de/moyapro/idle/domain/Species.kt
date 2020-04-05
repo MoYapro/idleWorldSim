@@ -48,6 +48,10 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         return "Species[$name]"
     }
 
+    fun getEffectiveTraits(): Set<Trait> {
+        return features.fold(mutableSetOf()) { s, f -> (s + f.traits).toMutableSet() }
+    }
+
 }
 
 fun defaultSpecies(name: String = "DefaultSpecies"): Species {
