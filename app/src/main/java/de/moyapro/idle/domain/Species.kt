@@ -49,7 +49,21 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     }
 
     fun getEffectiveTraits(): Set<Trait> {
-        return features.fold(mutableSetOf()) { s, f -> (s + f.traits).toMutableSet() }
+        val activeTraitSet = ActiveTraitSet()
+        features.forEach { activeTraitSet.addTraitsFrom(it) }
+        return activeTraitSet.inclued
+    }
+
+}
+
+class ActiveTraitSet(
+    val inclued: MutableSet<Trait> = mutableSetOf(),
+    val excluded: MutableSet<Trait> = mutableSetOf()
+) {
+    fun addTraitsFrom(feature: Feature) {
+        excluded += feature.excludedTraits
+        inclued += feature.traits
+        inclued -= excluded
     }
 
 }

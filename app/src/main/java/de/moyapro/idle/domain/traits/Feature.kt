@@ -7,7 +7,7 @@ import de.moyapro.idle.util.applyTo
  * Collection of traits.
  * Features containing the same traits are equal
  */
-open class Feature(private val name: String = "GenericFeature", var traits: Set<Trait> = setOf(), excludedTraits: Set<Trait> = setOf()) {
+open class Feature(private val name: String = "GenericFeature", var traits: Set<Trait> = setOf(), var excludedTraits: Set<Trait> = setOf()) {
     constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
 
     fun influenceConsumption(consumption: Consumption): Consumption {
