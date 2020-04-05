@@ -3,9 +3,7 @@ package de.moyapro.idle.domain
 import de.moyapro.idle.domain.consumption.Consumption
 import de.moyapro.idle.domain.consumption.Resource
 import de.moyapro.idle.domain.consumption.Resources
-import de.moyapro.idle.domain.traits.ConsumerTrait
-import de.moyapro.idle.domain.traits.Feature
-import de.moyapro.idle.domain.traits.Trait
+import de.moyapro.idle.domain.traits.*
 import de.moyapro.idle.util.applyTo
 
 /**
@@ -23,7 +21,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     fun process(totalSupplyFromBiome: Resources): Resources {
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
-        val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
+        val modifiedConsumption = getEffectiveTraits().applyTo(baseConsumption, ConsumptionModifyingTrait::influence)
         return grow(modifiedConsumption)
     }
 
@@ -41,7 +39,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     private fun grow(consumption: Consumption): Resources {
         val initialGrowthRate = 1.1
         val hungerRate = .95
-        val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowthRate)
+        val modifiedGrowthRate = getEffectiveTraits().applyTo(initialGrowthRate, GrowthModifyingTrait::influenceGrowth)
         return if (consumption.isProvided()) {
             val leftovers = consumption.consume()
             leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)

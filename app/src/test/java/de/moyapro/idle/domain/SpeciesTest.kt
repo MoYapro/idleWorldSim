@@ -54,8 +54,8 @@ internal class SpeciesTest {
         val speciesWithExcludedGrothImprovemnt = defaultSpecies().evolve(Feature(GrowthTrait), Feature(excludedTraits = mutableSetOf(GrowthTrait)))
         val speciesWithoutGrothImprovemnt = defaultSpecies()
 
-        val totalSupplyFromBiome = Resources(populations = mutableMapOf(Pair(speciesWithExcludedGrothImprovemnt, 1.0), Pair(speciesWithoutGrothImprovemnt, 1.0)))
-        val speciesWithGrothImprovemntPopulation = speciesWithExcludedGrothImprovemnt.process(totalSupplyFromBiome)[speciesWithExcludedGrothImprovemnt]
+        val totalSupplyFromBiome = Resources(populations = mutableMapOf(Pair(speciesWithGrothImprovemnt, 1.0), Pair(speciesWithExcludedGrothImprovemnt, 1.0), Pair(speciesWithoutGrothImprovemnt, 1.0)))
+        val speciesWithGrothImprovemntPopulation = speciesWithGrothImprovemnt.process(totalSupplyFromBiome)[speciesWithGrothImprovemnt]
         val speciesWithExcludedGrothImprovemntPopulation = speciesWithExcludedGrothImprovemnt.process(totalSupplyFromBiome)[speciesWithExcludedGrothImprovemnt]
         val speciesWithoutGrothImprovemntPopulation = speciesWithoutGrothImprovemnt.process(totalSupplyFromBiome)[speciesWithoutGrothImprovemnt]
 
