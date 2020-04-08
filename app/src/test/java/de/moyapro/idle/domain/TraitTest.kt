@@ -63,7 +63,6 @@ internal class TraitTest {
 
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
-        // this test is failing sometimes. it may depend on the order in which the species are processed
         val gras = defaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(
             ConsumerTrait(Energy)
         )

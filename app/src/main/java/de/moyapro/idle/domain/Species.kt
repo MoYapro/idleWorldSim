@@ -21,7 +21,8 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     fun process(totalSupplyFromBiome: Resources): Resources {
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
-        val modifiedConsumption = getEffectiveTraits().applyTo(baseConsumption, ConsumptionModifyingTrait::influence)
+        val modifiedSupply = getEffectiveTraits().applyTo(baseConsumption, SupplyModifyingTrait::influence)
+        val modifiedConsumption = getEffectiveTraits().applyTo(modifiedSupply, ConsumptionModifyingTrait::influence)
         return grow(modifiedConsumption)
     }
 
