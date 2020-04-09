@@ -1,0 +1,57 @@
+digraph G {
+
+    TreeOfLife ->
+    Simple_Autotroph ->
+    Sunlight_Consumer ->
+    Real_Cell ->
+    Cell_Colonies
+    Oxigen_Consumer -> Real_Cell
+    Simple_Autotroph -> Real_Cell
+    Simple_Autotroph -> Oxigen_Consumer
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+
+    Cell_Colonies -> Multi_Cellular
+
+    subgraph {
+    Multi_Cellular -> Filters
+    Multi_Cellular -> Mobility
+    Multi_Cellular -> Shells
+    Filters -> Roots
+
+    Shells -> Scales
+    Shells -> Armor
+    Scales -> Fins
+    Scales -> Gills
+
+
+
+
+    Mobility -> Skeleton
+
+    -> Teeth
+    }
+
+
+
+    subgraph {
+    Roots -> Land_Plants
+    Land_Plants -> Deep_Root
+    Land_Plants -> Wide_Roots
+    Land_Plants -> Leaf
+    Land_Plants -> High_Growing
+    Land_Plants -> Strong_Trunks
+    }
+
+
+
+    subgraph {
+    Strong_Trunks -> Tree
+    }
+
+
+
+
+}
