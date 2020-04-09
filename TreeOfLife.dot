@@ -1,5 +1,11 @@
 digraph G {
 
+    node [shape = "record"]
+
+    Simple_Autotroph [
+    label = "{Simple_Autotroph|ConsumerTrait(Mineral)\lConsumerTrait(Energy)\lConsumerTrait(Water)\l}"
+    ]
+
     TreeOfLife ->
     Simple_Autotroph ->
     Sunlight_Consumer ->
@@ -62,6 +68,9 @@ digraph G {
     Land_animals -> Social
 
     }
+
+
+
 
 
 
