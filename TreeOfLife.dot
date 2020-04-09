@@ -30,8 +30,8 @@ digraph G {
 
 
     Mobility -> Skeleton
-
-    -> Teeth
+    Skeleton -> Teeth
+    Multi_Cellular -> Lungs
     }
 
 
@@ -45,11 +45,24 @@ digraph G {
     Land_Plants -> Strong_Trunks
     }
 
+    subgraph {
+    Lungs -> Amphibious
+    }
 
 
     subgraph {
-    Strong_Trunks -> Tree
+    Lungs -> Land_animals
+    Land_animals -> Legs
+    Land_animals -> Arms
+    Land_animals -> Feet
+    Land_animals -> Intelligence
+    Land_animals -> Wings
+    Land_animals -> Burrow
+    Land_animals -> Egg
+    Land_animals -> Social
+
     }
+
 
 
 
