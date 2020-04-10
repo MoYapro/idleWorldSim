@@ -14,7 +14,7 @@ import de.moyapro.idle.util.applyTo
 class Species(val name: String, private val features: MutableSet<Feature> = mutableSetOf()) {
     constructor(name: String, feature: Feature) : this(name, mutableSetOf(feature))
 
-    private fun needsPerIndividual() = Resources(doubleArrayOf(-1.0, 1.0, 1.0, 1.0))
+    private fun needsPerIndividual() = Resources(doubleArrayOf(-1.0, 1.0, 1.0, 1.0, 0.0))
 
     fun getPopulationIn(biome: Biome): Double {
         return biome.resources.getPopulation(this)
@@ -29,6 +29,11 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
 
     fun evolve(vararg trait: Trait): Species {
         features.add(Feature(*trait))
+        return this
+    }
+
+    fun evolve(vararg features: Feature): Species {
+        this.features += features
         return this
     }
 

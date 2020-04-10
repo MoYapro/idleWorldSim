@@ -91,5 +91,13 @@ internal class ResourcesTest {
             .isEqualTo(Resources(doubleArrayOf(15.0, 15.0, 15.0, 15.0)))
     }
 
+    @Test
+    fun createResourcesWithMap() {
+        assertThat(
+            Resources(
+                mapOf(Pair(Energy, 0.0))
+            )
+        ).isNotNull
+    }
 
 }

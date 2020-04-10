@@ -1,5 +1,6 @@
 package de.moyapro.idle.domain
 
+import de.moyapro.idle.domain.consumption.Resource
 import de.moyapro.idle.domain.consumption.Resource.EvolutionPoints
 import de.moyapro.idle.domain.consumption.Resources
 import de.moyapro.idle.domain.traits.EvolutionBooster
@@ -22,7 +23,13 @@ internal class ResourceConsumptionTest {
 
     @Test
     fun generateSpeciesWithTraits() {
-        val species = defaultSpecies().evolve(EvolutionBooster()).evolve(EvolutionBooster())
-        assertThat(species.process(Resources(doubleArrayOf(0.0, 3.0, 3.0, 3.0)).setPopulation(species, 1.0))[EvolutionPoints]).isEqualTo(1.3225, defaultOffset())
+        val species = defaultSpecies().evolve(EvolutionBooster)
+        val availableResources = Resources(DoubleArray(Resource.values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 3.0 })
+        assertThat(
+            species.process(availableResources.setPopulation(species, 1.0))[EvolutionPoints]
+        ).isEqualTo(
+            1.15,
+            defaultOffset()
+        )
     }
 }

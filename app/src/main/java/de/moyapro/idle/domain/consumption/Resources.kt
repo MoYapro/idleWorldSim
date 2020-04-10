@@ -7,6 +7,14 @@ data class Resources(
     val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
     val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
+    constructor(quantitiesMap: Map<Resource, Double>) : this(mapToDoubleArray(quantitiesMap))
+
+    companion object {
+        private fun mapToDoubleArray(quantitiesMap: Map<Resource, Double>): DoubleArray {
+            return DoubleArray(values().size) { quantitiesMap[values()[it]] ?: 0.0 }
+        }
+    }
+
     operator fun get(species: Species) = getPopulation(species)
     operator fun set(species: Species, population: Double) = setPopulation(species, population)
 

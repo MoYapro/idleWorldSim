@@ -35,14 +35,23 @@ object WaterSaver : ConsumptionModifyingTrait() {
     }
 }
 
-class MineralSaver : ConsumptionModifyingTrait() {
+object MineralSaver : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(mineralsFactor = .9)
     }
 }
 
-class EvolutionBooster : ConsumptionModifyingTrait() {
+object EvolutionBooster : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         return consumption.times(evolutionPointsFactor = 1.15)
     }
+}
+
+object OxygenProducer : ConsumptionModifyingTrait() {
+    override fun influence(consumption: Consumption): Consumption {
+        consumption.needs[Resource.Oxygen] = -1.0
+        return consumption
+    }
+
+
 }
