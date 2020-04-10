@@ -1,14 +1,17 @@
 package de.moyapro.idle.domain
 
 import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idle.domain.consumption.emptyResources
 import de.moyapro.idle.util.toShortDecimalStr
 
 data class Biome(
     val name: String = "DefaultBiome",
     var resources: Resources = Resources(),
+    var generation: Resources = emptyResources(),
     private val speciesList: MutableCollection<Species> = mutableListOf()
 ) {
     fun process(): Biome {
+        this.resources += generation
         this.resources = speciesList
             .shuffled()
             .fold(resources)

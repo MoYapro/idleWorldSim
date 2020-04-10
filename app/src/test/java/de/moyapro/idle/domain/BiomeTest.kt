@@ -1,8 +1,8 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.domain.consumption.Resource.EvolutionPoints
-import de.moyapro.idle.domain.consumption.Resource.Water
+import de.moyapro.idle.domain.consumption.Resource.*
 import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idle.domain.consumption.emptyResources
 import de.moyapro.idle.domain.traits.Predator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -69,7 +69,7 @@ internal class BiomeTest {
                 .settle(defaultSpecies())
                 .process()
                 .resources
-        assertThat(initialResources).isEqualTo(resourcesAfterGeneration)
+        assertThat(initialResources.quantities).isEqualTo(resourcesAfterGeneration.quantities)
     }
 
     @Test
@@ -114,5 +114,13 @@ internal class BiomeTest {
             .process()
         assertThat(predator.getPopulationIn(biome)).isEqualTo(1.1)
         assertThat(prey.getPopulationIn(biome)).isLessThan(uninvolved.getPopulationIn(biome))
+    }
+
+    @Test
+    fun biomeGeneratesResources() {
+        val empty = emptyResources()
+        val generation = Resources(DoubleArray(values().size) { 1.0 })
+        val biome = Biome(resources = empty, generation = generation).process()
+        assertThat(biome.resources[Minerals]).isGreaterThan(0.0)
     }
 }

@@ -102,3 +102,5 @@ data class Resources(
         setQuantity(resource, quantity)
     }
 }
+
+fun emptyResources(): Resources = Resources(DoubleArray(values().size) { 0.0 })
