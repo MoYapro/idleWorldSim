@@ -1,8 +1,11 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.domain.consumption.Resource.*
-import de.moyapro.idle.domain.consumption.Resources
-import de.moyapro.idle.domain.traits.*
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.defaultSpecies
+import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -53,7 +56,8 @@ internal class TraitTest {
     @Test
     fun predatorsNeedWater() {
         val sheep = defaultSpecies("sheep")
-        val wolf = Species("Wolf").evolve(Predator(sheep), ConsumerTrait(Water))
+        val wolf = Species("Wolf")
+            .evolve(Predator(sheep), ConsumerTrait(Water))
         assertThat(
             Biome().settle(wolf).settle(sheep)
                 .process().resources[wolf]
@@ -64,9 +68,10 @@ internal class TraitTest {
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = defaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(
-            ConsumerTrait(Energy)
-        )
+        val gras = defaultSpecies("Gras")
+            .evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(
+                ConsumerTrait(Energy)
+            )
         val sheep = defaultSpecies("Sheep")
         val wolf = Species("Wolf").evolve(Predator(sheep))
         val biome = Biome()

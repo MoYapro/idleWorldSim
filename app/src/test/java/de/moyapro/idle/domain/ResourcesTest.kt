@@ -1,8 +1,8 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.domain.consumption.Resource.*
-import de.moyapro.idle.domain.consumption.ResourceFactor
-import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.ResourceFactor
+import de.moyapro.idleworldsim.domain.consumption.Resources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -56,7 +56,10 @@ internal class ResourcesTest {
 
     @Test
     fun canProvideEnergy() {
-        assertThat(Resources(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))).isTrue()
+        assertThat(
+            Resources(Energy, 10.0)
+                .canProvide(Resources().setQuantity(Energy, 2.0))
+        ).isTrue()
     }
 
     @Test
@@ -87,7 +90,16 @@ internal class ResourcesTest {
 
     @Test
     fun timesResourceFactors() {
-        assertThat(Resources(doubleArrayOf(5.0, 5.0, 5.0, 5.0)) * ResourceFactor(3.0, 3.0, 3.0, 3.0))
+        assertThat(
+            Resources(
+                doubleArrayOf(
+                    5.0,
+                    5.0,
+                    5.0,
+                    5.0
+                )
+            ) * ResourceFactor(3.0, 3.0, 3.0, 3.0)
+        )
             .isEqualTo(Resources(doubleArrayOf(15.0, 15.0, 15.0, 15.0)))
     }
 

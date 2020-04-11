@@ -1,6 +1,6 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.util.toShortDecimalStr
+import de.moyapro.idleworldsim.util.toShortDecimalStr
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

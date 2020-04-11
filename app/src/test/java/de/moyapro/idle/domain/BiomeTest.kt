@@ -1,9 +1,11 @@
 package de.moyapro.idle.domain
 
-import de.moyapro.idle.domain.consumption.Resource.EvolutionPoints
-import de.moyapro.idle.domain.consumption.Resource.Water
-import de.moyapro.idle.domain.consumption.Resources
-import de.moyapro.idle.domain.traits.Predator
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.consumption.Resource.EvolutionPoints
+import de.moyapro.idleworldsim.domain.consumption.Resource.Water
+import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.defaultSpecies
+import de.moyapro.idleworldsim.domain.traits.Predator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

@@ -1,9 +1,10 @@
 package de.moyapro.idle.domain.traits
 
-import de.moyapro.idle.domain.Species
-import de.moyapro.idle.domain.consumption.Consumption
-import de.moyapro.idle.domain.consumption.Resource.*
-import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.Consumption
+import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,12 +18,24 @@ internal class FeatureTest {
 
     @Test
     fun createFeatureWithTraits() {
-        assertThat(Feature(MineralSaver(), ConsumerTrait(Minerals))).isNotNull
+        assertThat(
+            Feature(
+                MineralSaver(),
+                ConsumerTrait(Minerals)
+            )
+        ).isNotNull
     }
 
     @Test
     fun createFeatureWithListOfTraits() {
-        assertThat(Feature(traits = setOf(MineralSaver(), ConsumerTrait(Minerals)))).isNotNull
+        assertThat(
+            Feature(
+                traits = setOf(
+                    MineralSaver(),
+                    ConsumerTrait(Minerals)
+                )
+            )
+        ).isNotNull
     }
 
 
@@ -100,7 +113,11 @@ internal class FeatureTest {
 
     @Test
     fun featuresWithTheSameTraitsAreEqual() {
-        val traits = setOf(EnergySaver, MineralSaver(), GrowthTrait)
+        val traits = setOf(
+            EnergySaver,
+            MineralSaver(),
+            GrowthTrait
+        )
         assertThat(Feature(traits = traits) == Feature(traits = traits)).isTrue()
         assertThat(Feature(traits = traits).hashCode() == Feature(traits = traits).hashCode()).isTrue()
     }
