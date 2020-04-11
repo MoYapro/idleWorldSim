@@ -4,6 +4,7 @@ import de.moyapro.idle.domain.consumption.Resource.*
 import de.moyapro.idle.domain.consumption.Resources
 import de.moyapro.idle.domain.consumption.emptyResources
 import de.moyapro.idle.domain.traits.Predator
+import de.moyapro.idle.domain.traits.oxygenConsumer
 import de.moyapro.idle.domain.traits.sunlightConsumer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -129,10 +130,11 @@ internal class BiomeTest {
     fun biomeWithEqualGenerationAndConsumptionIsStable() {
         val initial = Resources()
         val generation = Resources(DoubleArray(values().size) { 1.0 })
-        val species = defaultSpecies()
-        val biome = Biome(resources = initial, generation = generation).settle(species).process()
+        val oxygenConsumer = defaultSpecies().evolve(oxygenConsumer())
+        val biome = Biome(resources = initial, generation = generation)
+            .settle(oxygenConsumer)
+            .process()
         val expectedResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 2.0 else 1000.0 }) // 1EP from Biome and 1EP from Species
-        expectedResources[Oxygen] = 1001.0
         assertThat(biome.resources.quantities).containsExactly(*expectedResources.quantities)
     }
 
