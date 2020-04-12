@@ -1,0 +1,79 @@
+digraph G {
+
+    node [shape = "record"]
+
+    Simple_Autotroph [
+    label = "{Simple_Autotroph|ConsumerTrait(Mineral)\lConsumerTrait(Energy)\lConsumerTrait(Water)\l}"
+    ]
+
+    TreeOfLife ->
+    Simple_Autotroph ->
+    Sunlight_Consumer ->
+    Real_Cell ->
+    Cell_Colonies
+    Oxigen_Consumer -> Real_Cell
+    Simple_Autotroph -> Real_Cell
+    Simple_Autotroph -> Oxigen_Consumer
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+    Simple_Autotroph -> can_decompose_X
+
+    Cell_Colonies -> Multi_Cellular
+
+    subgraph {
+    Multi_Cellular -> Filters
+    Multi_Cellular -> Mobility
+    Multi_Cellular -> Shells
+    Filters -> Roots
+
+    Shells -> Scales
+    Shells -> Armor
+    Scales -> Fins
+    Scales -> Gills
+
+
+
+
+    Mobility -> Skeleton
+    Skeleton -> Teeth
+    Multi_Cellular -> Lungs
+    }
+
+
+
+    subgraph {
+    Roots -> Land_Plants
+    Land_Plants -> Deep_Root
+    Land_Plants -> Wide_Roots
+    Land_Plants -> Leaf
+    Land_Plants -> High_Growing
+    Land_Plants -> Strong_Trunks
+    }
+
+    subgraph {
+    Lungs -> Amphibious
+    }
+
+
+    subgraph {
+    Lungs -> Land_animals
+    Land_animals -> Legs
+    Land_animals -> Arms
+    Land_animals -> Feet
+    Land_animals -> Intelligence
+    Land_animals -> Wings
+    Land_animals -> Burrow
+    Land_animals -> Egg
+    Land_animals -> Social
+
+    }
+
+
+
+
+
+
+
+
+}
