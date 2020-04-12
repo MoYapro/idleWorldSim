@@ -64,7 +64,7 @@ internal class TraitTest {
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = Species("Gras").evolve(sunlightConsumer())
+        val gras = Species("Gras").evolve(Feature.sunlightConsumer())
         val wolf = Species("Wolf").evolve(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
         val biome = Biome()
             .settle(gras)

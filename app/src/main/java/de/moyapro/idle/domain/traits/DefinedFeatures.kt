@@ -6,12 +6,10 @@ import de.moyapro.idle.domain.consumption.Resource.Oxygen
 /**
  * Just a few predefined features
  */
-
-
-fun sunlightConsumer(): Feature {
+fun Feature.Companion.sunlightConsumer(): Feature {
     return Feature("SunlightConsumer", mutableSetOf(ProduceResource(Oxygen), ConsumerTrait(Energy), NeedResource(Energy)))
 }
 
-fun oxygenConsumer(): Feature {
+fun Feature.Companion.oxygenConsumer(): Feature {
     return Feature("OxygenConsumer", mutableSetOf(ConsumerTrait(Oxygen), NeedResource(Oxygen)))
 }

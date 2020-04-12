@@ -11,6 +11,8 @@ import de.moyapro.idle.util.applyTo
 open class Feature(private val name: String = "GenericFeature", private var traits: Set<Trait> = setOf()) {
     constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
 
+    companion object
+
     fun influenceConsumption(consumption: Consumption): Consumption {
         val availableConsumption = traits.applyTo(consumption, SupplyModifyingTrait::influence)
         return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
