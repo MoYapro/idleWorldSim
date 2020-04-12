@@ -5,4 +5,5 @@ enum class Resource(val displayName: String) {
     Energy("energy"),
     Water("water"),
     Minerals("minerals"),
+    Oxygen("oxygen")
 }
