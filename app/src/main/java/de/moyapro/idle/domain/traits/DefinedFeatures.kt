@@ -1,5 +1,5 @@
 package de.moyapro.idle.domain.traits
 
-fun sunlightConsumer(): Feature {
+fun Feature.Companion.sunlightConsumer(): Feature {
     return Feature(OxygenProducer)
 }
