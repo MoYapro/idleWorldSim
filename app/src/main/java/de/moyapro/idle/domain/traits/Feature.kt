@@ -1,6 +1,7 @@
 package de.moyapro.idle.domain.traits
 
 import de.moyapro.idle.domain.consumption.Consumption
+import de.moyapro.idle.domain.consumption.Resources
 import de.moyapro.idle.util.applyTo
 
 /**
@@ -22,6 +23,10 @@ open class Feature(private val name: String = "GenericFeature", private var trai
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
 
+    fun influenceNeed(need: Resources): Resources {
+        return traits.applyTo(need, NeedModifyingTrait::influenceNeed)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (null == other && other !is Feature) {
@@ -41,5 +46,9 @@ open class Feature(private val name: String = "GenericFeature", private var trai
 
     override fun toString(): String {
         return "Feature[$name - ${traits.joinToString(",") { it.toString() }}]"
+    }
+
+    fun hasTrait(trait: Trait): Boolean {
+        return traits.any { it == trait }
     }
 }

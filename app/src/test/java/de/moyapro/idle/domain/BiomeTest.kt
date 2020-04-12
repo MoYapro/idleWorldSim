@@ -4,6 +4,7 @@ import de.moyapro.idle.domain.consumption.Resource.*
 import de.moyapro.idle.domain.consumption.Resources
 import de.moyapro.idle.domain.consumption.emptyResources
 import de.moyapro.idle.domain.traits.Feature
+import de.moyapro.idle.domain.traits.Meaty
 import de.moyapro.idle.domain.traits.Predator
 import de.moyapro.idle.domain.traits.sunlightConsumer
 import org.assertj.core.api.Assertions.assertThat
@@ -92,8 +93,8 @@ internal class BiomeTest {
     fun speciesCanEatEachOther() {
         val initialResources = Resources(DoubleArray(values().size) { 2.0 })
         val predator = defaultSpecies("Predator")
-        val prey = defaultSpecies("Prey")
-        predator.evolve(Predator(prey))
+        predator.evolve(Predator(Meaty))
+        val prey = defaultSpecies("Prey").evolve(Meaty)
         val biome = Biome(resources = initialResources)
             .settle(predator)
             .settle(prey)
@@ -105,10 +106,9 @@ internal class BiomeTest {
     @Test
     fun speciesEatsAnotherSpecies() {
         val initialResources = Resources(DoubleArray(values().size) { 3.0 })
-        val predator = defaultSpecies("Eater")
-        val prey = defaultSpecies("Food")
+        val predator = defaultSpecies("Eater").evolve(Predator(Meaty))
+        val prey = defaultSpecies("Food").evolve(Meaty)
         val uninvolved = defaultSpecies("Uninvolved")
-        predator.evolve(Predator(prey))
         val biome = Biome(resources = initialResources)
             .settle(predator)
             .settle(prey)
