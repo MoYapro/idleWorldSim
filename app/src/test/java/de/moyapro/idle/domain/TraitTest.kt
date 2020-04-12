@@ -68,7 +68,7 @@ internal class TraitTest {
             ConsumerTrait(Energy)
         )
         val sheep = defaultSpecies("Sheep")
-        val wolf = Species("Wolf").evolve(Predator(sheep))
+        val wolf = Species("Wolf").evolve(Predator(sheep), NeedResource(Minerals), NeedResource(Energy))
         val biome = Biome()
             .settle(gras)
             .settle(wolf)

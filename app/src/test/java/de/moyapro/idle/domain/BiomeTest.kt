@@ -129,12 +129,14 @@ internal class BiomeTest {
     @Test
     fun biomeWithEqualGenerationAndConsumptionIsStable() {
         val initial = Resources()
-        val generation = Resources(DoubleArray(values().size) { 1.0 })
-        val oxygenConsumer = defaultSpecies().evolve(oxygenConsumer())
-        val biome = Biome(resources = initial, generation = generation)
+        val biomeGeneration = Resources(DoubleArray(values().size) { if (it == Energy.ordinal) 1.0 else 0.0 })
+        val sunlightConsumer = Species("Plant").evolve(sunlightConsumer())
+        val oxygenConsumer = Species("Animal").evolve(oxygenConsumer())
+        val biome = Biome(resources = initial, generation = biomeGeneration)
             .settle(oxygenConsumer)
+            .settle(sunlightConsumer)
             .process()
-        val expectedResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 2.0 else 1000.0 }) // 1EP from Biome and 1EP from Species
+        val expectedResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 }) // 1EP from Biome and 1EP from Species
         assertThat(biome.resources.quantities).containsExactly(*expectedResources.quantities)
     }
 
