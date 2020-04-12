@@ -51,6 +51,10 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         return "Species[$name]"
     }
 
+    fun hasTrait(trait: Trait): Boolean {
+        return features.any { it.hasTrait(trait) }
+    }
+
 }
 
 fun defaultSpecies(name: String = "DefaultSpecies"): Species {

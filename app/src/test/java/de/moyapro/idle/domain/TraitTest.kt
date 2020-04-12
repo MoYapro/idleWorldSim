@@ -52,8 +52,8 @@ internal class TraitTest {
 
     @Test
     fun predatorsNeedWater() {
-        val sheep = defaultSpecies("sheep")
-        val wolf = Species("Wolf").evolve(Predator(sheep), ConsumerTrait(Water))
+        val sheep = defaultSpecies("sheep").evolve(Meaty)
+        val wolf = Species("Wolf").evolve(Predator(Meaty), ConsumerTrait(Water))
         assertThat(
             Biome().settle(wolf).settle(sheep)
                 .process().resources[wolf]
@@ -64,11 +64,8 @@ internal class TraitTest {
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
-        val gras = defaultSpecies("Gras").evolve(ConsumerTrait(Water)).evolve(ConsumerTrait(Minerals)).evolve(
-            ConsumerTrait(Energy)
-        )
-        val sheep = defaultSpecies("Sheep")
-        val wolf = Species("Wolf").evolve(Predator(sheep), NeedResource(Minerals), NeedResource(Energy))
+        val gras = Species("Gras").evolve(sunlightConsumer())
+        val wolf = Species("Wolf").evolve(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
         val biome = Biome()
             .settle(gras)
             .settle(wolf)

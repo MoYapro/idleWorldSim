@@ -45,4 +45,8 @@ open class Feature(private val name: String = "GenericFeature", private var trai
     override fun toString(): String {
         return "Feature[$name - ${traits.joinToString(",") { it.toString() }}]"
     }
+
+    fun hasTrait(trait: Trait): Boolean {
+        return traits.any { it == trait }
+    }
 }
