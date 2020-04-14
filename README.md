@@ -1,3 +1,4 @@
+![Kotlin CI with Gradle](https://github.com/MoYapro/idleWorldSim/workflows/Java%20CI%20with%20Gradle/badge.svg)
 # Idle World Sim
 
 Trying to build an idle game to pass my idle time ...
@@ -6,3 +7,4 @@ Trying to build an idle game to pass my idle time ...
 
 
 ... we will see ...
+
