@@ -24,6 +24,7 @@ class SpeciesRecyclerViewAdapter(
 ) : RecyclerView.Adapter<SpeciesRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
+    private val mUpdateHandler = BiomeViewUpdateHandler(biome, this)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -38,6 +39,16 @@ class SpeciesRecyclerViewAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_species, parent, false)
         return ViewHolder(view)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        mUpdateHandler.startObservation()
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        mUpdateHandler.stopObservation()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

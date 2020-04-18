@@ -16,14 +16,14 @@ import kotlinx.android.synthetic.main.fragment_resource.view.*
 /**
  * [RecyclerView.Adapter] that can display a [Resource] and makes a call to the
  * specified [OnResourceInteractionListener].
- * TODO: Replace the implementation with code for your data type.
  */
 class ResourceRecyclerViewAdapter(
-    private val biome: Biome,
-    private val mListener: OnResourceInteractionListener?
+        val biome: Biome,
+        private val mListener: OnResourceInteractionListener?
 ) : RecyclerView.Adapter<ResourceRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
+    private val mUpdateHandler = BiomeViewUpdateHandler(biome, this)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -36,8 +36,18 @@ class ResourceRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_resource, parent, false)
+                .inflate(R.layout.fragment_resource, parent, false)
         return ViewHolder(view)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        mUpdateHandler.startObservation()
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        mUpdateHandler.stopObservation()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

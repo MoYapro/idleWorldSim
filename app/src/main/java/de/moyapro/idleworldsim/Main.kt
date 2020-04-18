@@ -3,7 +3,9 @@ package de.moyapro.idleworldsim
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.defaultSpecies
 import de.moyapro.idleworldsim.domain.traits.WaterSaver
+import de.moyapro.idleworldsim.util.QuickAndDirty
 
+@QuickAndDirty
 object Game {
     val biome = Biome()
 
