@@ -1,8 +1,9 @@
-package de.moyapro.idleworldsim
+package com.example.idleworldsim
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import de.moyapro.idleworldsim.ui.main.MainFragment
+import androidx.appcompat.app.AppCompatActivity
+import com.example.idleworldsim.ui.main.MainFragment
+import de.moyapro.idleworldsim.R
 
 class MainActivity : AppCompatActivity() {
 

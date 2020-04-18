@@ -4,7 +4,7 @@ import de.moyapro.idle.domain.Biome
 import de.moyapro.idle.domain.defaultSpecies
 import de.moyapro.idle.domain.traits.WaterSaver
 
-fun main(args: Array<String>) {
+fun main() {
     val biome = Biome()
         .settle(
             defaultSpecies("3").evolve(WaterSaver).evolve(WaterSaver).evolve(

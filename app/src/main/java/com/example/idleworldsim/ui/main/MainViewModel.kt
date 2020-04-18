@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.ui.main
+package com.example.idleworldsim.ui.main
 
 import androidx.lifecycle.ViewModel
 

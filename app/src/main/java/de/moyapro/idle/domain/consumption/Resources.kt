@@ -24,10 +24,9 @@ data class Resources(
         return this
     }
 
-    operator fun get(resource: Resource) = getQuantity(resource)
+    operator fun get(resource: Resource) = quantities.getOrElse(resource.ordinal) { 0.0 }
     operator fun set(resource: Resource, quantity: Double) = setQuantity(resource, quantity)
 
-    fun getQuantity(resource: Resource) = quantities.getOrElse(resource.ordinal) { 0.0 }
 
     fun setQuantity(resource: Resource, quantity: Double = 1.0): Resources {
         if (resource.ordinal in this.quantities.indices)
