@@ -109,4 +109,44 @@ internal class ResourcesTest {
         ).isNotNull
     }
 
+    @Test
+    fun setQuantity() {
+        val theValue = 666.3
+        assertThat(Resources().setQuantity(Water, theValue)[Water]).isEqualTo(theValue)
+    }
+
+    @Test
+    fun setDefaultQuantity() {
+        assertThat(Resources().setQuantity(Water)[Water]).isEqualTo(1.0)
+    }
+
+    @Test
+    fun setDefaultPolulation() {
+        val theSpecies = Species("X")
+        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(1.0)
+    }
+
+    @Test
+    fun setPolulation() {
+        val theValue = 345.678
+        val theSpecies = Species("X")
+        assertThat(Resources().setPopulation(theSpecies, theValue)[theSpecies]).isEqualTo(theValue)
+    }
+
+    @Test
+    fun hashCodeEquals() {
+        val resources1 = Resources().setQuantity(Minerals, 13.0)
+        val resources2 = Resources().setQuantity(Minerals, 13.0)
+        assertThat(resources1).isEqualTo(resources2)
+        assertThat(resources1.hashCode()).isEqualTo(resources2.hashCode())
+    }
+
+    @Test
+    fun hashCodeNotEquals() {
+        val resources1 = Resources().setQuantity(Minerals, 99.0)
+        val resources2 = Resources().setQuantity(Water, 2.0)
+        assertThat(resources1).isNotEqualTo(resources2)
+        assertThat(resources1.hashCode()).isNotEqualTo(resources2.hashCode())
+    }
+
 }

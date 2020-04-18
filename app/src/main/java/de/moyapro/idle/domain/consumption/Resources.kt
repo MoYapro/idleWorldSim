@@ -16,7 +16,6 @@ data class Resources(
     }
 
     operator fun get(species: Species) = getPopulation(species)
-    operator fun set(species: Species, population: Double) = setPopulation(species, population)
 
     fun getPopulation(species: Species) = populations.getOrDefault(species, 0.0)
 
