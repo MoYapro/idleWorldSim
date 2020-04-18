@@ -39,12 +39,18 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         val initialGrowthRate = 1.1
         val hungerRate = .95
         val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowthRate)
-        return if (consumption.isProvided()) {
-            val leftovers = consumption.consume()
-            leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)
-            leftovers
-        } else
-            consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
+        val provided = consumption.isProvided()
+        return when {
+            provided >= 1.0 -> {
+                val leftovers = consumption.consume()
+                leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)
+                leftovers
+            }
+            provided < 0.8 -> consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
+            else -> {
+                consumption.consume()
+            }
+        }
     }
 
     override fun toString(): String {

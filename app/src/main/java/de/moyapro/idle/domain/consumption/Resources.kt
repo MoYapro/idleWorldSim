@@ -75,13 +75,14 @@ data class Resources(
         }
     }
 
-    fun canProvide(resources: Resources): Boolean {
+    fun canProvide(resources: Resources): BooleanArray {
         // negative value in resources means production
-        return this.quantities.withIndex().all {
-            resources.quantities[it.index] <= it.value
-        } && this.populations.all {
-            (resources.populations[it.key] ?: 0.0) <= it.value
-        }
+        return this.quantities
+            .withIndex()
+            .map {
+                resources.quantities[it.index] <= it.value
+            }
+            .toBooleanArray()
     }
 
     fun updatePopulation(species: Species, growthRate: Double): Resources {

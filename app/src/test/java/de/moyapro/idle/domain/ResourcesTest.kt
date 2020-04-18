@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 internal class ResourcesTest {
     @Test
     fun resourceCanProvideAll() {
-        assertThat(Resources().canProvide(Resources())).isTrue()
+        assertThat(Resources().canProvide(Resources()).all { it }).isTrue()
     }
 
     @Test
@@ -18,6 +18,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -27,6 +28,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -35,6 +37,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -43,6 +46,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .all { it }
         ).isTrue()
     }
 
@@ -51,12 +55,17 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .all { it }
         ).isTrue()
     }
 
     @Test
     fun canProvideEnergy() {
-        assertThat(Resources(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))).isTrue()
+        assertThat(
+            Resources(Energy, 10.0).canProvide(Resources().setQuantity(Energy, 2.0))
+                .all { it }
+        )
+            .isTrue()
     }
 
     @Test
