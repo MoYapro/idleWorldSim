@@ -9,7 +9,7 @@ abstract class ConsumptionModifyingTrait : Trait() {
 
 class ConsumerTrait(private val influencedResource: Resource) : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
-        consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
+        consumption.usableSupply[influencedResource] = consumption.supply[influencedResource] * .01
         return consumption
     }
 
