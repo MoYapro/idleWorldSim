@@ -1,7 +1,7 @@
-package de.moyapro.idle.domain.traits
+package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idle.domain.consumption.Resource
-import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.Resource
+import de.moyapro.idleworldsim.domain.consumption.Resources
 
 abstract class NeedModifyingTrait : Trait() {
     abstract fun influenceNeed(need: Resources): Resources

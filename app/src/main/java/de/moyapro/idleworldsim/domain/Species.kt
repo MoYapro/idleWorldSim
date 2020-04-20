@@ -1,10 +1,10 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idle.domain.consumption.Consumption
-import de.moyapro.idle.domain.consumption.Resource.*
-import de.moyapro.idle.domain.consumption.Resources
-import de.moyapro.idle.domain.traits.*
-import de.moyapro.idle.util.applyTo
+import de.moyapro.idleworldsim.domain.consumption.Consumption
+import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.util.applyTo
 
 /**
  * Class representing a creature with some features consuming and producing resources according to those features

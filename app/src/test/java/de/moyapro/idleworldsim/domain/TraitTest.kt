@@ -1,10 +1,7 @@
-package de.moyapro.idle.domain
+package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.consumption.Resource.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.defaultSpecies
 import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

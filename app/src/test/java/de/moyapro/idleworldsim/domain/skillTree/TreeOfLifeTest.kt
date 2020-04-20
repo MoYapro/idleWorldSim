@@ -1,6 +1,5 @@
-package de.moyapro.idle.domain.skillTree
+package de.moyapro.idleworldsim.domain.skillTree
 
-import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.Feature
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

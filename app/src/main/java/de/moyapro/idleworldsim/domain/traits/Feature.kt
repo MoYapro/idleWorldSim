@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.util.applyTo
 
 /**

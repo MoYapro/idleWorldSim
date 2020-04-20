@@ -1,7 +1,7 @@
-package de.moyapro.idle.domain.traits
+package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idle.domain.consumption.Resource.Energy
-import de.moyapro.idle.domain.consumption.Resource.Oxygen
+import de.moyapro.idleworldsim.domain.consumption.Resource.Energy
+import de.moyapro.idleworldsim.domain.consumption.Resource.Oxygen
 
 /**
  * Just a few predefined features

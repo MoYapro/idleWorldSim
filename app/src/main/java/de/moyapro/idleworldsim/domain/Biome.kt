@@ -1,8 +1,8 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idle.domain.consumption.emptyResources
-import de.moyapro.idle.util.applyTo
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.util.applyTo
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
 
