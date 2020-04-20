@@ -6,7 +6,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".app.ui.main.MainFragment">
+        tools:context="com.example.idleworldsim.app.ui.main.MainFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -15,7 +15,6 @@
             android:id="@+id/linearLayout"
             tools:layout_editor_absoluteY="16dp"
             tools:layout_editor_absoluteX="31dp">
-
 
         <TextView
                 android:id="@+id/resourcesLabel"

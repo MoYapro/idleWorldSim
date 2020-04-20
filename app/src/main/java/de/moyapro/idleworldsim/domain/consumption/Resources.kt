@@ -7,8 +7,15 @@ data class Resources(
     val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
     val populations: MutableMap<Species, Double> = mutableMapOf()
 ) {
+    constructor(quantitiesMap: Map<Resource, Double>) : this(mapToDoubleArray(quantitiesMap))
+
+    companion object {
+        private fun mapToDoubleArray(quantitiesMap: Map<Resource, Double>): DoubleArray {
+            return DoubleArray(values().size) { quantitiesMap[values()[it]] ?: 0.0 }
+        }
+    }
+
     operator fun get(species: Species) = getPopulation(species)
-    operator fun set(species: Species, population: Double) = setPopulation(species, population)
 
     fun getPopulation(species: Species) = populations.getOrDefault(species, 0.0)
 
@@ -17,10 +24,9 @@ data class Resources(
         return this
     }
 
-    operator fun get(resource: Resource) = getQuantity(resource)
+    operator fun get(resource: Resource) = quantities.getOrElse(resource.ordinal) { 0.0 }
     operator fun set(resource: Resource, quantity: Double) = setQuantity(resource, quantity)
 
-    fun getQuantity(resource: Resource) = quantities.getOrElse(resource.ordinal) { 0.0 }
 
     fun setQuantity(resource: Resource, quantity: Double = 1.0): Resources {
         if (resource.ordinal in this.quantities.indices)
@@ -67,13 +73,14 @@ data class Resources(
         }
     }
 
-    fun canProvide(resources: Resources): Boolean {
+    fun canProvide(resources: Resources): BooleanArray {
         // negative value in resources means production
-        return this.quantities.withIndex().all {
-            resources.quantities[it.index] <= it.value
-        } && this.populations.all {
-            (resources.populations[it.key] ?: 0.0) <= it.value
-        }
+        return this.quantities
+            .withIndex()
+            .map {
+                resources.quantities[it.index] <= it.value
+            }
+            .toBooleanArray()
     }
 
     fun updatePopulation(species: Species, growthRate: Double): Resources {
@@ -106,3 +113,5 @@ data class Resources(
         setQuantity(resource, quantity)
     }
 }
+
+fun emptyResources(): Resources = Resources(DoubleArray(values().size) { 0.0 })

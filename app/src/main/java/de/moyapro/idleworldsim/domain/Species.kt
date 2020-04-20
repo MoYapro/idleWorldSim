@@ -1,12 +1,10 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.Resource
-import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
-import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Trait
-import de.moyapro.idleworldsim.util.applyTo
+import de.moyapro.idle.domain.consumption.Consumption
+import de.moyapro.idle.domain.consumption.Resource.*
+import de.moyapro.idle.domain.consumption.Resources
+import de.moyapro.idle.domain.traits.*
+import de.moyapro.idle.util.applyTo
 
 /**
  * Class representing a creature with some features consuming and producing resources according to those features
@@ -14,14 +12,14 @@ import de.moyapro.idleworldsim.util.applyTo
 class Species(val name: String, private val features: MutableSet<Feature> = mutableSetOf()) {
     constructor(name: String, feature: Feature) : this(name, mutableSetOf(feature))
 
-    private fun needsPerIndividual() = Resources(doubleArrayOf(-1.0, 1.0, 1.0, 1.0))
+    private fun needsPerIndividual() = features.applyTo(Resources(DoubleArray(values().size) { 0.0 }), Feature::influenceNeed)
 
     fun getPopulationIn(biome: Biome): Double {
         return biome.resources.getPopulation(this)
     }
 
     fun process(totalSupplyFromBiome: Resources): Resources {
-        val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 0.0)
+        val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: 1.0)
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
         val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
         return grow(modifiedConsumption)
@@ -32,20 +30,35 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         return this
     }
 
+    fun evolve(vararg features: Feature): Species {
+        this.features += features
+        return this
+    }
+
     private fun grow(consumption: Consumption): Resources {
         val initialGrowthRate = 1.1
         val hungerRate = .95
         val modifiedGrowthRate = features.applyTo(initialGrowthRate, Feature::influenceGrowthRate)
-        return if (consumption.isProvided()) {
-            val leftovers = consumption.consume()
-            leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)
-            leftovers
-        } else
-            consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
+        val provided = consumption.isProvided()
+        return when {
+            provided >= 1.0 -> {
+                val leftovers = consumption.consume()
+                leftovers.updatePopulation(consumption.consumer, modifiedGrowthRate)
+                leftovers
+            }
+            provided < 0.8 -> consumption.supply.copy().updatePopulation(consumption.consumer, hungerRate)
+            else -> {
+                consumption.consume()
+            }
+        }
     }
 
     override fun toString(): String {
         return "Species[$name]"
+    }
+
+    fun hasTrait(trait: Trait): Boolean {
+        return features.any { it.hasTrait(trait) }
     }
 
 }
@@ -53,9 +66,13 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
 fun defaultSpecies(name: String = "DefaultSpecies"): Species {
     return Species(
         name, Feature(
-            ConsumerTrait(Resource.Water),
-            ConsumerTrait(Resource.Minerals),
-            ConsumerTrait(Resource.Energy)
+            ConsumerTrait(Water),
+            ConsumerTrait(Minerals),
+            ConsumerTrait(Energy),
+            NeedResource(Water),
+            NeedResource(Minerals),
+            NeedResource(Energy),
+            ProduceResource(EvolutionPoints)
         )
     )
 }

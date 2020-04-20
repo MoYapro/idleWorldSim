@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 internal class ResourcesTest {
     @Test
     fun resourceCanProvideAll() {
-        assertThat(Resources().canProvide(Resources())).isTrue()
+        assertThat(Resources().canProvide(Resources()).all { it }).isTrue()
     }
 
     @Test
@@ -18,6 +18,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -27,6 +28,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -35,6 +37,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .all { it }
         ).isFalse()
     }
 
@@ -43,6 +46,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .all { it }
         ).isTrue()
     }
 
@@ -51,6 +55,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .all { it }
         ).isTrue()
     }
 
@@ -59,7 +64,9 @@ internal class ResourcesTest {
         assertThat(
             Resources(Energy, 10.0)
                 .canProvide(Resources().setQuantity(Energy, 2.0))
-        ).isTrue()
+        .all { it }
+        )
+            .isTrue()
     }
 
     @Test
@@ -103,5 +110,53 @@ internal class ResourcesTest {
             .isEqualTo(Resources(doubleArrayOf(15.0, 15.0, 15.0, 15.0)))
     }
 
+    @Test
+    fun createResourcesWithMap() {
+        assertThat(
+            Resources(
+                mapOf(Pair(Energy, 0.0))
+            )
+        ).isNotNull
+    }
+
+    @Test
+    fun setQuantity() {
+        val theValue = 666.3
+        assertThat(Resources().setQuantity(Water, theValue)[Water]).isEqualTo(theValue)
+    }
+
+    @Test
+    fun setDefaultQuantity() {
+        assertThat(Resources().setQuantity(Water)[Water]).isEqualTo(1.0)
+    }
+
+    @Test
+    fun setDefaultPolulation() {
+        val theSpecies = Species("X")
+        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(1.0)
+    }
+
+    @Test
+    fun setPolulation() {
+        val theValue = 345.678
+        val theSpecies = Species("X")
+        assertThat(Resources().setPopulation(theSpecies, theValue)[theSpecies]).isEqualTo(theValue)
+    }
+
+    @Test
+    fun hashCodeEquals() {
+        val resources1 = Resources().setQuantity(Minerals, 13.0)
+        val resources2 = Resources().setQuantity(Minerals, 13.0)
+        assertThat(resources1).isEqualTo(resources2)
+        assertThat(resources1.hashCode()).isEqualTo(resources2.hashCode())
+    }
+
+    @Test
+    fun hashCodeNotEquals() {
+        val resources1 = Resources().setQuantity(Minerals, 99.0)
+        val resources2 = Resources().setQuantity(Water, 2.0)
+        assertThat(resources1).isNotEqualTo(resources2)
+        assertThat(resources1.hashCode()).isNotEqualTo(resources2.hashCode())
+    }
 
 }

@@ -28,7 +28,8 @@ data class Consumption(
         return supply.minus(needs)
     }
 
-    fun isProvided(): Boolean {
-        return usableSupply.canProvide(needs)
+    fun isProvided(): Double {
+        val canProvide = usableSupply.canProvide(needs)
+        return canProvide.sumBy { if (it) 1 else 0 } / canProvide.size.toDouble()
     }
 }

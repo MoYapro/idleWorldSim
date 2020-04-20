@@ -20,7 +20,7 @@ internal class FeatureTest {
     fun createFeatureWithTraits() {
         assertThat(
             Feature(
-                MineralSaver(),
+                MineralSaver,
                 ConsumerTrait(Minerals)
             )
         ).isNotNull
@@ -31,7 +31,7 @@ internal class FeatureTest {
         assertThat(
             Feature(
                 traits = setOf(
-                    MineralSaver(),
+                    MineralSaver,
                     ConsumerTrait(Minerals)
                 )
             )
@@ -73,24 +73,23 @@ internal class FeatureTest {
     @Test
     fun featuresWithTheDifferentTraitsAreNotEqual() {
         val trait1 = EnergySaver
-        val trait2 = Predator(Species("Sheep"))
+        val trait2 = Predator(Meaty)
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
     fun differentPredatorsAreNotEqual() {
-        val trait1 = Predator(Species("Gras"))
-        val trait2 = Predator(Species("Sheep"))
+        val trait1 = Predator(Meaty)
+        val trait2 = Predator(GrowthTrait)
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
     fun samePredatorsAreEqual() {
-        val sheep = Species("Sheep")
-        val trait1 = Predator(sheep)
-        val trait2 = Predator(sheep)
+        val trait1 = Predator(Meaty)
+        val trait2 = Predator(Meaty)
         assertThat(Feature(trait1) == Feature(trait2)).isTrue()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
     }
@@ -115,7 +114,7 @@ internal class FeatureTest {
     fun featuresWithTheSameTraitsAreEqual() {
         val traits = setOf(
             EnergySaver,
-            MineralSaver(),
+            MineralSaver,
             GrowthTrait
         )
         assertThat(Feature(traits = traits) == Feature(traits = traits)).isTrue()
