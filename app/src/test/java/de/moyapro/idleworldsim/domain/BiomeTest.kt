@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.ResourceTypes.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.Feature

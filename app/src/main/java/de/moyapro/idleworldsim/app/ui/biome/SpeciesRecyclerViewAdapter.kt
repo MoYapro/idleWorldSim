@@ -55,7 +55,7 @@ class SpeciesRecyclerViewAdapter(
         val species = biome.getSpecies()[position]
         val population = biome.resources[species]
         holder.mIdView.text = species.name
-        holder.mContentView.text = (population * 1E6).toShortDecimalStr()
+        holder.mContentView.text = (population).toShortDecimalStr(1E6)
 
         with(holder.mView) {
             tag = species

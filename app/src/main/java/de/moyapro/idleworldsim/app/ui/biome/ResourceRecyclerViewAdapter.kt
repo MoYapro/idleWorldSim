@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
 import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.consumption.Resource
+import de.moyapro.idleworldsim.domain.consumption.ResourceTypes
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import kotlinx.android.synthetic.main.fragment_resource.view.*
 
 /**
- * [RecyclerView.Adapter] that can display a [Resource] and makes a call to the
+ * [RecyclerView.Adapter] that can display a [ResourceTypes] and makes a call to the
  * specified [OnResourceInteractionListener].
  */
 class ResourceRecyclerViewAdapter(
@@ -27,7 +27,7 @@ class ResourceRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val resource = v.tag as Resource
+            val resource = v.tag as ResourceTypes
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
             mListener?.onResourceInteraction(resource)
@@ -51,7 +51,7 @@ class ResourceRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val resource = Resource.values()[position]
+        val resource = ResourceTypes.values()[position]
         val quantity = biome.resources[resource]
         holder.mIdView.text = resource.displayName
         holder.mContentView.text = quantity.toShortDecimalStr()
@@ -62,7 +62,7 @@ class ResourceRecyclerViewAdapter(
         }
     }
 
-    override fun getItemCount(): Int = Resource.values().size
+    override fun getItemCount(): Int = ResourceTypes.values().size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView = mView.item_number

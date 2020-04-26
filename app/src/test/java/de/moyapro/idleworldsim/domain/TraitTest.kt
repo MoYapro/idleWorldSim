@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.*
+import de.moyapro.idleworldsim.domain.consumption.ResourceTypes.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
@@ -83,4 +83,16 @@ internal class TraitTest {
         val value = 1
         assertThat(traits.fold(value) { v, _ -> v }).isEqualTo(value)
     }
+
+    @Test
+    fun lowDeathRate() {
+        val lowDeathSpecies = defaultSpecies().evolve(LowDeathRate)
+        val species = defaultSpecies()
+        val biome = Biome(resources = Resources() * 0.0)
+            .settle(lowDeathSpecies)
+            .settle(species)
+            .process()
+        assertThat(biome.resources[species]).isGreaterThan(biome.resources[species])
+    }
+
 }

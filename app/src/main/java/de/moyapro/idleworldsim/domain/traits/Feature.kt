@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.traits
 
+import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.util.applyTo
@@ -19,7 +20,7 @@ open class Feature(private val name: String = "GenericFeature", private var trai
     }
 
     // TODO: Double to ValueObject, e.g. GrowthRate
-    fun influenceGrowthRate(growthRate: Double): Double {
+    fun influenceGrowthRate(growthRate: GrowthRate): GrowthRate {
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
     }
 
