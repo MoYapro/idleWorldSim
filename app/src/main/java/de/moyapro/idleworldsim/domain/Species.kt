@@ -1,13 +1,13 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.ResourceType.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
 import de.moyapro.idleworldsim.domain.valueObjects.HungerRate
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import de.moyapro.idleworldsim.util.applyTo
 
 /**

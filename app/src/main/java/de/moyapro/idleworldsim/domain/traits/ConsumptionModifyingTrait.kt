@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 abstract class ConsumptionModifyingTrait : Trait() {
     abstract fun influence(consumption: Consumption): Consumption

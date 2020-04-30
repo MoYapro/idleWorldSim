@@ -7,7 +7,7 @@ import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment
 import de.moyapro.idleworldsim.app.ui.biome.SpeciesFragment
 import de.moyapro.idleworldsim.app.ui.main.MainFragment
 import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.consumption.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 
 class MainActivity : AppCompatActivity(), ResourceFragment.OnResourceInteractionListener, SpeciesFragment.OnSpeciesInteractionListener {

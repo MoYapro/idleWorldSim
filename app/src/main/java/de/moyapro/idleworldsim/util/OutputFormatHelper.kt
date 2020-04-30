@@ -6,7 +6,7 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
-fun Population.toShortDecimalStr(displayFactor: Double = 1.0, roundFactor: Int = 100): String = value.toShortDecimalStr(displayFactor, roundFactor)
+fun Population.toShortDecimalStr(displayFactor: Double = 1.0, roundFactor: Int = 100): String = populationSize.toShortDecimalStr(displayFactor, roundFactor)
 
 fun Double.toShortDecimalStr(displayFactor: Double = 1.0, roundFactor: Int = 100): String {
     if (this == 0.0) return "0.0"

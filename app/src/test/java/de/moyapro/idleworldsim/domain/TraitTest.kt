@@ -1,8 +1,9 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.ResourceType.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,18 +18,18 @@ internal class TraitTest {
     fun increasedGrowthTrait() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(
-            species.process(resources).getPopulation(species)
+            species.process(resources).getPopulation(species).populationSize
         )
-            .isLessThan(species.evolve(GrowthTrait).process(resources).getPopulation(species))
+            .isLessThan(species.evolve(GrowthTrait).process(resources).getPopulation(species).populationSize)
     }
 
     @Test
     fun energySaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver).process(resources)[Energy])
     }
 
@@ -36,7 +37,7 @@ internal class TraitTest {
     fun waterSaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver).process(resources)[Water])
     }
 
@@ -44,7 +45,7 @@ internal class TraitTest {
     fun mineralSaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Minerals]).isLessThan(
             species.evolve(MineralSaver).process(resources)[Minerals]
         )
@@ -57,7 +58,7 @@ internal class TraitTest {
             .evolve(Predator(Meaty), ConsumerTrait(Water))
         assertThat(
             Biome().settle(wolf).settle(sheep)
-                .process().resources[wolf]
+                .process().resources[wolf].populationSize
         ).`as`("Wolf needs water")
             .isGreaterThan(1.0)
     }
@@ -73,8 +74,8 @@ internal class TraitTest {
             .settle(wolf)
             .process()
 
-        assertThat(biome.resources.getPopulation(gras)).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
-        assertThat(biome.resources.getPopulation(wolf)).`as`("Wolf cannot eat anything").isLessThan(1.0)
+        assertThat(biome.resources.getPopulation(gras).populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources.getPopulation(wolf).populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
     @Test
@@ -92,7 +93,7 @@ internal class TraitTest {
             .settle(lowDeathSpecies)
             .settle(species)
             .process()
-        assertThat(biome.resources[species]).isGreaterThan(biome.resources[species])
+        assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[species].populationSize)
     }
 
 }

@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 data class Consumption(
     val consumer: Species,
@@ -30,6 +31,6 @@ data class Consumption(
 
     fun isProvided(): Double {
         val canProvide = usableSupply.canProvide(needs)
-        return canProvide.sumBy { if (it) 1 else 0 } / canProvide.size.toDouble()
+        return canProvide.values.sumBy { if (it) 1 else 0 } / canProvide.size.toDouble()
     }
 }

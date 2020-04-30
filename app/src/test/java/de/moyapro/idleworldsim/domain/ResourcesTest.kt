@@ -1,8 +1,9 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.ResourceType.*
 import de.moyapro.idleworldsim.domain.consumption.ResourceFactor
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test
 internal class ResourcesTest {
     @Test
     fun resourceCanProvideAll() {
-        assertThat(Resources().canProvide(Resources()).all { it }).isTrue()
+        assertThat(Resources().canProvide(Resources()).all { it.value }).isTrue()
     }
 
     @Test
@@ -18,7 +19,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -28,7 +29,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -37,7 +38,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -46,7 +47,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))
-                .all { it }
+                .all { it.value }
         ).isTrue()
     }
 
@@ -55,7 +56,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))
-                .all { it }
+                .all { it.value }
         ).isTrue()
     }
 
@@ -64,7 +65,7 @@ internal class ResourcesTest {
         assertThat(
             Resources(Energy, 10.0)
                 .canProvide(Resources().setQuantity(Energy, 2.0))
-        .all { it }
+                .all { it.value }
         )
             .isTrue()
     }
@@ -138,7 +139,7 @@ internal class ResourcesTest {
 
     @Test
     fun setPolulation() {
-        val theValue = 345.678
+        val theValue = Population(345.678)
         val theSpecies = Species("X")
         assertThat(Resources().setPopulation(theSpecies, theValue)[theSpecies]).isEqualTo(theValue)
     }
@@ -158,5 +159,6 @@ internal class ResourcesTest {
         assertThat(resources1).isNotEqualTo(resources2)
         assertThat(resources1.hashCode()).isNotEqualTo(resources2.hashCode())
     }
+
 
 }
