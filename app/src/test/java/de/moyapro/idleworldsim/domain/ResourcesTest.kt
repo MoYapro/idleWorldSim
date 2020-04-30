@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.ResourceTypes.*
+import de.moyapro.idleworldsim.domain.consumption.ResourceType.*
 import de.moyapro.idleworldsim.domain.consumption.ResourceFactor
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import org.assertj.core.api.Assertions.assertThat

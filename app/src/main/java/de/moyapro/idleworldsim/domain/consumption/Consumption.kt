@@ -6,7 +6,7 @@ data class Consumption(
     val consumer: Species,
     var needs: Resources,
     var supply: Resources,
-    var usableSupply: Resources = Resources(DoubleArray(ResourceTypes.values().size))
+    var usableSupply: Resources = Resources(DoubleArray(ResourceType.values().size))
 ) {
     /**
      * use value objects for resources

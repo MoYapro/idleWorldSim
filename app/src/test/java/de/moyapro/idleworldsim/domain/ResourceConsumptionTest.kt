@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.ResourceTypes
-import de.moyapro.idleworldsim.domain.consumption.ResourceTypes.EvolutionPoints
+import de.moyapro.idleworldsim.domain.consumption.ResourceType
+import de.moyapro.idleworldsim.domain.consumption.ResourceType.EvolutionPoints
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.EvolutionBooster
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
@@ -29,7 +29,7 @@ internal class ResourceConsumptionTest {
     fun generateSpeciesWithTraits() {
         val species = defaultSpecies()
             .evolve(EvolutionBooster, ProduceResource(EvolutionPoints))
-        val availableResources = Resources(DoubleArray(ResourceTypes.values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 3.0 })
+        val availableResources = Resources(DoubleArray(ResourceType.values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 3.0 })
         assertThat(
             species.process(availableResources.setPopulation(species, 1.0))[EvolutionPoints]
         ).isEqualTo(

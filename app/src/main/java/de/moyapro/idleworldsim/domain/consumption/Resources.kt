@@ -2,49 +2,51 @@ package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.SpeciesConstants
-import de.moyapro.idleworldsim.domain.consumption.ResourceTypes.*
-import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.HungerRate
-import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.sum
+import de.moyapro.idleworldsim.domain.consumption.ResourceType.*
+import de.moyapro.idleworldsim.domain.valueObjects.*
 
-data class Resources(
-    val quantities: DoubleArray = DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 1000.0 },
-    val populations: MutableMap<Species, Population> = mutableMapOf()
+
+data class Resources private constructor(
+    private val quantities: MutableMap<ResourceType, Double> = mutableMapOf(*(ResourceType.values().map { Pair(it, if (it == EvolutionPoints) 0.0 else 1000.0) }).toTypedArray()),
+    private val populations: MutableMap<Species, Population> = mutableMapOf()
 ) {
-    constructor(quantitiesMap: Map<ResourceTypes, Double>) : this(mapToDoubleArray(quantitiesMap))
-
-    companion object {
-        private fun mapToDoubleArray(quantitiesMap: Map<ResourceTypes, Double>): DoubleArray {
-            return DoubleArray(values().size) { quantitiesMap[values()[it]] ?: 0.0 }
-        }
+    @Deprecated("Should use Resource value object instead")
+    constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
+    constructor(resource: ResourceType, quantity: Double = 1.0) : this() {
+        setQuantity(resource, quantity)
     }
 
-    operator fun get(species: Species) = getPopulation(species)
-
     fun getPopulation(species: Species) = populations.getOrDefault(species, Population(0.0))
-
     fun setPopulation(species: Species, population: Population = Population(1.0)): Resources {
         this.populations[species] = if (population < SpeciesConstants.MINIMAL_POPULATION) Population(0.0) else population
         return this
     }
 
-    operator fun get(resource: ResourceTypes) = quantities.getOrElse(resource.ordinal) { 0.0 }
-    operator fun set(resource: ResourceTypes, quantity: Double) = setQuantity(resource, quantity)
+    fun updatePopulation(species: Species, growthRate: GrowthRate): Resources {
+        return setPopulation(species, getPopulation(species) * growthRate)
+    }
 
+    fun updatePopulation(species: Species, hungerRate: HungerRate): Resources {
+        return setPopulation(species, getPopulation(species) * hungerRate)
+    }
 
-    fun setQuantity(resource: ResourceTypes, quantity: Double = 1.0): Resources {
-        if (resource.ordinal in this.quantities.indices)
-            this.quantities[resource.ordinal] = quantity
+    fun setQuantity(resource: ResourceType, quantity: Double = 1.0): Resources {
+        this.quantities[resource] = quantity
         return this
     }
 
-    override fun toString(): String {
-        return "Resources(${this.quantities.mapIndexed { index, quantity ->
-            values()[index].displayName + '=' + quantity.toBigDecimal()
-        }.joinToString(", ")})"
+    fun canProvide(resources: Resources): Map<ResourceType, Boolean> {
+        // negative value in resources means production
+        return this.quantities
+            .map {
+                Pair(it.key, resources.quantities[it.key] ?: 0.0 <= it.value)
+            }
+            .associate { it }
     }
 
+    operator fun get(species: Species) = getPopulation(species)
+    operator fun get(resource: ResourceType) = quantities.getOrElse(resource.ordinal) { 0.0 }
+    operator fun set(resource: ResourceType, quantity: Double) = setQuantity(resource, quantity)
     operator fun plus(otherResource: Resources) = Resources(
         this.quantities.zip(otherResource.quantities).map { it.first + it.second }.toDoubleArray(),
         (this.populations.asSequence() + otherResource.populations.asSequence())
@@ -78,23 +80,6 @@ data class Resources(
         }
     }
 
-    fun canProvide(resources: Resources): BooleanArray {
-        // negative value in resources means production
-        return this.quantities
-            .withIndex()
-            .map {
-                resources.quantities[it.index] <= it.value
-            }
-            .toBooleanArray()
-    }
-
-    fun updatePopulation(species: Species, growthRate: GrowthRate): Resources {
-        return setPopulation(species, getPopulation(species) * growthRate)
-    }
-    fun updatePopulation(species: Species, hungerRate: HungerRate): Resources {
-        return setPopulation(species, getPopulation(species) * hungerRate)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -117,11 +102,16 @@ data class Resources(
         it.key
     }.toTypedArray()
 
-    operator fun times(population: Population): Resources = this. * population
-
-    constructor(resource: Resource, quantity: Double = 1.0) : this() {
-        setQuantity(resource, quantity)
+    override fun toString(): String {
+        return "Resources(${this.quantities.mapIndexed { index, quantity ->
+            values()[index].displayName + '=' + quantity.toBigDecimal()
+        }.joinToString(", ")})"
     }
+
+
+    operator fun times(population: Population): Resources = this * population
+
 }
 
 fun emptyResources(): Resources = Resources(DoubleArray(values().size) { 0.0 })
+fun defaultResources():

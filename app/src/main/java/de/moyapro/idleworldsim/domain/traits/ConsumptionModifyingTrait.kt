@@ -1,13 +1,13 @@
 package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.ResourceTypes
+import de.moyapro.idleworldsim.domain.consumption.ResourceType
 
 abstract class ConsumptionModifyingTrait : Trait() {
     abstract fun influence(consumption: Consumption): Consumption
 }
 
-class ConsumerTrait(private val influencedResource: ResourceTypes) : ConsumptionModifyingTrait() {
+class ConsumerTrait(private val influencedResource: ResourceType) : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
         return consumption
