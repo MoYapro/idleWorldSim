@@ -114,6 +114,25 @@ internal class ResourcesTest {
     }
 
     @Test
+    fun plusSpecies() {
+        val theSpecies = Species("species1")
+        val initialSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        val additionalSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        assertThat((initialSpeciesPopulation + additionalSpeciesPopulation)[theSpecies])
+            .isEqualTo(Population(10.0))
+    }
+
+    @Test
+    fun minusSpecies() {
+        val theSpecies = Species("species1")
+        val initialSpeciesPopulation = Resources(theSpecies, Population(7.0))
+        val toRemovSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        assertThat((initialSpeciesPopulation - toRemovSpeciesPopulation)[theSpecies])
+            .isEqualTo(Population(2.0))
+    }
+
+
+    @Test
     fun minusFromEmptyResources() {
         assertThat(
             emptyResources() - Resources(Water, 5.1)

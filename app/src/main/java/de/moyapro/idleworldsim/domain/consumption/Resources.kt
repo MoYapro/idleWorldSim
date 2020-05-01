@@ -14,7 +14,7 @@ data class Resources(
     @Deprecated("Should use Resource value object instead")
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
     constructor(resource: ResourceType, quantity: Double = 1.0) : this(quantities = mutableMapOf(Pair(resource, quantity)))
-
+    constructor(species: Species, population: Population) : this(mutableMapOf(), mutableMapOf(Pair(species, population)))
     constructor(doubleArrayOf: DoubleArray) : this(doubleArrayOf.withIndex().map { Pair(ResourceType.values()[it.index], it.value) }.associate { it }.toMutableMap())
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMutableMap())
 
@@ -72,11 +72,17 @@ data class Resources(
 
 
     operator fun minus(otherResource: Resources) = Resources(
-        subtract(this.quantities, otherResource.quantities),
-        this.populations //- otherResource.populations
+        subtractQuantities(this.quantities, otherResource.quantities),
+        subtractPopulations(this.populations, otherResource.populations)
     )
 
-    private fun subtract(initialAmount: MutableMap<ResourceType, Double>, toBeRemoved: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+    private fun subtractPopulations(initialPopulation: MutableMap<Species, Population>, toBeRemoved: MutableMap<Species, Population>): MutableMap<Species, Population> {
+        val amountCopy = HashMap(initialPopulation)
+        toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: Population(0.0)) - it.value }
+        return amountCopy
+    }
+
+    private fun subtractQuantities(initialAmount: MutableMap<ResourceType, Double>, toBeRemoved: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
         val amountCopy = HashMap(initialAmount)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: 0.0) - it.value }
         return amountCopy
@@ -121,7 +127,7 @@ data class Resources(
 
     override fun toString(): String {
         return "Resources(${this.quantities.map { (resourceType, quantity) ->
-            resourceType.displayName + '=' + quantity.toBigDecimal()
+            resourceType.name + '=' + quantity.toBigDecimal()
         }.joinToString(", ")})"
     }
 

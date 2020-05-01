@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.applyTo
 import de.moyapro.idleworldsim.util.toShortDecimalStr
@@ -8,8 +9,8 @@ import java.util.*
 
 data class Biome(
     val name: String = "DefaultBiome",
-    var resources: Resources = Resources(),
-    var generation: Resources = Resources(),
+    var resources: Resources = emptyResources(),
+    var generation: Resources = emptyResources(),
     private val speciesList: MutableCollection<Species> = mutableListOf()
 ) {
     class BiomeProcessObservable : Observable() {
