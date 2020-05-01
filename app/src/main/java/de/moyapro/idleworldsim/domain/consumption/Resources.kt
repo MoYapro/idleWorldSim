@@ -4,32 +4,31 @@ import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.SpeciesConstants
 import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
+import java.util.*
 
 
-data class Resources constructor(
+data class Resources(
     val quantities: MutableMap<ResourceType, Double> = mutableMapOf(*(values().map { Pair(it, if (it == EvolutionPoints) 0.0 else 1000.0) }).toTypedArray()),
     val populations: MutableMap<Species, Population> = mutableMapOf()
 ) {
     @Deprecated("Should use Resource value object instead")
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
-    constructor(resource: ResourceType, quantity: Double = 1.0) : this() {
-        setQuantity(resource, quantity)
-    }
+    constructor(resource: ResourceType, quantity: Double = 1.0) : this(quantities = mutableMapOf(Pair(resource, quantity)))
 
     constructor(doubleArrayOf: DoubleArray) : this(doubleArrayOf.withIndex().map { Pair(ResourceType.values()[it.index], it.value) }.associate { it }.toMutableMap())
+    constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMutableMap())
 
-    fun getPopulation(species: Species) = populations.getOrDefault(species, Population(0.0))
     fun setPopulation(species: Species, population: Population = Population(1.0)): Resources {
         this.populations[species] = if (population < SpeciesConstants.MINIMAL_POPULATION) Population(0.0) else population
         return this
     }
 
     fun updatePopulation(species: Species, growthRate: GrowthRate): Resources {
-        return setPopulation(species, getPopulation(species) * growthRate)
+        return setPopulation(species, this.get(species) * growthRate)
     }
 
     fun updatePopulation(species: Species, hungerRate: HungerRate): Resources {
-        return setPopulation(species, getPopulation(species) * hungerRate)
+        return setPopulation(species, this.get(species) * hungerRate)
     }
 
     fun setQuantity(resource: ResourceType, quantity: Double = 1.0): Resources {
@@ -46,21 +45,42 @@ data class Resources constructor(
             .associate { it }
     }
 
-    operator fun get(species: Species) = getPopulation(species)
+    operator fun get(species: Species) = populations.getOrDefault(species, Population(0.0))
     operator fun get(resource: ResourceType) = quantities.getOrElse(resource) { 0.0 }
     operator fun set(resource: ResourceType, quantity: Double) = setQuantity(resource, quantity)
-    operator fun plus(otherResource: Resources) = Resources(
-        this.quantities,// - otherResource.quantities,
-        (this.populations.asSequence() + otherResource.populations.asSequence())
-            .groupBy({ it.key }, { it.value })
-            .mapValues { (_, values) -> values.sum() }
+    operator fun plus(otherResource: Resources): Resources {
+        return Resources(
+            calculatePlus(this.quantities, otherResource.quantities),
+            (this.populations.asSequence() + otherResource.populations.asSequence())
+                .groupBy({ it.key }, { it.value })
+                .mapValues { (_, values) -> values.sum() }
+                .toMutableMap()
+        )
+
+    }
+
+    private fun calculatePlus(quantities1: MutableMap<ResourceType, Double>, quantities2: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+        val newList = LinkedList(quantities1.entries)
+        newList.addAll(quantities2.entries)
+        return newList.groupBy { it.key }
+            .map { it -> Pair(it.key, it.value.sumByDouble { it.value }) }
+            .associate { it }
             .toMutableMap()
-    )
+
+
+    }
+
 
     operator fun minus(otherResource: Resources) = Resources(
-        this.quantities,// - otherResource.quantities,
+        subtract(this.quantities, otherResource.quantities),
         this.populations //- otherResource.populations
     )
+
+    private fun subtract(initialAmount: MutableMap<ResourceType, Double>, toBeRemoved: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+        val amountCopy = HashMap(initialAmount)
+        toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: 0.0) - it.value }
+        return amountCopy
+    }
 
     operator fun times(scalar: Double) = Resources(
         this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMutableMap(),
@@ -106,20 +126,8 @@ data class Resources constructor(
     }
 
 
-    operator fun times(population: Population): Resources = this * population
+    operator fun times(population: Population): Resources = this * population.populationSize
 
 }
 
-fun minus(resources: MutableMap<ResourceType, Double>, otherResources: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
-    return resources
-        .map { (resourceType, amount) -> Pair(resourceType, amount - (otherResources[resourceType] ?: 0.0)) }
-        .associate { it }
-        .toMutableMap()
-}
-
-fun MutableMap<Species, Population>.minuss(otherPopulation: MutableMap<Species, Population>): MutableMap<Species, Population> {
-    return this
-        .map { (species, amount) -> Pair(species, amount - (otherPopulation[species] ?: Population(0.0))) }
-        .associate { it }
-        .toMutableMap()
-}
+fun emptyResources() = Resources(mutableMapOf(), mutableMapOf())

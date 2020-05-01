@@ -2,7 +2,9 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.ResourceFactor
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -71,22 +73,52 @@ internal class ResourcesTest {
     }
 
     @Test
-    fun plus() {
+    fun plusSingle() {
         assertThat(
-            Resources(doubleArrayOf(1.0, 1.0, 1.0, 1.0))
-                    + Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
+            Resources(Water, 1.0)
+                    + Resources(Water, 2.1)
         ).isEqualTo(
-            Resources(doubleArrayOf(3.1, 3.0, 3.0, 3.0))
+            Resources(Water, 3.1)
         )
     }
 
     @Test
-    fun minus() {
+    fun plusMultiple() {
+        val initialResourcesList = listOf(Resource(Water, 9.112), Resource(Minerals, 4.123))
+        val additionalResourcesList = listOf(Resource(Water, 0.888), Resource(Oxygen, 6.612))
+        val expectedAddition = listOf(Resource(Water, 10.0), Resource(Minerals, 4.123), Resource(Oxygen, 6.612))
         assertThat(
-            Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
-                    + Resources(doubleArrayOf(-1.0, -1.0, -1.0, -1.0))
+            Resources(initialResourcesList) + Resources(additionalResourcesList)
         ).isEqualTo(
-            Resources(doubleArrayOf(1.1, 1.0, 1.0, 1.0))
+            Resources(expectedAddition)
+        )
+    }
+
+    @Test
+    fun singleConstructor() {
+        val setQuantity = 3.14159
+        val testResources = Resources(Minerals, setQuantity)
+        assertThat(testResources[Minerals]).isEqualTo(setQuantity)
+        assertThat(testResources[Water]).isEqualTo(0.0)
+        assertThat(testResources.quantities.size).`as`("Init with one resource should contain only that resource").isEqualTo(1)
+    }
+
+
+    @Test
+    fun minusSingle() {
+        assertThat(
+            Resources(Water, 10.0) - Resources(Water, 5.1)
+        ).isEqualTo(
+            Resources(Water, 4.9)
+        )
+    }
+
+    @Test
+    fun minusFromEmptyResources() {
+        assertThat(
+            emptyResources() - Resources(Water, 5.1)
+        ).isEqualTo(
+            Resources(Water, -5.1)
         )
     }
 
@@ -134,7 +166,7 @@ internal class ResourcesTest {
     @Test
     fun setDefaultPolulation() {
         val theSpecies = Species("X")
-        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(1.0)
+        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(Population(1.0))
     }
 
     @Test

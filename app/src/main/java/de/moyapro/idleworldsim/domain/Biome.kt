@@ -50,7 +50,7 @@ data class Biome(
 
     private fun getStatusText(species: Species): String {
         return species.name + ": " + (species.getPopulationIn(this)).toShortDecimalStr(1E6) +
-                " -> " + (species.process(this.resources).getPopulation(species)).toShortDecimalStr(1E6)
+                " -> " + (species.process(this.resources).get(species)).toShortDecimalStr(1E6)
     }
 
     fun getSpecies(): Array<Species> = resources.getSpecies()

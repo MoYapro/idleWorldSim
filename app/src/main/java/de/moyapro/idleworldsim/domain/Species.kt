@@ -23,7 +23,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     private fun needsPerIndividual() = features.applyTo(Resources(DoubleArray(values().size) { 0.0 }), Feature::influenceNeed)
 
     fun getPopulationIn(biome: Biome): Population {
-        return biome.resources.getPopulation(this)
+        return biome.resources.get(this)
     }
 
     fun process(totalSupplyFromBiome: Resources): Resources {

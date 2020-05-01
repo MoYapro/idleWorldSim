@@ -5,6 +5,7 @@ import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.Meaty
 import de.moyapro.idleworldsim.domain.traits.Predator
 import de.moyapro.idleworldsim.domain.traits.sunlightConsumer
+import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -58,8 +59,8 @@ internal class BiomeTest {
     fun speciesShouldShrinkOnResourceShortage() {
         val species1 = defaultSpecies()
         val species2 = defaultSpecies()
-        val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
-        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
+        val usualGrowthResult = Biome().settle(species1).process().resources.get(species1)
+        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.get(species2)
         assertThat(cappedGrowthResult.populationSize).isLessThan(usualGrowthResult.populationSize)
     }
 
@@ -98,7 +99,7 @@ internal class BiomeTest {
             .settle(predator)
             .settle(prey)
             .process()
-        assertThat(predator.getPopulationIn(biome)).isEqualTo(1.1)
+        assertThat(predator.getPopulationIn(biome)).isEqualTo(Population(1.1))
         assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(1.1)
     }
 
@@ -113,7 +114,7 @@ internal class BiomeTest {
             .settle(prey)
             .settle(uninvolved)
             .process()
-        assertThat(predator.getPopulationIn(biome)).isEqualTo(1.1)
+        assertThat(predator.getPopulationIn(biome)).isEqualTo(Population(1.1))
         assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(uninvolved.getPopulationIn(biome).populationSize)
     }
 

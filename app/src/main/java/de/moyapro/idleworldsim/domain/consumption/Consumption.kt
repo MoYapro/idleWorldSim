@@ -22,7 +22,7 @@ data class Consumption(
         return this
     }
 
-    fun getPopulation(species: Species = consumer) = supply.getPopulation(species)
+    fun getPopulation(species: Species = consumer) = supply.get(species)
 
     fun consume(): Resources {
         //TODO should ensure that supply is not exeeded

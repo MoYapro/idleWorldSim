@@ -13,8 +13,8 @@ class SpeciesGrowAndDieTest {
         assertThat(
             species.process(
                 Resources().setPopulation(species, Population(1.0))
-            ).getPopulation(species)
-        ).isEqualTo(1.1)
+            ).get(species)
+        ).isEqualTo(Population(1.1))
     }
 
     @Test
@@ -24,7 +24,7 @@ class SpeciesGrowAndDieTest {
             species.process(
                 (Resources() * 0.0)
                     .setPopulation(species, Population(1.0))
-            ).getPopulation(species)
+            ).get(species)
                 .populationSize
         ).isLessThan(1.0)
     }

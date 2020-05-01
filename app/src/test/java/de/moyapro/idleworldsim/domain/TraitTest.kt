@@ -20,9 +20,9 @@ internal class TraitTest {
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
         assertThat(
-            species.process(resources).getPopulation(species).populationSize
+            species.process(resources).get(species).populationSize
         )
-            .isLessThan(species.evolve(GrowthTrait).process(resources).getPopulation(species).populationSize)
+            .isLessThan(species.evolve(GrowthTrait).process(resources).get(species).populationSize)
     }
 
     @Test
@@ -74,8 +74,8 @@ internal class TraitTest {
             .settle(wolf)
             .process()
 
-        assertThat(biome.resources.getPopulation(gras).populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
-        assertThat(biome.resources.getPopulation(wolf).populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
+        assertThat(biome.resources.get(gras).populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources.get(wolf).populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
     @Test
