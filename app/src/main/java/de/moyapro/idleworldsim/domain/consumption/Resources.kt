@@ -23,13 +23,16 @@ data class Resources(
         return this
     }
 
-    fun updatePopulation(species: Species, growthRate: GrowthRate): Resources {
-        return setPopulation(species, this.get(species) * growthRate)
-    }
+    fun updatePopulation(species: Species, growthRate: GrowthRate) =
+        setPopulation(species, this[species] * growthRate)
 
-    fun updatePopulation(species: Species, hungerRate: HungerRate): Resources {
-        return setPopulation(species, this.get(species) * hungerRate)
-    }
+
+    fun updatePopulation(species: Species, hungerRate: HungerRate) =
+        setPopulation(species, this[species] * hungerRate)
+
+
+    fun updatePopulation(species: Species, deathRate: DeathRate) =
+        setPopulation(species, this[species] * deathRate)
 
     fun setQuantity(resource: ResourceType, quantity: Double = 1.0): Resources {
         this.quantities[resource] = quantity
@@ -128,7 +131,7 @@ data class Resources(
     override fun toString(): String {
         return "Resources(${this.quantities.map { (resourceType, quantity) ->
             resourceType.name + '=' + quantity.toBigDecimal()
-        }.joinToString(", ")})"
+        }.joinToString(", ")})[${this.populations.map { (species, population) -> "$species:${population.populationSize.toBigDecimal()}" }}]"
     }
 
 

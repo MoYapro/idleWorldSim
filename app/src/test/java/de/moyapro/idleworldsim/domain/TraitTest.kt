@@ -69,13 +69,13 @@ internal class TraitTest {
         val gras = Species("Gras")
             .evolve(Feature.sunlightConsumer())
         val wolf = Species("Wolf").evolve(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
-        val biome = Biome()
+        val biome = Biome("Earth", Resources())
             .settle(gras)
             .settle(wolf)
             .process()
 
-        assertThat(biome.resources.get(gras).populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
-        assertThat(biome.resources.get(wolf).populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
+        assertThat(biome.resources[gras].populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources[wolf].populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
     @Test
@@ -86,14 +86,17 @@ internal class TraitTest {
     }
 
     @Test
-    fun lowDeathRate() {
+    fun lowOrHighDeathRate() {
         val lowDeathSpecies = defaultSpecies().evolve(LowDeathRate)
+        val highDeathSpecies = defaultSpecies().evolve(HighDeathRate)
         val species = defaultSpecies()
-        val biome = Biome(resources = Resources() * 0.0)
+        val biome = Biome()
             .settle(lowDeathSpecies)
+            .settle(highDeathSpecies)
             .settle(species)
             .process()
-        assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[species].populationSize)
+        assertThat(biome.resources[lowDeathSpecies].populationSize).isGreaterThan(biome.resources[species].populationSize)
+        assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[highDeathSpecies].populationSize)
     }
 
 }

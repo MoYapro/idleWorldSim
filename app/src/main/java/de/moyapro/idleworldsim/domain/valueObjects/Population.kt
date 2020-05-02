@@ -5,6 +5,7 @@ class Population(val populationSize: Double) {
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
     operator fun times(growthRate: GrowthRate) = Population(populationSize * growthRate.rate)
     operator fun times(hungerRate: HungerRate) = Population(populationSize * hungerRate.rate)
+    operator fun times(deathRate: DeathRate) = Population(populationSize * deathRate.rate)
     operator fun minus(other: Population) = Population(populationSize - other.populationSize)
     operator fun div(divider: Double) = Population(populationSize / divider)
     operator fun times(scalar: Double) = Population(populationSize * scalar)
@@ -15,6 +16,10 @@ class Population(val populationSize: Double) {
 
     override fun hashCode(): Int {
         return populationSize.hashCode()
+    }
+
+    override fun toString(): String {
+        return "Population[$populationSize]"
     }
 
 }

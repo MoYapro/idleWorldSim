@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,8 +14,8 @@ class SpeciesGrowAndDieTest {
         assertThat(
             species.process(
                 Resources().setPopulation(species, Population(1.0))
-            ).get(species)
-        ).isEqualTo(Population(1.1))
+            )[species].populationSize
+        ).isGreaterThan(1.0)
     }
 
     @Test
@@ -22,9 +23,8 @@ class SpeciesGrowAndDieTest {
         val species = defaultSpecies()
         assertThat(
             species.process(
-                (Resources() * 0.0)
-                    .setPopulation(species, Population(1.0))
-            ).get(species)
+                emptyResources().setPopulation(species, Population(1.0))
+            )[species]
                 .populationSize
         ).isLessThan(1.0)
     }

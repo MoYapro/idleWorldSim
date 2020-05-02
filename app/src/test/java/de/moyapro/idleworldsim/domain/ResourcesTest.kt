@@ -197,8 +197,8 @@ internal class ResourcesTest {
 
     @Test
     fun hashCodeEquals() {
-        val resources1 = Resources().setQuantity(Minerals, 13.0)
-        val resources2 = Resources().setQuantity(Minerals, 13.0)
+        val resources1 = Resources(listOf(Resource(Water, 4.1), Resource(Minerals, 13.0)))
+        val resources2 = Resources(listOf(Resource(Minerals, 13.0), Resource(Water, 4.1)))
         assertThat(resources1).isEqualTo(resources2)
         assertThat(resources1.hashCode()).isEqualTo(resources2.hashCode())
     }
