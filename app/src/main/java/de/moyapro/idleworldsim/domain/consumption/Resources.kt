@@ -15,7 +15,9 @@ data class Resources(
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
     constructor(resource: ResourceType, quantity: Double = 1.0) : this(quantities = mutableMapOf(Pair(resource, quantity)))
     constructor(species: Species, population: Population) : this(mutableMapOf(), mutableMapOf(Pair(species, population)))
-    constructor(doubleArrayOf: DoubleArray) : this(doubleArrayOf.withIndex().map { Pair(ResourceType.values()[it.index], it.value) }.associate { it }.toMutableMap())
+
+    @Deprecated("Should use Resource value object instead")
+    constructor(resources: DoubleArray) : this(resources.mapIndexed { i, value -> Pair(values()[i], value) }.associate { it }.toMutableMap())
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMutableMap())
 
     fun setPopulation(species: Species, population: Population = Population(1.0)): Resources {
