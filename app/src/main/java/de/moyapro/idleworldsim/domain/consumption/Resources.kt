@@ -27,8 +27,8 @@ data class Resources(
         setPopulation(species, this[species] * growthRate)
 
 
-    fun updatePopulation(species: Species, hungerRate: HungerRate) =
-        setPopulation(species, this[species] * hungerRate)
+    fun updatePopulation(species: Species, starvationRate: StarvationRate) =
+        setPopulation(species, this[species] * starvationRate)
 
 
     fun updatePopulation(species: Species, deathRate: DeathRate) =

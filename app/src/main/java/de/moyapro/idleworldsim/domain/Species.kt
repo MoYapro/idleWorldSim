@@ -5,9 +5,9 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.HungerRate
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
+import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 import de.moyapro.idleworldsim.util.applyTo
 
 /**
@@ -91,6 +91,6 @@ fun defaultSpecies(name: String = "DefaultSpecies"): Species {
 object SpeciesConstants {
     val GROWTH_RATE = GrowthRate(1.1)
     val DEATH_RATE = DeathRate(.95)
-    val HUNGER_RATE = HungerRate(.5)
+    val HUNGER_RATE = StarvationRate(.5)
     val MINIMAL_POPULATION = Population(1E-6)
 }
