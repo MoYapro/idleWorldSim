@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain.traits
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 /**
@@ -19,14 +20,14 @@ class Predator(private val preyTrait: Trait) : SupplyModifyingTrait() {
         val huntingEfficiency = 0.01
         val predatorPopulation = consumption.getPopulation()
         val prey = findPrey(consumption.supply.populations)
-        val totalNumberOfPreyInBiome: Population = Population(prey.values.map { it.populationSize }.sum())
+        val totalNumberOfPreyInBiome = Population(prey.values.map { it.populationSize }.sum())
         val totalIndividualsEaten = totalNumberOfPreyInBiome * (predatorPopulation.populationSize * (1 - huntingEfficiency))
         val eatenPerSpecies = prey
             .map { (species, preyPopulation) -> Pair(species, preyPopulation - (preyPopulation / totalNumberOfPreyInBiome.populationSize * totalIndividualsEaten.populationSize)) }
 
         if (prey.isNotEmpty()) {
-            consumption.needs[ResourceType.Minerals] = 0.0
-            consumption.needs[ResourceType.Energy] = 0.0
+            consumption.needs[ResourceType.Minerals] = Resource(ResourceType.Minerals, 0.0)
+            consumption.needs[ResourceType.Energy] = Resource(ResourceType.Energy, 0.0)
             eatenPerSpecies.forEach { leftoverPrey ->
                 consumption.needs.setPopulation(leftoverPrey.first, leftoverPrey.second)
             }

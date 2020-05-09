@@ -32,12 +32,11 @@ data class Resources(
     fun updatePopulation(species: Species, hungerRate: HungerRate) =
         setPopulation(species, this[species] * hungerRate)
 
-
     fun updatePopulation(species: Species, deathRate: DeathRate) =
         setPopulation(species, this[species] * deathRate)
 
-    fun setQuantity(resource: ResourceType, quantity: Double = 1.0): Resources {
-        this.quantities[resource] = quantity
+    fun setQuantity(resource: Resource): Resources {
+        this.quantities[resource.resourceType] = resource.amount
         return this
     }
 
@@ -51,8 +50,13 @@ data class Resources(
     }
 
     operator fun get(species: Species) = populations.getOrDefault(species, Population(0.0))
-    operator fun get(resource: ResourceType) = quantities.getOrElse(resource) { 0.0 }
-    operator fun set(resource: ResourceType, quantity: Double) = setQuantity(resource, quantity)
+    operator fun get(resource: ResourceType) = Resource(resource, quantities.getOrElse(resource) { 0.0 })
+    operator fun set(resource: ResourceType, quantity: Resource): Resources {
+        if (resource != quantity.resourceType) {
+            throw IllegalArgumentException("Not allowed to assign with wrong resourceType. Expected $resource, but was ${quantity.resourceType}")
+        }
+        return setQuantity(quantity)
+    }
     operator fun plus(otherResource: Resources): Resources {
         return Resources(
             calculatePlus(this.quantities, otherResource.quantities),
@@ -100,10 +104,10 @@ data class Resources(
 
     operator fun times(factor: ResourceFactor): Resources {
         return this.copy().let {
-            it[EvolutionPoints] *= factor.evolutionPointsFactor
-            it[Energy] *= factor.energyFactor
-            it[Water] *= factor.waterFactor
-            it[Minerals] *= factor.mineralsFactor
+            it[EvolutionPoints] = it[EvolutionPoints] * factor.evolutionPointsFactor
+            it[Energy] = it[Energy] * factor.energyFactor
+            it[Water] = it[Water] * factor.waterFactor
+            it[Minerals] = it[Minerals] * factor.mineralsFactor
             it
         }
     }

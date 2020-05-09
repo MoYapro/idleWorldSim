@@ -20,9 +20,9 @@ internal class TraitTest {
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
         assertThat(
-            species.process(resources).get(species).populationSize
+            species.process(resources)[species].populationSize
         )
-            .isLessThan(species.evolve(GrowthTrait).process(resources).get(species).populationSize)
+            .isLessThan(species.evolve(GrowthTrait).process(resources)[species].populationSize)
     }
 
     @Test
@@ -30,7 +30,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver).process(resources)[Energy])
+        assertThat(species.process(resources)[Energy].amount).isLessThan(species.evolve(EnergySaver).process(resources)[Energy].amount)
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver).process(resources)[Water])
+        assertThat(species.process(resources)[Water].amount).isLessThan(species.evolve(WaterSaver).process(resources)[Water].amount)
     }
 
     @Test
@@ -46,8 +46,8 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Minerals]).isLessThan(
-            species.evolve(MineralSaver).process(resources)[Minerals]
+        assertThat(species.process(resources)[Minerals].amount).isLessThan(
+            species.evolve(MineralSaver).process(resources)[Minerals].amount
         )
     }
 

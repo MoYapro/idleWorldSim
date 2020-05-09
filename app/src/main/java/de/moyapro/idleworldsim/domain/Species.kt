@@ -3,10 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
-import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.HungerRate
-import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import de.moyapro.idleworldsim.util.applyTo
 
@@ -21,7 +18,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     private fun deathRate() = features.applyTo(SpeciesConstants.DEATH_RATE, Feature::influenceDyingRate)
 
 
-    private fun needsPerIndividual() = features.applyTo(Resources(DoubleArray(values().size) { 0.0 }), Feature::influenceNeed)
+    private fun needsPerIndividual() = features.applyTo(Resources(mutableMapOf()), Feature::influenceNeed)
 
     fun getPopulationIn(biome: Biome): Population {
         return biome.resources.get(this)
@@ -69,6 +66,12 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
 
     fun hasTrait(trait: Trait): Boolean {
         return features.any { it.hasTrait(trait) }
+    }
+
+    fun needs(population: Population): Need {
+        val individualNeeds = this.needsPerIndividual()
+        val r: Resource = individualNeeds[Water]
+        return Need(Resource(Water, population.populationSize), Pressure(0.0))
     }
 
 }

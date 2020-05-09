@@ -14,7 +14,7 @@ internal class ResourceConsumptionTest {
     @Test
     fun generateDefault() {
         assertThat(
-            defaultSpecies().process(Resources(doubleArrayOf(0.0, 1.0, 1.0, 1.0)))[EvolutionPoints]
+            defaultSpecies().process(Resources(doubleArrayOf(0.0, 1.0, 1.0, 1.0)))[EvolutionPoints].amount
         ).isEqualTo(1.0)
     }
 
@@ -50,7 +50,7 @@ internal class ResourceConsumptionTest {
             .evolve(EvolutionBooster, ProduceResource(EvolutionPoints))
         val availableResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 0.0 else 3.0 })
         assertThat(
-            species.process(availableResources.setPopulation(species, Population(1.0)))[EvolutionPoints]
+            species.process(availableResources.setPopulation(species, Population(1.0)))[EvolutionPoints].amount
         ).isEqualTo(
             1.15,
             defaultOffset()

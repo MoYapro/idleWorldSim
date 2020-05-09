@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.valueObjects.Need
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.applyTo
 import de.moyapro.idleworldsim.util.toShortDecimalStr
@@ -31,9 +32,9 @@ data class Biome(
         return this
     }
 
-    fun settle(species: Species): Biome {
+    fun settle(species: Species, population: Population = Population(1.0)): Biome {
         this.speciesList.add(species)
-        this.resources.setPopulation(species, Population(1.0))
+        this.resources.setPopulation(species, population)
         onBiomeProcess.notifyChange()
         return this
     }
@@ -55,4 +56,9 @@ data class Biome(
     }
 
     fun getSpecies(): Array<Species> = resources.getSpecies()
+    fun calculateNeeds(): Map<Species, Need> {
+        return this.resources.populations
+            .map { (species, population) -> Pair(species, species.needs(population)) }
+            .associate { it }
+    }
 }
