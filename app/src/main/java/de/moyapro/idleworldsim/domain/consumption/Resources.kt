@@ -57,6 +57,7 @@ data class Resources(
         }
         return setQuantity(quantity)
     }
+
     operator fun plus(otherResource: Resources): Resources {
         return Resources(
             calculatePlus(this.quantities, otherResource.quantities),
@@ -130,9 +131,9 @@ data class Resources(
         return result
     }
 
-    fun getSpecies(): Array<Species> = populations.map {
+    fun getSpecies(): List<Species> = populations.map {
         it.key
-    }.toTypedArray()
+    }
 
     override fun toString(): String {
         return "Resources(${this.quantities.map { (resourceType, quantity) ->
@@ -142,7 +143,7 @@ data class Resources(
 
 
     operator fun times(population: Population): Resources = this * population.populationSize
-
+    fun getQuantities(): Iterable<Resource> = quantities.map { (resourceType, amount) -> Resource(resourceType, amount) }
 }
 
 fun emptyResources() = Resources(mutableMapOf(), mutableMapOf())

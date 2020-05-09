@@ -2,9 +2,9 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
-import de.moyapro.idleworldsim.domain.valueObjects.Need
+import de.moyapro.idleworldsim.domain.valueObjects.AquireSkill
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.util.applyTo
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
 
@@ -25,11 +25,28 @@ data class Biome(
 
     fun process(): Biome {
         this.resources += generation
-        this.resources = speciesList
-            .shuffled()
-            .applyTo(resources, Species::process)
+//        calculate Map<Species, Map<ResourceType,  AquireSkill>> to distribute available resources
+//        determin Map<Species, Resources> how much is the species able to consume
+
+        val availableResourcePerSpecies: Map<Species, Resources> = getAvailableResourcesPerSpecies()
+        speciesList
+            .forEach { it.process(availableResourcePerSpecies[it] ?: emptyResources()) }
         onBiomeProcess.notifyChange()
         return this
+    }
+
+    fun getAvailableResourcesPerSpecies(): Map<Species, Resources> {
+        return this.resources.populations.entries
+            .map { (species, population) ->
+                Pair(
+                    species,
+                    species.needsPerIndividual() * population
+                )
+            }.associate { it }
+    }
+
+    private operator fun get(species: Species, resourceType: ResourceType): AquireSkill {
+        return AquireSkill(1.0)
     }
 
     fun settle(species: Species, population: Population = Population(1.0)): Biome {
@@ -55,10 +72,5 @@ data class Biome(
                 " -> " + (species.process(this.resources).get(species)).toShortDecimalStr(1E6)
     }
 
-    fun getSpecies(): Array<Species> = resources.getSpecies()
-    fun calculateNeeds(): Map<Species, Need> {
-        return this.resources.populations
-            .map { (species, population) -> Pair(species, species.needs(population)) }
-            .associate { it }
-    }
+    fun getSpecies() = resources.getSpecies()
 }
