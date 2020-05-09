@@ -79,7 +79,7 @@ internal class BiomeTest {
         val biomeName = "DefaultBiome${Math.random()}"
         val expectedBiomeStatus = """
             BiomeStatus: $biomeName
-            Resources(Oxygen=1000.0, Minerals=999.0, Water=999.0, EvolutionPoints=1.0, Energy=999.0)[[Species[Species1]:1.045, Species[Species2]:1.0]]
+            Resources(EvolutionPoints=1.0, Water=999.0, Oxygen=1000.0, Minerals=999.0, Energy=999.0)[[Species[Species1]:1.045, Species[Species2]:1.0]]
             Species1: 1.04M -> 1.09M
             Species2: 1.0M -> 1.04M
             """.trimIndent()
