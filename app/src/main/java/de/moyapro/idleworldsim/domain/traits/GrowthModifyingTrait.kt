@@ -2,11 +2,11 @@ package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.HungerRate
+import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 
 open class GrowthModifyingTrait : Trait() {
     open fun influenceGrowth(growthRate: GrowthRate): GrowthRate = growthRate
-    open fun influenceHunger(hungerRate: HungerRate): HungerRate = hungerRate
+    open fun influenceHunger(starvationRate: StarvationRate): StarvationRate = starvationRate
     open fun influenceDying(deathRate: DeathRate): DeathRate = deathRate
 }
 
