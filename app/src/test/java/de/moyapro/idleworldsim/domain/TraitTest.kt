@@ -87,8 +87,8 @@ internal class TraitTest {
 
     @Test
     fun lowOrHighDeathRate() {
-        val lowDeathSpecies = defaultSpecies().evolve(LowDeathRate)
-        val highDeathSpecies = defaultSpecies().evolve(HighDeathRate)
+        val lowDeathSpecies = defaultSpecies("LowDeath").evolve(LowDeathRate)
+        val highDeathSpecies = defaultSpecies("HighDeath").evolve(HighDeathRate)
         val species = defaultSpecies()
         val biome = Biome()
             .settle(lowDeathSpecies)

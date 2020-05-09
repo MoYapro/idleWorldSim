@@ -70,9 +70,25 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     fun hasTrait(trait: Trait): Boolean {
         return features.any { it.hasTrait(trait) }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (null == other || other !is Species) {
+            return false
+        }
+
+        val nameEqual = name == other.name
+        val featureCountEqual = features.size == other.features.size
+        val featuresEqual = features.containsAll(other.features)
+        return nameEqual && featureCountEqual && featuresEqual
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() * 31 + features.sumBy { it.hashCode() * 5 }
+    }
+
 }
 
-fun defaultSpecies(name: String = "DefaultSpecies"): Species {
+fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
     return Species(
         name, Feature(
             ConsumerTrait(Water),
