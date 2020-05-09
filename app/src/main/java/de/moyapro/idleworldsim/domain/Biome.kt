@@ -5,6 +5,7 @@ import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.valueObjects.AquireSkill
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.util.applyTo
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
 
@@ -36,13 +37,32 @@ data class Biome(
     }
 
     fun getAvailableResourcesPerSpecies(): Map<Species, Resources> {
-        return this.resources.populations.entries
+        val totalAquireSkill: Map<ResourceType, AquireSkill> = mapOf()
+        resources.getSpecies().applyTo(AquireSkill(0.0), Biome::sumByx)
+
+        this.resources.populations.entries
             .map { (species, population) ->
                 Pair(
                     species,
-                    species.needsPerIndividual() * population
+                    resources.quantities
+                        .map { (resourceType, totalAvailable) -> goxxxxxxxx(resources, species.needsPerIndividual(), this[species, resourceType], totalAquireSkill[resourceType]) }
                 )
             }.associate { it }
+        return mapOf()
+    }
+
+    fun sumByx(aquireSkill: AquireSkill): AquireSkill {
+        return AquireSkill(0.0)
+    }
+
+
+    private fun goxxxxxxxx(
+        resources: Resources,
+        needsPerIndividual: Resources,
+        aquireSkill: AquireSkill,
+        aquireSkill1: AquireSkill?
+    ) {
+
     }
 
     private operator fun get(species: Species, resourceType: ResourceType): AquireSkill {

@@ -30,4 +30,17 @@ class RessourceDistributionTest {
         assertThat(availableResources[species3]?.get(Water)?.amount ?: 0.0).isEqualTo(0.0)
     }
 
+    @Test
+    fun calculateAvailableResourcesEqualShare() {
+        val species1 = Species("one").evolve(ConsumerTrait(Water), NeedResource(Water))
+        val species2 = Species("two").evolve(ConsumerTrait(Water), NeedResource(Water))
+        val available = Resource(Water, 10.0)
+        val biome = Biome(resources = Resources(listOf(available)))
+            .settle(species1, Population(10.0))
+            .settle(species2, Population(15.0))
+        val availableResources = biome.getAvailableResourcesPerSpecies()
+        assertThat(availableResources[species1]?.get(Water)?.amount ?: 0.0).isEqualTo(5.0)
+        assertThat(availableResources[species2]?.get(Water)?.amount ?: 0.0).isEqualTo(5.0)
+    }
+
 }

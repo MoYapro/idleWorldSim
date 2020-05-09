@@ -131,9 +131,7 @@ data class Resources(
         return result
     }
 
-    fun getSpecies(): List<Species> = populations.map {
-        it.key
-    }
+    fun getSpecies(): List<Species> = populations.map { it.key }
 
     override fun toString(): String {
         return "Resources(${this.quantities.map { (resourceType, quantity) ->
