@@ -1,3 +1,3 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-inline class AquireSkill(val skill: Double)
+inline class AquireResourceSkill(val skill: Double)

@@ -31,8 +31,8 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: Population(1.0))
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
         val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
-        val x = grow(modifiedConsumption)
-        return die(x)
+        val leftovers = grow(modifiedConsumption)
+        return die(leftovers)
     }
 
 

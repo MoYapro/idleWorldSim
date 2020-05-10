@@ -2,10 +2,10 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
-import de.moyapro.idleworldsim.domain.valueObjects.AquireSkill
+import de.moyapro.idleworldsim.domain.valueObjects.AquireResourceSkill
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
-import de.moyapro.idleworldsim.util.applyTo
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
 
@@ -29,44 +29,32 @@ data class Biome(
 //        calculate Map<Species, Map<ResourceType,  AquireSkill>> to distribute available resources
 //        determin Map<Species, Resources> how much is the species able to consume
 
-        val availableResourcePerSpecies: Map<Species, Resources> = getAvailableResourcesPerSpecies()
+        val availableResourcePerSpecies: Map<Species, Resources> = getAquiredResourcesPerSpecies()
         speciesList
             .forEach { it.process(availableResourcePerSpecies[it] ?: emptyResources()) }
         onBiomeProcess.notifyChange()
         return this
     }
 
-    fun getAvailableResourcesPerSpecies(): Map<Species, Resources> {
-        val totalAquireSkill: Map<ResourceType, AquireSkill> = mapOf()
-        resources.getSpecies().applyTo(AquireSkill(0.0), Biome::sumByx)
+    fun getAquiredResourcesPerSpecies(): Map<Species, Resources> {
+        val resourceType = ResourceType.Water
+        val totalAquireSkill: AquireResourceSkill = calculateTotalAquireSkill(resourceType)
+        val totalAvailable: Resource = Resource(ResourceType.Water, 10)
+        val needPerSpecies: Map<Species, Resource> = resources.populations
+            .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
+            .associate { it }
+        val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
 
-        this.resources.populations.entries
-            .map { (species, population) ->
-                Pair(
-                    species,
-                    resources.quantities
-                        .map { (resourceType, totalAvailable) -> goxxxxxxxx(resources, species.needsPerIndividual(), this[species, resourceType], totalAquireSkill[resourceType]) }
-                )
-            }.associate { it }
         return mapOf()
     }
 
-    fun sumByx(aquireSkill: AquireSkill): AquireSkill {
-        return AquireSkill(0.0)
+
+    private fun calculateTotalAquireSkill(resourceType: ResourceType): AquireResourceSkill {
+        return AquireResourceSkill(10.0)
     }
 
-
-    private fun goxxxxxxxx(
-        resources: Resources,
-        needsPerIndividual: Resources,
-        aquireSkill: AquireSkill,
-        aquireSkill1: AquireSkill?
-    ) {
-
-    }
-
-    private operator fun get(species: Species, resourceType: ResourceType): AquireSkill {
-        return AquireSkill(1.0)
+    private operator fun get(species: Species, resourceType: ResourceType): AquireResourceSkill {
+        return AquireResourceSkill(1.0)
     }
 
     fun settle(species: Species, population: Population = Population(1.0)): Biome {
