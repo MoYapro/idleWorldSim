@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.valueObjects.AquireResourceSkill
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
@@ -37,15 +38,27 @@ data class Biome(
     }
 
     fun getAquiredResourcesPerSpecies(): Map<Species, Resources> {
-        val resourceType = ResourceType.Water
-        val totalAquireSkill: AquireResourceSkill = calculateTotalAquireSkill(resourceType)
-        val totalAvailable: Resource = Resource(ResourceType.Water, 10)
-        val needPerSpecies: Map<Species, Resource> = resources.populations
-            .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
-            .associate { it }
-        val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
+        val resultMap = resources.getSpecies().associateWithTo(mutableMapOf()) { emptyResources() }
+        for (resourceType in ResourceType.values()) {
+            val totalAquireSkill: AquireResourceSkill = calculateTotalAquireSkill(resourceType)
+            val needPerSpecies: Map<Species, Resource> = resources.populations
+                .filter { it.key.hasTrait(ConsumerTrait(resourceType)) }
+                .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
+                .associate { it }
+            val totalAvailable: Resource = Resource(ResourceType.Water, 10)
+            val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
+            if (totalNeed < totalAvailable) {
+                needPerSpecies.forEach { (s, r) -> resultMap[s]!![r.resourceType] = r }
+            }
 
-        return mapOf()
+//            resources.populations
+//                .map { (species, population) ->
+//                    val relativeResources =
+//                }
+
+
+        }
+        return resultMap
     }
 
 

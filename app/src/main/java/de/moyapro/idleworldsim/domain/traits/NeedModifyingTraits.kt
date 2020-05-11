@@ -20,5 +20,10 @@ class ProduceResource(private val resourceType: ResourceType) : NeedModifyingTra
         need[resourceType] = Resource(resourceType, -1.0)
         return need
     }
+
+    override fun toString(): String {
+        return "NeedResource[$resourceType]"
+    }
+
 }
 
