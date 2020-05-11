@@ -2,7 +2,9 @@
 
 package de.moyapro.idleworldsim.domain.traits
 
-abstract class Trait internal constructor(val level: Int = 1)
+import de.moyapro.idleworldsim.domain.valueObjects.Level
+
+abstract class Trait internal constructor(val level: Level = Level(1))
 
 
 object Meaty : Trait()

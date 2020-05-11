@@ -11,13 +11,13 @@ open class GrowthModifyingTrait : Trait() {
 }
 
 object GrowthTrait : GrowthModifyingTrait() {
-    override fun influenceGrowth(growthRate: GrowthRate) = growthRate.pow(level + 1)
+    override fun influenceGrowth(growthRate: GrowthRate) = growthRate.pow(level.level + 1)
 }
 
 object LowDeathRate : GrowthModifyingTrait() {
-    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level * -1 - 1)
+    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level.level * -1 - 1)
 }
 
 object HighDeathRate : GrowthModifyingTrait() {
-    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level + 1)
+    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level.level + 1)
 }

@@ -4,6 +4,7 @@ import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 import de.moyapro.idleworldsim.util.applyTo
 
@@ -60,5 +61,13 @@ open class Feature(private val name: String = "GenericFeature", private var trai
 
     fun hasTrait(trait: Trait): Boolean {
         return traits.any { it == trait }
+    }
+
+    operator fun get(trait: Trait): Level {
+        return this.traits
+            .filter { it::class == trait::class }
+            .map { it.level }
+            .maxBy { it.level }
+            ?: Level(0)
     }
 }

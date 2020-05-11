@@ -3,11 +3,8 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
-import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
-import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 import de.moyapro.idleworldsim.util.applyTo
 
 /**
@@ -84,6 +81,13 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
 
     override fun hashCode(): Int {
         return name.hashCode() * 31 + features.sumBy { it.hashCode() * 5 }
+    }
+
+    operator fun get(trait: Trait): Level {
+        return features
+            .map { it[trait] }
+            .maxBy { it.level }
+            ?: Level(0)
     }
 
 }
