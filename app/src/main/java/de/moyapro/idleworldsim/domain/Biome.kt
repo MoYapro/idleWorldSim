@@ -52,7 +52,7 @@ data class Biome(
                 .filter { it.key.hasTrait(ConsumerTrait(resourceType)) }
                 .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
                 .associate { it }
-            val totalAvailable: Resource = Resource(resourceType, 10)
+            val totalAvailable: Resource = resources[resourceType]
             val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
             if (totalNeed < totalAvailable) {
                 distributeWithSurplus(resultMap, needPerSpecies)
@@ -99,7 +99,7 @@ data class Biome(
 
     private fun getStatusText(species: Species): String {
         return species.name + ": " + (species.getPopulationIn(this)).toShortDecimalStr(1E6) +
-                " -> " + (species.process(this.resources).get(species)).toShortDecimalStr(1E6)
+                " -> " + (species.process(this.resources)[species]).toShortDecimalStr(1E6)
     }
 
     fun getSpecies() = resources.getSpecies()

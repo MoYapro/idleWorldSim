@@ -1,10 +1,8 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Meaty
-import de.moyapro.idleworldsim.domain.traits.Predator
-import de.moyapro.idleworldsim.domain.traits.sunlightConsumer
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
@@ -57,10 +55,10 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
-        val species1 = defaultSpecies()
-        val species2 = defaultSpecies()
-        val usualGrowthResult = Biome(resources = Resources().setQuantity(Resource(Water, 1000.0))).settle(species1).process().resources[species1]
-        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Resource(Water, 0.0))).settle(species2).process().resources[species2]
+        val species1 = Species("I").evolve(NeedResource(Water), ConsumerTrait(Water))
+        val species2 = Species("II").evolve(NeedResource(Water), ConsumerTrait(Water))
+        val usualGrowthResult = Biome(resources = Resources(Water, 1000.0)).settle(species1).process().resources[species1]
+        val cappedGrowthResult = Biome(resources = emptyResources()).settle(species2).process().resources[species2]
         assertThat(cappedGrowthResult.populationSize).isLessThan(usualGrowthResult.populationSize)
     }
 
