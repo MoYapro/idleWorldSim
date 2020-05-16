@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +12,7 @@ internal class TraitTest {
 
     @Test
     fun createGrowthTrait() {
-        assertThat(GrowthTrait).hasFieldOrPropertyWithValue("level", 1)
+        assertThat(GrowthTrait).hasFieldOrPropertyWithValue("level", Level(1))
     }
 
     @Test
