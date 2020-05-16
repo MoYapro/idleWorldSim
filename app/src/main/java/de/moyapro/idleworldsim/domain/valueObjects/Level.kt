@@ -10,9 +10,5 @@ class Level(val level: Int) : Comparable<Level> {
         return this.level == other.level
     }
 
-    override fun hashCode(): Int {
-        return this.level.hashCode() * 67
-    }
-
-
+    override fun hashCode() = this.level.hashCode() * 67
 }
