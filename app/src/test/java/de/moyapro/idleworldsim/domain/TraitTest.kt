@@ -90,13 +90,13 @@ internal class TraitTest {
     fun lowOrHighDeathRate() {
         val lowDeathSpecies = defaultSpecies("LowDeath").evolve(LowDeathRate)
         val highDeathSpecies = defaultSpecies("HighDeath").evolve(HighDeathRate)
-        val species = defaultSpecies()
-        val biome = Biome()
+        val species = defaultSpecies() // species do not die without death trait (deathrate = 1)
+        val biome = Biome(resources = Resources())
             .settle(lowDeathSpecies)
             .settle(highDeathSpecies)
             .settle(species)
             .process()
-        assertThat(biome.resources[lowDeathSpecies].populationSize).isGreaterThan(biome.resources[species].populationSize)
+        assertThat(biome.resources[lowDeathSpecies].populationSize).isLessThan(biome.resources[species].populationSize)
         assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[highDeathSpecies].populationSize)
     }
 

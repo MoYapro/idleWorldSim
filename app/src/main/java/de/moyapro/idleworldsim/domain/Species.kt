@@ -28,8 +28,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: Population(1.0))
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
         val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
-        val leftovers = grow(modifiedConsumption)
-        return die(leftovers)
+        return die(grow(modifiedConsumption))
     }
 
 
@@ -61,7 +60,7 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     }
 
     override fun toString(): String {
-        return "Species[$name]"
+        return "Species[$name | grow=${growthRate()}, die=${deathRate()}]"
     }
 
     fun hasTrait(trait: Trait): Boolean {
@@ -109,7 +108,7 @@ fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
 
 object SpeciesConstants {
     val GROWTH_RATE = GrowthRate(1.1)
-    val DEATH_RATE = DeathRate(.95)
+    val DEATH_RATE = DeathRate(1.0)
     val HUNGER_RATE = StarvationRate(.5)
     val MINIMAL_POPULATION = Population(1E-6)
 }

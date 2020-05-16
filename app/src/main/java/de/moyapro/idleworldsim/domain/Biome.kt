@@ -34,7 +34,13 @@ data class Biome(
 
         val availableResourcePerSpecies: Map<Species, Resources> = getAquiredResourcesPerSpecies()
         speciesList
-            .forEach { it.process(availableResourcePerSpecies[it] ?: emptyResources()) }
+            .forEach {
+                val available = availableResourcePerSpecies[it] ?: emptyResources()
+                available.populations = resources.populations
+                val leftovers = it.process(available)
+                val used = available - leftovers
+                resources -= used
+            }
         onBiomeProcess.notifyChange()
         return this
     }

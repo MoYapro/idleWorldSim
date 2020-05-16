@@ -9,7 +9,7 @@ import java.util.*
 
 data class Resources(
     val quantities: MutableMap<ResourceType, Double> = mutableMapOf(*(values().map { Pair(it, if (it == EvolutionPoints) 0.0 else 1000.0) }).toTypedArray()),
-    val populations: MutableMap<Species, Population> = mutableMapOf()
+    var populations: MutableMap<Species, Population> = mutableMapOf()
 ) {
     @Deprecated("Should use Resource value object instead")
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
