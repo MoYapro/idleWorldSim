@@ -28,7 +28,7 @@ class RessourceDistributionTest {
         val availableResources = biome.getAquiredResourcesPerSpecies()
         assertThat(availableResources[species1]?.get(Water)?.amount ?: 0.0).isEqualTo(5.0)
         assertThat(availableResources[species2]?.get(Water)?.amount ?: 0.0).isEqualTo(3.0)
-        assertThat(availableResources[species3]?.get(Water)?.amount ?: 0.0).isEqualTo(0.0)
+        assertThat(availableResources[species3]?.get(Water)?.amount ?: 0.0).isEqualTo(0.0) // get no water if not need water
     }
 
     @Test

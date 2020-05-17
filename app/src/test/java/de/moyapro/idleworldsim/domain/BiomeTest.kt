@@ -64,13 +64,13 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldNotConsumeOnResourceShortage() {
-        val initialResources = Resources(DoubleArray(values().size) { 0.0 })
+        val initialResources = Resources(values().map { Resource(it, 0.0) })
         val resourcesAfterGeneration =
             Biome(resources = initialResources)
                 .settle(defaultSpecies())
                 .process()
                 .resources
-        assertThat(initialResources.quantities.entries).containsExactly(*resourcesAfterGeneration.quantities.entries.toTypedArray())
+        assertThat(initialResources.quantities.entries).containsExactlyInAnyOrder(*resourcesAfterGeneration.quantities.entries.toTypedArray())
     }
 
     @Test
@@ -78,9 +78,9 @@ internal class BiomeTest {
         val biomeName = "DefaultBiome${Math.random()}"
         val expectedBiomeStatus = """
             BiomeStatus: $biomeName
-            Resources(Oxygen=1000.0, Minerals=999.0, Water=999.0, EvolutionPoints=1.0, Energy=999.0)[[Species[Species1]:1.045, Species[Species2]:1.0]]
-            Species1: 1.04M -> 1.09M
-            Species2: 1.0M -> 1.04M
+            Resources(Minerals=999.0, Oxygen=1000.0, EvolutionPoints=1.0, Energy=999.0, Water=999.0)[[Species[Species2 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.0, Species[Species1 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.1]]
+            Species1: 1.1M -> 1.21M
+            Species2: 1.0M -> 1.1M
             """.trimIndent()
         val biome = Biome(biomeName, Resources()).settle(defaultSpecies(name = "Species1")).process()
             .settle(defaultSpecies("Species2"))

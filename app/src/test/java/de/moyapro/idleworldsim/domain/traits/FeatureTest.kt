@@ -38,6 +38,21 @@ internal class FeatureTest {
         ).isNotNull
     }
 
+    @Test
+    fun hasTraitMeaty() {
+        assertThat(Feature(Meaty).hasTrait(Meaty)).isTrue()
+    }
+
+    @Test
+    fun hasTraitConsumer() {
+        assertThat(Feature(ConsumerTrait(Water)).hasTrait(ConsumerTrait(Water))).isTrue()
+    }
+
+    @Test
+    fun hasTraitNeed() {
+        assertThat(Feature(NeedResource(Water)).hasTrait(NeedResource(Water))).isTrue()
+    }
+
 
     @Test
     fun featureInfluencesLikeTraits() {

@@ -41,7 +41,7 @@ internal class ResourceConsumptionTest {
         )
 
         assertThat(species.process(totalSupplyFromBiome))
-            .isEqualTo(expectedResourcesAfterConsumption.setPopulation(species, Population(2.09)))
+            .isEqualTo(expectedResourcesAfterConsumption.setPopulation(species, Population(2.2)))
     }
 
     @Test

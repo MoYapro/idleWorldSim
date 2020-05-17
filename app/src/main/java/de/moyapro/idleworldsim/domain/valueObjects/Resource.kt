@@ -15,8 +15,10 @@ data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) {
     operator fun div(quotient: Int) = this.amount / quotient
 
     override fun toString(): String {
-        return "Resource[$resourceType]"
+        return "Resource[$resourceType=$amount]"
     }
+
+    fun isNone() = 0.0 == amount
 
 }
 

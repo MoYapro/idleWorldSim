@@ -4,6 +4,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.AquireResource
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
+import de.moyapro.idleworldsim.domain.traits.NeedResource
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -49,25 +50,29 @@ data class Biome(
         val resultMap = resources.getSpecies().associateWithTo(mutableMapOf()) { emptyResources() }
         for (resourceType in values()) {
             val needPerSpecies: Map<Species, Resource> = resources.populations
-                .filter { it.key.hasTrait(ConsumerTrait(resourceType)) }
+                .filter { it.key.hasTrait(ConsumerTrait(resourceType)) && it.key.hasTrait(NeedResource(resourceType)) }
                 .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
                 .associate { it }
             val totalAvailable: Resource = resources[resourceType]
             val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
-            if (totalNeed < totalAvailable) {
+            if (totalNeed <= totalAvailable) {
                 distributeWithSurplus(resultMap, needPerSpecies)
+            } else {
+                distributeWithShortage(resultMap, resourceType, totalAvailable)
             }
-            distributeWithShortage(resultMap, resourceType, totalAvailable)
         }
         return resultMap
     }
 
     private fun distributeWithShortage(resultMap: MutableMap<Species, Resources>, resourceType: ResourceType, totalAvailable: Resource) {
-        val totalAquireValue = max(1, resources.populations.keys.map { it[AquireResource(resourceType)].level }.max() ?: 1)
+        if (totalAvailable.isNone()) {
+            return
+        }
+        val maxAquireSkill = max(1, resources.populations.keys.map { it[AquireResource(resourceType)].level }.max() ?: 1)
         val relativeAquireValuePerSpecies = resources.populations.keys
-            .map { Pair(it, calculateRelativeAquireValue(totalAquireValue - it[AquireResource(resourceType)].level)) }
+            .map { Pair(it, calculateRelativeAquireValue(maxAquireSkill - it[AquireResource(resourceType)].level)) }
         relativeAquireValuePerSpecies
-            .forEach { (s, relativeAquired) -> resultMap[s]!![resourceType] = totalAvailable * (relativeAquired / totalAquireValue) }
+            .forEach { (s, relativeAquired) -> resultMap[s]!![resourceType] = totalAvailable * (relativeAquired / maxAquireSkill) }
     }
 
     private fun distributeWithSurplus(resultMap: MutableMap<Species, Resources>, needPerSpecies: Map<Species, Resource>) {
