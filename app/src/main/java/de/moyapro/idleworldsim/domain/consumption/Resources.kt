@@ -69,7 +69,7 @@ data class Resources(
 
     }
 
-    private fun calculatePlus(quantities1: MutableMap<ResourceType, Double>, quantities2: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+    private fun calculatePlus(quantities1: Map<ResourceType, Double>, quantities2: Map<ResourceType, Double>): MutableMap<ResourceType, Double> {
         val newList = LinkedList(quantities1.entries)
         newList.addAll(quantities2.entries)
         return newList.groupBy { it.key }
@@ -86,13 +86,13 @@ data class Resources(
         subtractPopulations(this.populations, otherResource.populations)
     )
 
-    private fun subtractPopulations(initialPopulation: MutableMap<Species, Population>, toBeRemoved: MutableMap<Species, Population>): MutableMap<Species, Population> {
+    private fun subtractPopulations(initialPopulation: Map<Species, Population>, toBeRemoved: Map<Species, Population>): MutableMap<Species, Population> {
         val amountCopy = HashMap(initialPopulation)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: Population(0.0)) - it.value }
         return amountCopy
     }
 
-    private fun subtractQuantities(initialAmount: MutableMap<ResourceType, Double>, toBeRemoved: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+    private fun subtractQuantities(initialAmount: Map<ResourceType, Double>, toBeRemoved: Map<ResourceType, Double>): MutableMap<ResourceType, Double> {
         val amountCopy = HashMap(initialAmount)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: 0.0) - it.value }
         return amountCopy
