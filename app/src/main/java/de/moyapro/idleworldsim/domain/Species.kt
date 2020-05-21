@@ -3,11 +3,8 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
-import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
-import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
-import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 import de.moyapro.idleworldsim.util.applyTo
 
 /**
@@ -21,18 +18,17 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     private fun deathRate() = features.applyTo(SpeciesConstants.DEATH_RATE, Feature::influenceDyingRate)
 
 
-    private fun needsPerIndividual() = features.applyTo(Resources(DoubleArray(values().size) { 0.0 }), Feature::influenceNeed)
+    fun needsPerIndividual() = features.applyTo(Resources(mutableMapOf()), Feature::influenceNeed)
 
     fun getPopulationIn(biome: Biome): Population {
-        return biome.resources.get(this)
+        return biome.resources[this]
     }
 
     fun process(totalSupplyFromBiome: Resources): Resources {
         val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: Population(1.0))
         val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
         val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
-        val x = grow(modifiedConsumption)
-        return die(x)
+        return die(grow(modifiedConsumption))
     }
 
 
@@ -64,16 +60,38 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     }
 
     override fun toString(): String {
-        return "Species[$name]"
+        return "Species[$name | grow=${growthRate()}, die=${deathRate()}]"
     }
 
     fun hasTrait(trait: Trait): Boolean {
         return features.any { it.hasTrait(trait) }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (null == other || other !is Species) {
+            return false
+        }
+
+        val nameEqual = name == other.name
+        val featureCountEqual = features.size == other.features.size
+        val featuresEqual = features.containsAll(other.features)
+        return nameEqual && featureCountEqual && featuresEqual
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() * 31 + features.sumBy { it.hashCode() * 5 }
+    }
+
+    operator fun get(trait: Trait): Level {
+        return features
+            .map { it[trait] }
+            .maxBy { it.level }
+            ?: Level(0)
+    }
+
 }
 
-fun defaultSpecies(name: String = "DefaultSpecies"): Species {
+fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
     return Species(
         name, Feature(
             ConsumerTrait(Water),
@@ -90,7 +108,7 @@ fun defaultSpecies(name: String = "DefaultSpecies"): Species {
 
 object SpeciesConstants {
     val GROWTH_RATE = GrowthRate(1.1)
-    val DEATH_RATE = DeathRate(.95)
+    val DEATH_RATE = DeathRate(1.0)
     val HUNGER_RATE = StarvationRate(.5)
     val MINIMAL_POPULATION = Population(1E-6)
 }

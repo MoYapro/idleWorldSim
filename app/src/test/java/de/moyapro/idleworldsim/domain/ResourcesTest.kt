@@ -8,6 +8,7 @@ import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.test.assertFailsWith
 
 @Suppress("UsePropertyAccessSyntax")
 internal class ResourcesTest {
@@ -20,7 +21,7 @@ internal class ResourcesTest {
     fun cannotProvideWater() {
         assertThat(
             Resources()
-                .setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .setQuantity(Resource(Water, 1.0)).canProvide(Resources().setQuantity(Resource(Water, 2.0)))
                 .all { it.value }
         ).isFalse()
     }
@@ -30,7 +31,7 @@ internal class ResourcesTest {
     fun cannotProvideEnergy() {
         assertThat(
             Resources()
-                .setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))
+                .setQuantity(Resource(Energy, 1.0)).canProvide(Resources().setQuantity(Resource(Energy, 2.0)))
                 .all { it.value }
         ).isFalse()
     }
@@ -39,7 +40,7 @@ internal class ResourcesTest {
     fun cannotProvideMinerals() {
         assertThat(
             Resources()
-                .setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .setQuantity(Resource(Minerals, 1.0)).canProvide(Resources().setQuantity(Resource(Minerals, 2.0)))
                 .all { it.value }
         ).isFalse()
     }
@@ -48,7 +49,7 @@ internal class ResourcesTest {
     fun canProvideWater() {
         assertThat(
             Resources()
-                .setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))
+                .setQuantity(Resource(Water, 10.0)).canProvide(Resources().setQuantity(Resource(Water, 2.0)))
                 .all { it.value }
         ).isTrue()
     }
@@ -57,7 +58,7 @@ internal class ResourcesTest {
     fun canProvideMinerals() {
         assertThat(
             Resources()
-                .setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))
+                .setQuantity(Resource(Minerals, 10.0)).canProvide(Resources().setQuantity(Resource(Minerals, 2.0)))
                 .all { it.value }
         ).isTrue()
     }
@@ -66,7 +67,7 @@ internal class ResourcesTest {
     fun canProvideEnergy() {
         assertThat(
             Resources(Energy, 10.0)
-                .canProvide(Resources().setQuantity(Energy, 2.0))
+                .canProvide(Resources().setQuantity(Resource(Energy, 2.0)))
                 .all { it.value }
         )
             .isTrue()
@@ -98,8 +99,8 @@ internal class ResourcesTest {
     fun singleConstructor() {
         val setQuantity = 3.14159
         val testResources = Resources(Minerals, setQuantity)
-        assertThat(testResources[Minerals]).isEqualTo(setQuantity)
-        assertThat(testResources[Water]).isEqualTo(0.0)
+        assertThat(testResources[Minerals].amount).isEqualTo(setQuantity)
+        assertThat(testResources[Water].amount).isEqualTo(0.0)
         assertThat(testResources.quantities.size).`as`("Init with one resource should contain only that resource").isEqualTo(1)
     }
 
@@ -166,20 +167,20 @@ internal class ResourcesTest {
     fun createResourcesWithMap() {
         assertThat(
             Resources(
-                mapOf(Pair(Energy, 0.0))
+                listOf(Resource(Energy, 0.0))
             )
         ).isNotNull
     }
 
     @Test
     fun setQuantity() {
-        val theValue = 666.3
-        assertThat(Resources().setQuantity(Water, theValue)[Water]).isEqualTo(theValue)
+        val theValue = Resource(Water, 666.3)
+        assertThat(Resources().setQuantity(theValue)[Water]).isEqualTo(theValue)
     }
 
     @Test
     fun setDefaultQuantity() {
-        assertThat(Resources().setQuantity(Water)[Water]).isEqualTo(1.0)
+        assertThat(Resources().setQuantity(Resource(Water))[Water].amount).isEqualTo(1.0)
     }
 
     @Test
@@ -205,10 +206,16 @@ internal class ResourcesTest {
 
     @Test
     fun hashCodeNotEquals() {
-        val resources1 = Resources().setQuantity(Minerals, 99.0)
-        val resources2 = Resources().setQuantity(Water, 2.0)
+        val resources1 = Resources().setQuantity(Resource(Minerals, 99.0))
+        val resources2 = Resources().setQuantity(Resource(Water, 2.0))
         assertThat(resources1).isNotEqualTo(resources2)
         assertThat(resources1.hashCode()).isNotEqualTo(resources2.hashCode())
+    }
+
+    @Test
+    fun wrongResourceAssignThrowsException() {
+        val exception = assertFailsWith<IllegalArgumentException> { Resources()[Water] = Resource(Minerals, 1.0) }
+        assertThat(exception).`as`("Should produce exception").isNotNull()
     }
 
 

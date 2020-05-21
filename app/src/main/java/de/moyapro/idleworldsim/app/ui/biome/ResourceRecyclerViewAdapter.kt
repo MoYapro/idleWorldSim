@@ -54,7 +54,7 @@ class ResourceRecyclerViewAdapter(
         val resource = ResourceType.values()[position]
         val quantity = biome.resources[resource]
         holder.mIdView.text = resource.displayName
-        holder.mContentView.text = quantity.toShortDecimalStr()
+        holder.mContentView.text = quantity.amount.toShortDecimalStr()
 
         with(holder.mView) {
             tag = resource

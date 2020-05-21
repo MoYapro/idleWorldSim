@@ -2,9 +2,15 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.traits.AquireResource
+import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
+import de.moyapro.idleworldsim.domain.traits.NeedResource
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.util.applyTo
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.values
 import de.moyapro.idleworldsim.util.toShortDecimalStr
+import java.lang.Integer.max
 import java.util.*
 
 data class Biome(
@@ -24,16 +30,63 @@ data class Biome(
 
     fun process(): Biome {
         this.resources += generation
-        this.resources = speciesList
-            .shuffled()
-            .applyTo(resources, Species::process)
+//        calculate Map<Species, Map<ResourceType,  AquireSkill>> to distribute available resources
+//        determin Map<Species, Resources> how much is the species able to consume
+
+        val availableResourcePerSpecies: Map<Species, Resources> = getAquiredResourcesPerSpecies()
+        speciesList
+            .forEach {
+                val available = availableResourcePerSpecies[it] ?: emptyResources()
+                available.populations = resources.populations
+                val leftovers = it.process(available)
+                val used = available - leftovers
+                resources -= used
+            }
         onBiomeProcess.notifyChange()
         return this
     }
 
-    fun settle(species: Species): Biome {
+    fun getAquiredResourcesPerSpecies(): Map<Species, Resources> {
+        val resultMap = resources.getSpecies().associateWithTo(mutableMapOf()) { emptyResources() }
+        for (resourceType in values()) {
+            val needPerSpecies: Map<Species, Resource> = resources.populations
+                .filter { it.key.hasTrait(ConsumerTrait(resourceType)) && it.key.hasTrait(NeedResource(resourceType)) }
+                .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
+                .associate { it }
+            val totalAvailable: Resource = resources[resourceType]
+            val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
+            if (totalNeed <= totalAvailable) {
+                distributeWithSurplus(resultMap, needPerSpecies)
+            } else {
+                distributeWithShortage(resultMap, resourceType, totalAvailable)
+            }
+        }
+        return resultMap
+    }
+
+    private fun distributeWithShortage(resultMap: MutableMap<Species, Resources>, resourceType: ResourceType, totalAvailable: Resource) {
+        if (totalAvailable.isNone()) {
+            return
+        }
+        val maxAquireSkill = max(1, resources.populations.keys.map { it[AquireResource(resourceType)].level }.max() ?: 1)
+        val relativeAquireValuePerSpecies = resources.populations.keys
+            .map { Pair(it, calculateRelativeAquireValue(maxAquireSkill - it[AquireResource(resourceType)].level)) }
+        relativeAquireValuePerSpecies
+            .forEach { (s, relativeAquired) -> resultMap[s]!![resourceType] = totalAvailable * (relativeAquired / maxAquireSkill) }
+    }
+
+    private fun distributeWithSurplus(resultMap: MutableMap<Species, Resources>, needPerSpecies: Map<Species, Resource>) {
+        needPerSpecies.forEach { (s, r) -> resultMap[s]!![r.resourceType] = r }
+    }
+
+    /**
+     * This determins how much falloff there is when species is 'rank' levels behind the best
+     */
+    private fun calculateRelativeAquireValue(rank: Int) = 1.0 / ((rank) * 2)
+
+    fun settle(species: Species, population: Population = Population(1.0)): Biome {
         this.speciesList.add(species)
-        this.resources.setPopulation(species, Population(1.0))
+        this.resources.setPopulation(species, population)
         onBiomeProcess.notifyChange()
         return this
     }
@@ -51,8 +104,8 @@ data class Biome(
 
     private fun getStatusText(species: Species): String {
         return species.name + ": " + (species.getPopulationIn(this)).toShortDecimalStr(1E6) +
-                " -> " + (species.process(this.resources).get(species)).toShortDecimalStr(1E6)
+                " -> " + (species.process(this.resources)[species]).toShortDecimalStr(1E6)
     }
 
-    fun getSpecies(): Array<Species> = resources.getSpecies()
+    fun getSpecies() = resources.getSpecies()
 }

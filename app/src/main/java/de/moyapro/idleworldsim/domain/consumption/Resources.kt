@@ -9,7 +9,7 @@ import java.util.*
 
 data class Resources(
     val quantities: MutableMap<ResourceType, Double> = mutableMapOf(*(values().map { Pair(it, if (it == EvolutionPoints) 0.0 else 1000.0) }).toTypedArray()),
-    val populations: MutableMap<Species, Population> = mutableMapOf()
+    var populations: MutableMap<Species, Population> = mutableMapOf()
 ) {
     @Deprecated("Should use Resource value object instead")
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
@@ -32,12 +32,11 @@ data class Resources(
     fun updatePopulation(species: Species, starvationRate: StarvationRate) =
         setPopulation(species, this[species] * starvationRate)
 
-
     fun updatePopulation(species: Species, deathRate: DeathRate) =
         setPopulation(species, this[species] * deathRate)
 
-    fun setQuantity(resource: ResourceType, quantity: Double = 1.0): Resources {
-        this.quantities[resource] = quantity
+    fun setQuantity(resource: Resource): Resources {
+        this.quantities[resource.resourceType] = resource.amount
         return this
     }
 
@@ -51,8 +50,14 @@ data class Resources(
     }
 
     operator fun get(species: Species) = populations.getOrDefault(species, Population(0.0))
-    operator fun get(resource: ResourceType) = quantities.getOrElse(resource) { 0.0 }
-    operator fun set(resource: ResourceType, quantity: Double) = setQuantity(resource, quantity)
+    operator fun get(resource: ResourceType) = Resource(resource, quantities.getOrElse(resource) { 0.0 })
+    operator fun set(resource: ResourceType, quantity: Resource): Resources {
+        if (resource != quantity.resourceType) {
+            throw IllegalArgumentException("Not allowed to assign with wrong resourceType. Expected $resource, but was ${quantity.resourceType}")
+        }
+        return setQuantity(quantity)
+    }
+
     operator fun plus(otherResource: Resources): Resources {
         return Resources(
             calculatePlus(this.quantities, otherResource.quantities),
@@ -64,15 +69,13 @@ data class Resources(
 
     }
 
-    private fun calculatePlus(quantities1: MutableMap<ResourceType, Double>, quantities2: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+    private fun calculatePlus(quantities1: Map<ResourceType, Double>, quantities2: Map<ResourceType, Double>): MutableMap<ResourceType, Double> {
         val newList = LinkedList(quantities1.entries)
         newList.addAll(quantities2.entries)
         return newList.groupBy { it.key }
             .map { it -> Pair(it.key, it.value.sumByDouble { it.value }) }
             .associate { it }
             .toMutableMap()
-
-
     }
 
 
@@ -81,13 +84,13 @@ data class Resources(
         subtractPopulations(this.populations, otherResource.populations)
     )
 
-    private fun subtractPopulations(initialPopulation: MutableMap<Species, Population>, toBeRemoved: MutableMap<Species, Population>): MutableMap<Species, Population> {
+    private fun subtractPopulations(initialPopulation: Map<Species, Population>, toBeRemoved: Map<Species, Population>): MutableMap<Species, Population> {
         val amountCopy = HashMap(initialPopulation)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: Population(0.0)) - it.value }
         return amountCopy
     }
 
-    private fun subtractQuantities(initialAmount: MutableMap<ResourceType, Double>, toBeRemoved: MutableMap<ResourceType, Double>): MutableMap<ResourceType, Double> {
+    private fun subtractQuantities(initialAmount: Map<ResourceType, Double>, toBeRemoved: Map<ResourceType, Double>): MutableMap<ResourceType, Double> {
         val amountCopy = HashMap(initialAmount)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: 0.0) - it.value }
         return amountCopy
@@ -100,10 +103,10 @@ data class Resources(
 
     operator fun times(factor: ResourceFactor): Resources {
         return this.copy().let {
-            it[EvolutionPoints] *= factor.evolutionPointsFactor
-            it[Energy] *= factor.energyFactor
-            it[Water] *= factor.waterFactor
-            it[Minerals] *= factor.mineralsFactor
+            it[EvolutionPoints] = it[EvolutionPoints] * factor.evolutionPointsFactor
+            it[Energy] = it[Energy] * factor.energyFactor
+            it[Water] = it[Water] * factor.waterFactor
+            it[Minerals] = it[Minerals] * factor.mineralsFactor
             it
         }
     }
@@ -126,9 +129,7 @@ data class Resources(
         return result
     }
 
-    fun getSpecies(): Array<Species> = populations.map {
-        it.key
-    }.toTypedArray()
+    fun getSpecies(): List<Species> = populations.map { it.key }
 
     override fun toString(): String {
         return "Resources(${this.quantities.map { (resourceType, quantity) ->
@@ -138,7 +139,7 @@ data class Resources(
 
 
     operator fun times(population: Population): Resources = this * population.populationSize
-
+    fun getQuantities(): Iterable<Resource> = quantities.map { (resourceType, amount) -> Resource(resourceType, amount) }
 }
 
 fun emptyResources() = Resources(mutableMapOf(), mutableMapOf())

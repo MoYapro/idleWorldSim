@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +12,7 @@ internal class TraitTest {
 
     @Test
     fun createGrowthTrait() {
-        assertThat(GrowthTrait).hasFieldOrPropertyWithValue("level", 1)
+        assertThat(GrowthTrait).hasFieldOrPropertyWithValue("level", Level(1))
     }
 
     @Test
@@ -20,9 +21,9 @@ internal class TraitTest {
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
         assertThat(
-            species.process(resources).get(species).populationSize
+            species.process(resources)[species].populationSize
         )
-            .isLessThan(species.evolve(GrowthTrait).process(resources).get(species).populationSize)
+            .isLessThan(species.evolve(GrowthTrait).process(resources)[species].populationSize)
     }
 
     @Test
@@ -30,7 +31,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver).process(resources)[Energy])
+        assertThat(species.process(resources)[Energy].amount).isLessThan(species.evolve(EnergySaver).process(resources)[Energy].amount)
     }
 
     @Test
@@ -38,7 +39,7 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver).process(resources)[Water])
+        assertThat(species.process(resources)[Water].amount).isLessThan(species.evolve(WaterSaver).process(resources)[Water].amount)
     }
 
     @Test
@@ -46,8 +47,8 @@ internal class TraitTest {
         val species = defaultSpecies()
         val resources = Resources()
         resources.setPopulation(species, Population(1.0))
-        assertThat(species.process(resources)[Minerals]).isLessThan(
-            species.evolve(MineralSaver).process(resources)[Minerals]
+        assertThat(species.process(resources)[Minerals].amount).isLessThan(
+            species.evolve(MineralSaver).process(resources)[Minerals].amount
         )
     }
 
@@ -87,15 +88,15 @@ internal class TraitTest {
 
     @Test
     fun lowOrHighDeathRate() {
-        val lowDeathSpecies = defaultSpecies().evolve(LowDeathRate)
-        val highDeathSpecies = defaultSpecies().evolve(HighDeathRate)
-        val species = defaultSpecies()
-        val biome = Biome()
+        val lowDeathSpecies = defaultSpecies("LowDeath").evolve(LowDeathRate)
+        val highDeathSpecies = defaultSpecies("HighDeath").evolve(HighDeathRate)
+        val species = defaultSpecies() // species do not die without death trait (deathrate = 1)
+        val biome = Biome(resources = Resources())
             .settle(lowDeathSpecies)
             .settle(highDeathSpecies)
             .settle(species)
             .process()
-        assertThat(biome.resources[lowDeathSpecies].populationSize).isGreaterThan(biome.resources[species].populationSize)
+        assertThat(biome.resources[lowDeathSpecies].populationSize).isLessThan(biome.resources[species].populationSize)
         assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[highDeathSpecies].populationSize)
     }
 
