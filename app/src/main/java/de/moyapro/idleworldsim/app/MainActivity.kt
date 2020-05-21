@@ -7,7 +7,7 @@ import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment
 import de.moyapro.idleworldsim.app.ui.biome.SpeciesFragment
 import de.moyapro.idleworldsim.app.ui.main.MainFragment
 import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.consumption.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 
 class MainActivity : AppCompatActivity(), ResourceFragment.OnResourceInteractionListener, SpeciesFragment.OnSpeciesInteractionListener {
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), ResourceFragment.OnResourceInteraction
         }
     }
 
-    override fun onResourceInteraction(resource: Resource?) {
+    override fun onResourceInteraction(resource: ResourceType?) {
         // TODO: implement the onListFragmentInteraction-Method for Resource class
     }
 

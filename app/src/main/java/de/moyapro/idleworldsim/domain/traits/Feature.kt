@@ -2,6 +2,9 @@ package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
+import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
+import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 import de.moyapro.idleworldsim.util.applyTo
 
 /**
@@ -18,9 +21,16 @@ open class Feature(private val name: String = "GenericFeature", private var trai
         return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
     }
 
-    // TODO: Double to ValueObject, e.g. GrowthRate
-    fun influenceGrowthRate(growthRate: Double): Double {
+    fun influenceGrowthRate(growthRate: GrowthRate): GrowthRate {
         return traits.applyTo(growthRate, GrowthModifyingTrait::influenceGrowth)
+    }
+
+    fun influenceHungerRate(starvationRate: StarvationRate): StarvationRate {
+        return traits.applyTo(starvationRate, GrowthModifyingTrait::influenceHunger)
+    }
+
+    fun influenceDyingRate(hungerRate: DeathRate): DeathRate {
+        return traits.applyTo(hungerRate, GrowthModifyingTrait::influenceDying)
     }
 
     fun influenceNeed(need: Resources): Resources {

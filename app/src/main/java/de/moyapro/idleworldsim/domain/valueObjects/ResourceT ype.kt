@@ -1,6 +1,6 @@
-package de.moyapro.idleworldsim.domain.consumption
+package de.moyapro.idleworldsim.domain.valueObjects
 
-enum class Resource(val displayName: String) {
+enum class ResourceType(val displayName: String) {
     EvolutionPoints("evolution points"),
     Energy("energy"),
     Water("water"),

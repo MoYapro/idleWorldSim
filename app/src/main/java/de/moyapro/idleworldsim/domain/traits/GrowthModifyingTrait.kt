@@ -1,11 +1,23 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import kotlin.math.pow
+import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
+import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
+import de.moyapro.idleworldsim.domain.valueObjects.StarvationRate
 
-abstract class GrowthModifyingTrait : Trait() {
-    abstract fun influenceGrowth(growthRate: Double): Double
+open class GrowthModifyingTrait : Trait() {
+    open fun influenceGrowth(growthRate: GrowthRate): GrowthRate = growthRate
+    open fun influenceHunger(starvationRate: StarvationRate): StarvationRate = starvationRate
+    open fun influenceDying(deathRate: DeathRate): DeathRate = deathRate
 }
 
 object GrowthTrait : GrowthModifyingTrait() {
-    override fun influenceGrowth(growthRate: Double) = growthRate.pow(level + 1)
+    override fun influenceGrowth(growthRate: GrowthRate) = growthRate.pow(level + 1)
+}
+
+object LowDeathRate : GrowthModifyingTrait() {
+    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level * -1 - 1)
+}
+
+object HighDeathRate : GrowthModifyingTrait() {
+    override fun influenceDying(deathRate: DeathRate): DeathRate = deathRate.pow(level + 1)
 }

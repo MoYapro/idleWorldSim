@@ -1,8 +1,9 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,18 +18,18 @@ internal class TraitTest {
     fun increasedGrowthTrait() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(
-            species.process(resources).getPopulation(species)
+            species.process(resources).get(species).populationSize
         )
-            .isLessThan(species.evolve(GrowthTrait).process(resources).getPopulation(species))
+            .isLessThan(species.evolve(GrowthTrait).process(resources).get(species).populationSize)
     }
 
     @Test
     fun energySaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Energy]).isLessThan(species.evolve(EnergySaver).process(resources)[Energy])
     }
 
@@ -36,7 +37,7 @@ internal class TraitTest {
     fun waterSaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Water]).isLessThan(species.evolve(WaterSaver).process(resources)[Water])
     }
 
@@ -44,7 +45,7 @@ internal class TraitTest {
     fun mineralSaver() {
         val species = defaultSpecies()
         val resources = Resources()
-        resources.setPopulation(species, 1.0)
+        resources.setPopulation(species, Population(1.0))
         assertThat(species.process(resources)[Minerals]).isLessThan(
             species.evolve(MineralSaver).process(resources)[Minerals]
         )
@@ -57,7 +58,7 @@ internal class TraitTest {
             .evolve(Predator(Meaty), ConsumerTrait(Water))
         assertThat(
             Biome().settle(wolf).settle(sheep)
-                .process().resources[wolf]
+                .process().resources[wolf].populationSize
         ).`as`("Wolf needs water")
             .isGreaterThan(1.0)
     }
@@ -68,13 +69,13 @@ internal class TraitTest {
         val gras = Species("Gras")
             .evolve(Feature.sunlightConsumer())
         val wolf = Species("Wolf").evolve(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
-        val biome = Biome()
+        val biome = Biome("Earth", Resources())
             .settle(gras)
             .settle(wolf)
             .process()
 
-        assertThat(biome.resources.getPopulation(gras)).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
-        assertThat(biome.resources.getPopulation(wolf)).`as`("Wolf cannot eat anything").isLessThan(1.0)
+        assertThat(biome.resources[gras].populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources[wolf].populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
     @Test
@@ -83,4 +84,19 @@ internal class TraitTest {
         val value = 1
         assertThat(traits.fold(value) { v, _ -> v }).isEqualTo(value)
     }
+
+    @Test
+    fun lowOrHighDeathRate() {
+        val lowDeathSpecies = defaultSpecies().evolve(LowDeathRate)
+        val highDeathSpecies = defaultSpecies().evolve(HighDeathRate)
+        val species = defaultSpecies()
+        val biome = Biome()
+            .settle(lowDeathSpecies)
+            .settle(highDeathSpecies)
+            .settle(species)
+            .process()
+        assertThat(biome.resources[lowDeathSpecies].populationSize).isGreaterThan(biome.resources[species].populationSize)
+        assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[highDeathSpecies].populationSize)
+    }
+
 }

@@ -2,7 +2,8 @@ package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 /**
  * Determine which of the available supply is consumable/reachable by the current species
@@ -18,13 +19,14 @@ class Predator(private val preyTrait: Trait) : SupplyModifyingTrait() {
         val huntingEfficiency = 0.01
         val predatorPopulation = consumption.getPopulation()
         val prey = findPrey(consumption.supply.populations)
-        val totalNumberOfIndividualsInBiome = prey.map { it.value }.sum()
-        val totalIndividualsEaten = totalNumberOfIndividualsInBiome * (1 - huntingEfficiency * predatorPopulation)
-        val eatenPerSpecies = prey.map { Pair(it.key, it.value - (it.value / totalNumberOfIndividualsInBiome * totalIndividualsEaten)) }
+        val totalNumberOfPreyInBiome: Population = Population(prey.values.map { it.populationSize }.sum())
+        val totalIndividualsEaten = totalNumberOfPreyInBiome * (predatorPopulation.populationSize * (1 - huntingEfficiency))
+        val eatenPerSpecies = prey
+            .map { (species, preyPopulation) -> Pair(species, preyPopulation - (preyPopulation / totalNumberOfPreyInBiome.populationSize * totalIndividualsEaten.populationSize)) }
 
         if (prey.isNotEmpty()) {
-            consumption.needs[Resource.Minerals] = 0.0
-            consumption.needs[Resource.Energy] = 0.0
+            consumption.needs[ResourceType.Minerals] = 0.0
+            consumption.needs[ResourceType.Energy] = 0.0
             eatenPerSpecies.forEach { leftoverPrey ->
                 consumption.needs.setPopulation(leftoverPrey.first, leftoverPrey.second)
             }
@@ -32,7 +34,7 @@ class Predator(private val preyTrait: Trait) : SupplyModifyingTrait() {
         return consumption
     }
 
-    private fun findPrey(populations: Map<Species, Double>): Map<Species, Double> {
+    private fun findPrey(populations: Map<Species, Population>): Map<Species, Population> {
         return populations.filter { it.key.hasTrait(preyTrait) }
     }
 

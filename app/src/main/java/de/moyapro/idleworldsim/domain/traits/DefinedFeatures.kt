@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.Energy
-import de.moyapro.idleworldsim.domain.consumption.Resource.Oxygen
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Energy
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Oxygen
 
 /**
  * Just a few predefined features

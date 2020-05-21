@@ -1,8 +1,11 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.*
 import de.moyapro.idleworldsim.domain.consumption.ResourceFactor
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,7 +13,7 @@ import org.junit.jupiter.api.Test
 internal class ResourcesTest {
     @Test
     fun resourceCanProvideAll() {
-        assertThat(Resources().canProvide(Resources()).all { it }).isTrue()
+        assertThat(Resources().canProvide(Resources()).all { it.value }).isTrue()
     }
 
     @Test
@@ -18,7 +21,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 1.0).canProvide(Resources().setQuantity(Water, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -28,7 +31,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Energy, 1.0).canProvide(Resources().setQuantity(Energy, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -37,7 +40,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 1.0).canProvide(Resources().setQuantity(Minerals, 2.0))
-                .all { it }
+                .all { it.value }
         ).isFalse()
     }
 
@@ -46,7 +49,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Water, 10.0).canProvide(Resources().setQuantity(Water, 2.0))
-                .all { it }
+                .all { it.value }
         ).isTrue()
     }
 
@@ -55,7 +58,7 @@ internal class ResourcesTest {
         assertThat(
             Resources()
                 .setQuantity(Minerals, 10.0).canProvide(Resources().setQuantity(Minerals, 2.0))
-                .all { it }
+                .all { it.value }
         ).isTrue()
     }
 
@@ -64,28 +67,77 @@ internal class ResourcesTest {
         assertThat(
             Resources(Energy, 10.0)
                 .canProvide(Resources().setQuantity(Energy, 2.0))
-        .all { it }
+                .all { it.value }
         )
             .isTrue()
     }
 
     @Test
-    fun plus() {
+    fun plusSingle() {
         assertThat(
-            Resources(doubleArrayOf(1.0, 1.0, 1.0, 1.0))
-                    + Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
+            Resources(Water, 1.0)
+                    + Resources(Water, 2.1)
         ).isEqualTo(
-            Resources(doubleArrayOf(3.1, 3.0, 3.0, 3.0))
+            Resources(Water, 3.1)
         )
     }
 
     @Test
-    fun minus() {
+    fun plusMultiple() {
+        val initialResourcesList = listOf(Resource(Water, 9.112), Resource(Minerals, 4.123))
+        val additionalResourcesList = listOf(Resource(Water, 0.888), Resource(Oxygen, 6.612))
+        val expectedAddition = listOf(Resource(Water, 10.0), Resource(Minerals, 4.123), Resource(Oxygen, 6.612))
         assertThat(
-            Resources(doubleArrayOf(2.1, 2.0, 2.0, 2.0))
-                    + Resources(doubleArrayOf(-1.0, -1.0, -1.0, -1.0))
+            Resources(initialResourcesList) + Resources(additionalResourcesList)
         ).isEqualTo(
-            Resources(doubleArrayOf(1.1, 1.0, 1.0, 1.0))
+            Resources(expectedAddition)
+        )
+    }
+
+    @Test
+    fun singleConstructor() {
+        val setQuantity = 3.14159
+        val testResources = Resources(Minerals, setQuantity)
+        assertThat(testResources[Minerals]).isEqualTo(setQuantity)
+        assertThat(testResources[Water]).isEqualTo(0.0)
+        assertThat(testResources.quantities.size).`as`("Init with one resource should contain only that resource").isEqualTo(1)
+    }
+
+
+    @Test
+    fun minusSingle() {
+        assertThat(
+            Resources(Water, 10.0) - Resources(Water, 5.1)
+        ).isEqualTo(
+            Resources(Water, 4.9)
+        )
+    }
+
+    @Test
+    fun plusSpecies() {
+        val theSpecies = Species("species1")
+        val initialSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        val additionalSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        assertThat((initialSpeciesPopulation + additionalSpeciesPopulation)[theSpecies])
+            .isEqualTo(Population(10.0))
+    }
+
+    @Test
+    fun minusSpecies() {
+        val theSpecies = Species("species1")
+        val initialSpeciesPopulation = Resources(theSpecies, Population(7.0))
+        val toRemovSpeciesPopulation = Resources(theSpecies, Population(5.0))
+        assertThat((initialSpeciesPopulation - toRemovSpeciesPopulation)[theSpecies])
+            .isEqualTo(Population(2.0))
+    }
+
+
+    @Test
+    fun minusFromEmptyResources() {
+        assertThat(
+            emptyResources() - Resources(Water, 5.1)
+        ).isEqualTo(
+            Resources(Water, -5.1)
         )
     }
 
@@ -133,20 +185,20 @@ internal class ResourcesTest {
     @Test
     fun setDefaultPolulation() {
         val theSpecies = Species("X")
-        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(1.0)
+        assertThat(Resources().setPopulation(theSpecies)[theSpecies]).isEqualTo(Population(1.0))
     }
 
     @Test
     fun setPolulation() {
-        val theValue = 345.678
+        val theValue = Population(345.678)
         val theSpecies = Species("X")
         assertThat(Resources().setPopulation(theSpecies, theValue)[theSpecies]).isEqualTo(theValue)
     }
 
     @Test
     fun hashCodeEquals() {
-        val resources1 = Resources().setQuantity(Minerals, 13.0)
-        val resources2 = Resources().setQuantity(Minerals, 13.0)
+        val resources1 = Resources(listOf(Resource(Water, 4.1), Resource(Minerals, 13.0)))
+        val resources2 = Resources(listOf(Resource(Minerals, 13.0), Resource(Water, 4.1)))
         assertThat(resources1).isEqualTo(resources2)
         assertThat(resources1.hashCode()).isEqualTo(resources2.hashCode())
     }
@@ -158,5 +210,6 @@ internal class ResourcesTest {
         assertThat(resources1).isNotEqualTo(resources2)
         assertThat(resources1.hashCode()).isNotEqualTo(resources2.hashCode())
     }
+
 
 }

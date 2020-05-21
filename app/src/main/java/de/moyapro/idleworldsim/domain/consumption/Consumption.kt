@@ -1,12 +1,13 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 data class Consumption(
     val consumer: Species,
     var needs: Resources,
     var supply: Resources,
-    var usableSupply: Resources = Resources(DoubleArray(Resource.values().size))
+    var usableSupply: Resources = Resources(DoubleArray(ResourceType.values().size))
 ) {
     /**
      * use value objects for resources
@@ -21,7 +22,7 @@ data class Consumption(
         return this
     }
 
-    fun getPopulation(species: Species = consumer) = supply.getPopulation(species)
+    fun getPopulation(species: Species = consumer) = supply.get(species)
 
     fun consume(): Resources {
         //TODO should ensure that supply is not exeeded
@@ -30,6 +31,6 @@ data class Consumption(
 
     fun isProvided(): Double {
         val canProvide = usableSupply.canProvide(needs)
-        return canProvide.sumBy { if (it) 1 else 0 } / canProvide.size.toDouble()
+        return canProvide.values.sumBy { if (it) 1 else 0 } / canProvide.size.toDouble()
     }
 }

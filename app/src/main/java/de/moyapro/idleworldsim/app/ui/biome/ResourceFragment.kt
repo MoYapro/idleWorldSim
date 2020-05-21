@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.domain.consumption.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 /**
  * A fragment representing a list of Items.
@@ -79,7 +79,7 @@ class ResourceFragment : Fragment() {
      */
     interface OnResourceInteractionListener {
         // TODO: Update argument type and name
-        fun onResourceInteraction(resource: Resource?)
+        fun onResourceInteraction(resource: ResourceType?)
     }
 
     companion object {

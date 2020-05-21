@@ -1,12 +1,11 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resource.*
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.Meaty
 import de.moyapro.idleworldsim.domain.traits.Predator
 import de.moyapro.idleworldsim.domain.traits.sunlightConsumer
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -59,9 +58,9 @@ internal class BiomeTest {
     fun speciesShouldShrinkOnResourceShortage() {
         val species1 = defaultSpecies()
         val species2 = defaultSpecies()
-        val usualGrowthResult = Biome().settle(species1).process().resources.getPopulation(species1)
-        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.getPopulation(species2)
-        assertThat(cappedGrowthResult).isLessThan(usualGrowthResult)
+        val usualGrowthResult = Biome(resources = Resources().setQuantity(Water, 1000.0)).settle(species1).process().resources.get(species1)
+        val cappedGrowthResult = Biome(resources = Resources().setQuantity(Water, 0.0)).settle(species2).process().resources.get(species2)
+        assertThat(cappedGrowthResult.populationSize).isLessThan(usualGrowthResult.populationSize)
     }
 
     @Test
@@ -72,7 +71,7 @@ internal class BiomeTest {
                 .settle(defaultSpecies())
                 .process()
                 .resources
-        assertThat(initialResources.quantities).containsExactly(*resourcesAfterGeneration.quantities)
+        assertThat(initialResources.quantities.entries).containsExactly(*resourcesAfterGeneration.quantities.entries.toTypedArray())
     }
 
     @Test
@@ -80,11 +79,11 @@ internal class BiomeTest {
         val biomeName = "DefaultBiome${Math.random()}"
         val expectedBiomeStatus = """
             BiomeStatus: $biomeName
-            Resources(evolution points=1.0, energy=999.0, water=999.0, minerals=999.0, oxygen=1000.0)
-            Species1: 1.1M -> 1.21M
-            Species2: 1.0M -> 1.1M
+            Resources(EvolutionPoints=1.0, Water=999.0, Oxygen=1000.0, Minerals=999.0, Energy=999.0)[[Species[Species1]:1.045, Species[Species2]:1.0]]
+            Species1: 1.04M -> 1.09M
+            Species2: 1.0M -> 1.04M
             """.trimIndent()
-        val biome = Biome(biomeName).settle(defaultSpecies(name = "Species1")).process()
+        val biome = Biome(biomeName, Resources()).settle(defaultSpecies(name = "Species1")).process()
             .settle(defaultSpecies("Species2"))
         assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
     }
@@ -99,28 +98,27 @@ internal class BiomeTest {
             .settle(predator)
             .settle(prey)
             .process()
-        assertThat(predator.getPopulationIn(biome)).isEqualTo(1.1)
-        assertThat(prey.getPopulationIn(biome)).isLessThan(1.1)
+        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
+        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(1.1)
     }
 
     @Test
     fun speciesEatsAnotherSpecies() {
-        val initialResources = Resources(DoubleArray(values().size) { 3.0 })
         val predator = defaultSpecies("Eater").evolve(Predator(Meaty))
         val prey = defaultSpecies("Food").evolve(Meaty)
         val uninvolved = defaultSpecies("Uninvolved")
-        val biome = Biome(resources = initialResources)
+        val biome = Biome("Earth", Resources())
             .settle(predator)
             .settle(prey)
             .settle(uninvolved)
             .process()
-        assertThat(predator.getPopulationIn(biome)).isEqualTo(1.1)
-        assertThat(prey.getPopulationIn(biome)).isLessThan(uninvolved.getPopulationIn(biome))
+        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
+        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(uninvolved.getPopulationIn(biome).populationSize)
     }
 
     @Test
     fun biomeGeneratesResources() {
-        val empty = emptyResources()
+        val empty = Resources()
         val generation = Resources(DoubleArray(values().size) { 1.0 })
         val biome = Biome(resources = empty, generation = generation).process()
         assertThat(biome.resources[Minerals]).isGreaterThan(0.0)
@@ -134,12 +132,12 @@ internal class BiomeTest {
         val biome = Biome(resources = initial, generation = generation).settle(species).process()
         val expectedResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 2.0 else 1000.0 }) // 1EP from Biome and 1EP from Species
         expectedResources[Oxygen] = 1001.0
-        assertThat(biome.resources.quantities).containsExactly(*expectedResources.quantities)
+        assertThat(biome.resources.quantities.entries).containsExactlyInAnyOrder(*expectedResources.quantities.entries.toTypedArray())
     }
 
     @Test
     fun biomeStoresResourcesGeneratedBySpecies() {
-        val empty = emptyResources()
+        val empty = Resources()
         val generation = Resources(DoubleArray(values().size) { 1.0 })
         generation[Oxygen] = 0.0 // biome does not create oxygen
         val species = defaultSpecies().evolve(Feature.sunlightConsumer())
