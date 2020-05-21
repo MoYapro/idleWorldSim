@@ -10,8 +10,7 @@ inline fun <reified T : Any, V : Any, reified X : T> Collection<T>.applyTo(initi
 }
 
 
-@Suppress("UNCHECKED_CAST")
-inline fun <T> Iterable<T>.sumUsing(sumFunction: (T, T) -> T, zeroElementProvider: () -> T = { null as T }): T? {
+inline fun <T> Iterable<T>.sumUsing(sumFunction: (T, T) -> T, zeroElementProvider: () -> T? = { null }): T? {
     return if (this is Collection<*> && this.size <= 0) return zeroElementProvider.invoke()
     else this.reduce(sumFunction)
 }

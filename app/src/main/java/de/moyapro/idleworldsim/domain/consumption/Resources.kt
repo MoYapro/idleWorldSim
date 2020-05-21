@@ -76,8 +76,6 @@ data class Resources(
             .map { it -> Pair(it.key, it.value.sumByDouble { it.value }) }
             .associate { it }
             .toMutableMap()
-
-
     }
 
 
