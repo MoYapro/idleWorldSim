@@ -20,7 +20,7 @@ internal class FoodChainTest {
         .add(consumer2)
         .add(poc)
         assertThat(foodChain[poc].size).isEqualTo(1)
-        assertThat(foodChain.nodeSize()).isEqualTo(3)
+        assertThat(foodChain.producers()).isEqualTo(3)
         assertThat(foodChain[producer1].size).isEqualTo(2)
         assertThat(foodChain[producer2].size).isEqualTo(0)
     }
