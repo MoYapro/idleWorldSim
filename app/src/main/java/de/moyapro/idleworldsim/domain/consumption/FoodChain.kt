@@ -1,12 +1,23 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+/**
+ * Implement the food chain of a given set of producers and consumers.
+ */
 class FoodChain {
 
     private val elements: MutableList<FoodChainNode> = mutableListOf()
     private val consumersWithoutProducers: MutableList<ResourceConsumer> = mutableListOf()
 
-    operator fun get(producer: ResourceProducer): List<ResourceConsumer> {
+    /**
+     * Get all consumers of the given producer
+     */
+    operator fun get(producer: ResourceProducer): List<FoodChainEdge> {
         return elements.find { it.producer == producer }?.consumer ?: emptyList()
+    }
+
+    operator fun get(consumer: ResourceConsumer): List<ResourceProducer> {
+        return emptyList()
+
     }
 
     fun add(poc: PorC): FoodChain {
@@ -50,12 +61,24 @@ class FoodChain {
 
 }
 
+/**
+ * Nodes in the food chain are producers and connections to their consumers
+ */
 private data class FoodChainNode(val producer: ResourceProducer) {
-    val consumer: MutableList<ResourceConsumer> = mutableListOf()
+    val consumer: MutableList<FoodChainEdge> = mutableListOf()
     fun add(newConsumer: ResourceConsumer): FoodChainNode {
-        consumer += newConsumer
+        consumer += FoodChainEdge(newConsumer, 0.0)
         return this
     }
+}
+
+/**
+ * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
+ */
+data class FoodChainEdge(val consumer: ResourceConsumer, val fittness: Double) {
 
 
 }
+
+
+

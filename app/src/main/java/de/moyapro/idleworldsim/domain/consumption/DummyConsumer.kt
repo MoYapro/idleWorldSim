@@ -20,7 +20,7 @@ class DummyConsumer(val name: String) : ResourceConsumer {
         return name.hashCode()
     }
 
-    fun canConsume(producerName: String): ResourceConsumer {
+    fun canConsume(producerName: String): DummyConsumer {
         canConsume += producerName
         return this
     }
