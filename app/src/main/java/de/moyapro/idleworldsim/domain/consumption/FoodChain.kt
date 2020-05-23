@@ -27,7 +27,7 @@ class FoodChain {
     }
 
     fun add(producer: ResourceProducer): FoodChain {
-        elements += FoodChainNode(producer)
+        elements += FoodChainNode(this, producer)
         addConsumersWithoutFoodsource(producer)
         return this
     }
@@ -64,10 +64,19 @@ class FoodChain {
 /**
  * Nodes in the food chain are producers and connections to their consumers
  */
-private data class FoodChainNode(val producer: ResourceProducer) {
+private data class FoodChainNode(private val foodChain: FoodChain, val producer: ResourceProducer) {
     val consumer: MutableList<FoodChainEdge> = mutableListOf()
+    val fittnessCalculator = FittnessCalculator(producer)
+
+    /**
+     * add a new connection between the nodes producer and the given producer.
+     */
     fun add(newConsumer: ResourceConsumer): FoodChainNode {
-        consumer += FoodChainEdge(newConsumer, 0.0)
+        consumer += FoodChainEdge(
+            newConsumer,
+            fittnessCalculator.calculate(foodChain[producer].map { it.consumer })
+            // add other weight / property calculators here
+        )
         return this
     }
 }
