@@ -20,7 +20,7 @@ internal class FoodChainTest {
         assertThat(foodChain[poc2 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain.producers()).isEqualTo(4)
         assertThat(foodChain[producer1].size).isEqualTo(3)
-        assertThat(foodChain[producer2].size).isEqualTo(0)
+        assertThat(foodChain[producer2].size).isEqualTo(1)
     }
 
     @Test

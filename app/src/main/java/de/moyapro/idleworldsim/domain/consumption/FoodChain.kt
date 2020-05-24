@@ -12,7 +12,7 @@ class FoodChain {
      * Get all consumers of the given producer
      */
     operator fun get(producer: ResourceProducer): List<FoodChainEdge> {
-        return elements.find { it.producer == producer }?.consumer ?: emptyList()
+        return elements.find { it.producer == producer }?.consumers ?: emptyList()
     }
 
     operator fun get(consumer: ResourceConsumer): List<ResourceProducer> {
@@ -24,7 +24,7 @@ class FoodChain {
     private fun nodeConatinsConsumer(
         it: FoodChainNode,
         consumer: ResourceConsumer
-    ) = it.consumer.any { it.consumer == consumer }
+    ) = it.consumers.any { it.consumer == consumer }
 
     fun add(poc: PorC): FoodChain {
         add(poc as ResourceProducer)
@@ -49,7 +49,7 @@ class FoodChain {
     private fun findConsumersFor(producer: ResourceProducer): Iterable<ResourceConsumer> {
         return elements
             .map { node ->
-                node.consumer.filter {
+                node.consumers.filter {
                     it.consumer.canConsume(producer)
                 }
                     .map { it.consumer }
@@ -75,7 +75,7 @@ class FoodChain {
     }
 
     private fun isConsumerAlreadyInFoodchain(consumer: ResourceConsumer): Boolean {
-        return elements.any { node -> node.consumer.any { edge -> edge.consumer == consumer } }
+        return elements.any { node -> node.consumers.any { edge -> edge.consumer == consumer } }
     }
 
     private fun addConsumer(foodSources: List<FoodChainNode>, consumer: ResourceConsumer) {
@@ -112,7 +112,7 @@ class FoodChain {
      * Represent a node in dot notation
      */
     private fun asDotNotation(node: FoodChainNode): Iterable<String> =
-        node.consumer.map { "${node.producer.name} -> ${it.consumer.name}" }
+        node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
 
 }
 
@@ -120,19 +120,26 @@ class FoodChain {
  * Nodes in the food chain are producers and connections to their consumers
  */
 private data class FoodChainNode(private val foodChain: FoodChain, val producer: ResourceProducer) {
-    val consumer: MutableList<FoodChainEdge> = mutableListOf()
+    val consumers: MutableList<FoodChainEdge> = mutableListOf()
     val fittnessCalculator = FittnessCalculator(producer)
 
     /**
      * add a new connection between the nodes producer and the given producer.
      */
     fun add(newConsumer: ResourceConsumer): FoodChainNode {
-        consumer += FoodChainEdge(
+        if (isConsumerAlreadyAdded(newConsumer)) {
+            return this // do not re-add
+        }
+        consumers += FoodChainEdge(
             newConsumer,
             fittnessCalculator.calculate(foodChain[producer].map { it.consumer })
             // add other weight / property calculators here
         )
         return this
+    }
+
+    private fun isConsumerAlreadyAdded(newConsumer: ResourceConsumer): Boolean {
+        return consumers.any { it.consumer == newConsumer }
     }
 }
 
