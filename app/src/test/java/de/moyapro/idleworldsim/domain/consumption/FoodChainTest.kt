@@ -16,17 +16,17 @@ internal class FoodChainTest {
     fun insertIntoFoodChain() {
         val foodChain = buildTestFoodchain()
         assertThat(foodChain[poc1 as ResourceProducer].size).isEqualTo(1)
-        assertThat(foodChain.producers()).isEqualTo(3)
-        assertThat(foodChain[producer1].size).isEqualTo(2)
+        assertThat(foodChain.producers()).isEqualTo(4)
+        assertThat(foodChain[producer1].size).isEqualTo(3)
         assertThat(foodChain[producer2].size).isEqualTo(0)
-// not jet implemented        assertThat(foodChain[consumer1].size).isEqualTo(1)
     }
 
     @Test
     fun weights() {
         val foodChain = buildTestFoodchain()
         val consumers = foodChain[producer1]
-        assertThat(consumers[0].fittness).`as`("First consumer should have higher consume fittness").isGreaterThanOrEqualTo(consumers[1].fittness)
+        assertThat(consumers[0].fittness).`as`("First consumer should have higher consume fittness")
+            .isGreaterThanOrEqualTo(consumers[1].fittness)
     }
 
     @Test
