@@ -9,7 +9,7 @@ class DummyConsumer(override val name: String) : ResourceConsumer {
 
 
     override fun equals(other: Any?): Boolean {
-        return if (null == other || other !is DummyProducer) {
+        return if (null == other || other !is DummyConsumer) {
             false
         } else {
             this.name == other.name

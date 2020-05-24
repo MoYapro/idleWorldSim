@@ -1,7 +1,5 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import java.lang.StringBuilder
-
 /**
  * Implement the food chain of a given set of producers and consumers.
  */
@@ -18,9 +16,15 @@ class FoodChain {
     }
 
     operator fun get(consumer: ResourceConsumer): List<ResourceProducer> {
-        return emptyList()
-
+        return elements
+            .filter { node -> nodeConatinsConsumer(node, consumer) }
+            .map { it.producer }
     }
+
+    private fun nodeConatinsConsumer(
+        it: FoodChainNode,
+        consumer: ResourceConsumer
+    ) = it.consumer.any { it.consumer == consumer }
 
     fun add(poc: PorC): FoodChain {
         add(poc as ResourceProducer)
@@ -29,9 +33,28 @@ class FoodChain {
     }
 
     fun add(producer: ResourceProducer): FoodChain {
-        elements += FoodChainNode(this, producer)
+        if (isProducerAlreadyInFoodchain(producer)) {
+            return this // do not add producer again
+        }
+        val newProducerNode = FoodChainNode(this, producer)
+        elements += newProducerNode
+        findConsumersFor(producer).forEach { newProducerNode.add(it) }
         addConsumersWithoutFoodsource(producer)
         return this
+    }
+
+    private fun isProducerAlreadyInFoodchain(producer: ResourceProducer) =
+        elements.any { it.producer == producer }
+
+    private fun findConsumersFor(producer: ResourceProducer): Iterable<ResourceConsumer> {
+        return elements
+            .map { node ->
+                node.consumer.filter {
+                    it.consumer.canConsume(producer)
+                }
+                    .map { it.consumer }
+            }
+            .flatten()
     }
 
     fun producers(): Int {
@@ -39,6 +62,9 @@ class FoodChain {
     }
 
     fun add(consumer: ResourceConsumer): FoodChain {
+        if (isConsumerAlreadyInFoodchain(consumer)) {
+            return this // do not add producer again
+        }
         val foodSources = getPossibleFoodSources(consumer)
         if (foodSources.isNotEmpty()) {
             addConsumer(foodSources, consumer)
@@ -48,11 +74,16 @@ class FoodChain {
         return this
     }
 
+    private fun isConsumerAlreadyInFoodchain(consumer: ResourceConsumer): Boolean {
+        return elements.any { node -> node.consumer.any { edge -> edge.consumer == consumer } }
+    }
+
     private fun addConsumer(foodSources: List<FoodChainNode>, consumer: ResourceConsumer) {
         foodSources.forEach { it.add(consumer) }
     }
 
-    private fun getPossibleFoodSources(consumer: ResourceConsumer) = elements.filter { consumer.canConsume(it.producer) }
+    private fun getPossibleFoodSources(consumer: ResourceConsumer) =
+        elements.filter { consumer.canConsume(it.producer) }
 
     /**
      * We need to check consumers without prdocuers if the new producer matchers their needs and add them to the producers consume list
@@ -80,7 +111,8 @@ class FoodChain {
     /**
      * Represent a node in dot notation
      */
-    private fun asDotNotation(node: FoodChainNode): Iterable<String> = node.consumer.map { "${node.producer.name} -> ${it.consumer.name}" }
+    private fun asDotNotation(node: FoodChainNode): Iterable<String> =
+        node.consumer.map { "${node.producer.name} -> ${it.consumer.name}" }
 
 }
 
