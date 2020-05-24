@@ -1,5 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import java.lang.StringBuilder
+
 /**
  * Implement the food chain of a given set of producers and consumers.
  */
@@ -50,14 +52,35 @@ class FoodChain {
         foodSources.forEach { it.add(consumer) }
     }
 
-    private fun getPossibleFoodSources(consumer: ResourceConsumer) = elements
-        .filter { consumer.canConsume(it.producer) }
+    private fun getPossibleFoodSources(consumer: ResourceConsumer) = elements.filter { consumer.canConsume(it.producer) }
 
+    /**
+     * We need to check consumers without prdocuers if the new producer matchers their needs and add them to the producers consume list
+     */
     private fun addConsumersWithoutFoodsource(producer: ResourceProducer) {
         consumersWithoutProducers.filter { it.canConsume(producer) }.forEach { add(it) }
         consumersWithoutProducers.removeIf { it.canConsume(producer) }
     }
 
+    /**
+     * Get the graph in dot notation.
+     * @link https://www.graphviz.org/doc/info/lang.html
+     */
+    fun asDotNotation(): String {
+        val sb = StringBuilder("digraph G {\n")
+        elements
+            .map { asDotNotation(it).joinToString("\n") }
+            .filter { it.isNotBlank() && it.isNotEmpty() }
+            .joinToString("\n")
+            .let { sb.append(it) }
+        sb.append("\n}")
+        return sb.toString()
+    }
+
+    /**
+     * Represent a node in dot notation
+     */
+    private fun asDotNotation(node: FoodChainNode): Iterable<String> = node.consumer.map { "${node.producer.name} -> ${it.consumer.name}" }
 
 }
 

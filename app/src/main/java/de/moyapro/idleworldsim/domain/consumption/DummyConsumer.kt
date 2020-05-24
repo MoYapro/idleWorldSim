@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-class DummyConsumer(val name: String) : ResourceConsumer {
+class DummyConsumer(override val name: String) : ResourceConsumer {
 
     private val canConsume: MutableList<String> = mutableListOf()
     override fun canConsume(producer: ResourceProducer): Boolean {
