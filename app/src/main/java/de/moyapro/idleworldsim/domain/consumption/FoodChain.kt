@@ -132,11 +132,42 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
         }
         consumers += FoodChainEdge(
             newConsumer,
-            fittnessCalculator.calculate(foodChain[producer].map { it.consumer })
-            // add other weight / property calculators here
+            0.0
         )
+
+        updateConsumerWeights(this)
+
         return this
     }
+
+    private fun updateConsumerWeights(foodChainNode: FoodChainNode) {
+        val absoluteConsumeSkill = foodChainNode.consumers
+            .associateBy(
+                { it.consumer },
+                { it.consumer.consumePowerIndex(foodChainNode.producer) }
+            )
+        val maxConsumeSkill = absoluteConsumeSkill.values.max() ?: 0.0
+
+        val relativeConsumeValuePerSpecies = absoluteConsumeSkill
+            .map { (consumer, consumeSkill) -> Pair(consumer, maxConsumeSkill - consumeSkill) }
+            .associate { it }
+
+        relativeConsumeValuePerSpecies.entries
+            .sortedBy { it.value }
+            .map() { (consumer, _) -> consumer }
+            .withIndex()
+            .forEach() { (rank, consumer) ->
+                foodChainNode[consumer]?.consumeFactor = calculateConsumeFactor(rank)
+            }
+
+    }
+
+    private operator fun get(consumer: ResourceConsumer): FoodChainEdge? =
+        this.consumers.first { it.consumer == consumer } // consumer is unique
+
+
+    private fun calculateConsumeFactor(rank: Int) = 1.0 / ((rank) * 2)
+
 
     private fun isConsumerAlreadyAdded(newConsumer: ResourceConsumer): Boolean {
         return consumers.any { it.consumer == newConsumer }
@@ -147,8 +178,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
  * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
  */
 data class FoodChainEdge(val consumer: ResourceConsumer, val fittness: Double) {
-
-
+    var consumeFactor: Double = 0.0
 }
 
 

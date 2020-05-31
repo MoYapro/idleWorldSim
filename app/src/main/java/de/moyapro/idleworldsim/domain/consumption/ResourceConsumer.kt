@@ -5,4 +5,9 @@ interface ResourceConsumer {
 
     fun canConsume(producer: ResourceProducer): Boolean
 
+    /**
+     * Calculate an index indicating how got the consume can find/hunt/eat the producer
+     */
+     fun consumePowerIndex(producer: ResourceProducer): Double
+
 }

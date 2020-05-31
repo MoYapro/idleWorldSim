@@ -7,6 +7,10 @@ class DummyPorC(override val name: String) : PorC {
         return canConsume.contains(producer.name)
     }
 
+    override fun consumePowerIndex(producer: ResourceProducer) {
+        TODO("Not yet implemented")
+    }
+
 
     override fun equals(other: Any?): Boolean {
         return if (null == other || other !is DummyPorC) {
