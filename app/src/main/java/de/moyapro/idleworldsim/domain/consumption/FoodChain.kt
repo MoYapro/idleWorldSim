@@ -122,7 +122,6 @@ class FoodChain {
  */
 private data class FoodChainNode(private val foodChain: FoodChain, val producer: ResourceProducer) {
     val consumers: MutableList<FoodChainEdge> = mutableListOf()
-    val fittnessCalculator = FittnessCalculator(producer)
 
     /**
      * add a new connection between the nodes producer and the given producer.
