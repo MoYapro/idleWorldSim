@@ -5,20 +5,21 @@ package de.moyapro.idleworldsim.domain.consumption
  */
 class FoodChain {
 
-    private val elements: MutableList<FoodChainNode> = mutableListOf()
+    private val nodes: MutableList<FoodChainNode> = mutableListOf()
     private val consumersWithoutProducers: MutableList<ResourceConsumer> = mutableListOf()
 
     /**
-     * Get all consumers of the given producer
+     * Get all FoodChainEdge to consumers of the given producer
      */
     operator fun get(producer: ResourceProducer): List<FoodChainEdge> {
-        return elements.find { it.producer == producer }?.consumers ?: emptyList()
+        return nodes.find { it.producer == producer }?.consumers ?: emptyList()
     }
 
-    operator fun get(consumer: ResourceConsumer): List<ResourceProducer> {
-        return elements
+    operator fun get(consumer: ResourceConsumer): List<FoodChainEdge> {
+        return nodes
             .filter { node -> nodeConatinsConsumer(node, consumer) }
-            .map { it.producer }
+            .map { it.consumers }
+            .flatten()
     }
 
     private fun nodeConatinsConsumer(
@@ -37,17 +38,17 @@ class FoodChain {
             return this // do not add producer again
         }
         val newProducerNode = FoodChainNode(this, producer)
-        elements += newProducerNode
-        findConsumersFor(producer).forEach { newProducerNode.add(it) }
+        nodes += newProducerNode
+        findConsumersFor(producer).forEach { newProducerNode.add(producer, it) }
         addConsumersWithoutFoodsource(producer)
         return this
     }
 
     private fun isProducerAlreadyInFoodchain(producer: ResourceProducer) =
-        elements.any { it.producer == producer }
+        nodes.any { it.producer == producer }
 
     private fun findConsumersFor(producer: ResourceProducer): Iterable<ResourceConsumer> {
-        return elements
+        return nodes
             .map { node ->
                 node.consumers.filter {
                     it.consumer.canConsume(producer)
@@ -58,7 +59,7 @@ class FoodChain {
     }
 
     fun producers(): Int {
-        return elements.size
+        return nodes.size
     }
 
     fun add(consumer: ResourceConsumer): FoodChain {
@@ -75,15 +76,15 @@ class FoodChain {
     }
 
     private fun isConsumerAlreadyInFoodchain(consumer: ResourceConsumer): Boolean {
-        return elements.any { node -> node.consumers.any { edge -> edge.consumer == consumer } }
+        return nodes.any { node -> node.consumers.any { edge -> edge.consumer == consumer } }
     }
 
     private fun addConsumer(foodSources: List<FoodChainNode>, consumer: ResourceConsumer) {
-        foodSources.forEach { it.add(consumer) }
+        foodSources.forEach { it.add(it.producer, consumer) }
     }
 
     private fun getPossibleFoodSources(consumer: ResourceConsumer) =
-        elements.filter { consumer.canConsume(it.producer) }
+        nodes.filter { consumer.canConsume(it.producer) }
 
     /**
      * We need to check consumers without prdocuers if the new producer matchers their needs and add them to the producers consume list
@@ -99,7 +100,7 @@ class FoodChain {
      */
     fun asDotNotation(): String {
         val sb = StringBuilder("digraph G {\n")
-        elements
+        nodes
             .map { asDotNotation(it).joinToString("\n") }
             .filter { it.isNotBlank() && it.isNotEmpty() }
             .joinToString("\n")
@@ -126,17 +127,12 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
     /**
      * add a new connection between the nodes producer and the given producer.
      */
-    fun add(newConsumer: ResourceConsumer): FoodChainNode {
+    fun add(producer: ResourceProducer, newConsumer: ResourceConsumer): FoodChainNode {
         if (isConsumerAlreadyAdded(newConsumer)) {
             return this // do not re-add
         }
-        consumers += FoodChainEdge(
-            newConsumer,
-            0.0
-        )
-
+        consumers += FoodChainEdge(producer, newConsumer)
         updateConsumerWeights(this)
-
         return this
     }
 
@@ -144,7 +140,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
         val absoluteConsumeSkill = foodChainNode.consumers
             .associateBy(
                 { it.consumer },
-                { it.consumer.consumePowerIndex(foodChainNode.producer) }
+                { it.consumer.consumePowerFactor(foodChainNode.producer) }
             )
         val maxConsumeSkill = absoluteConsumeSkill.values.max() ?: 0.0
 
@@ -177,7 +173,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
 /**
  * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
  */
-data class FoodChainEdge(val consumer: ResourceConsumer, val fittness: Double) {
+data class FoodChainEdge(val producer: ResourceProducer, val consumer: ResourceConsumer) {
     var consumeFactor: Double = 0.0
 }
 

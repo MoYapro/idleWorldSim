@@ -1,5 +1,7 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
+import de.moyapro.idleworldsim.domain.traits.Trait
+
 class Level(val level: Int) : Comparable<Level> {
     override fun compareTo(other: Level) = level.compareTo(other.level)
 
@@ -11,4 +13,11 @@ class Level(val level: Int) : Comparable<Level> {
     }
 
     override fun hashCode() = this.level.hashCode() * 67
+    operator fun minus(other: Level) = Level(this.level - other.level)
+    operator fun plus(other: Level) = Level(this.level + other.level)
+}
+
+
+fun sum(traits: Iterable<Trait>): Level {
+    return Level(traits.map { it.level.level }.sum())
 }

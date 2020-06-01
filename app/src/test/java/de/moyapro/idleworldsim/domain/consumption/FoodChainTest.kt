@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain.consumption
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import kotlin.test.fail
 
 internal class FoodChainTest {
 
@@ -30,7 +31,7 @@ internal class FoodChainTest {
             .add(consumer2)
             .add(producer2)
         assertThat(foodChain[producer2].map { it.consumer }).contains(consumer2)
-        assertThat(foodChain[consumer2]).contains(producer2)
+        assertThat(foodChain[consumer2].map { it.producer }).contains(producer2)
     }
 
     @Test
@@ -40,7 +41,7 @@ internal class FoodChainTest {
             .add(producer1)
             .add(consumer1)
         assertThat(foodChain[producer1].map { it.consumer }).contains(consumer1)
-        assertThat(foodChain[consumer1]).contains(producer1)
+        assertThat(foodChain[consumer1].map { it.producer }).contains(producer1)
     }
 
     @Test
@@ -68,8 +69,9 @@ internal class FoodChainTest {
     fun weights() {
         val foodChain = buildTestFoodchain()
         val consumers = foodChain[producer1]
-        assertThat(consumers[0].fittness).`as`("First consumer should have higher consume fittness")
-            .isGreaterThanOrEqualTo(consumers[1].fittness)
+//        assertThat(consumers[0].fittness).`as`("First consumer should have higher consume fittness")
+//            .isGreaterThanOrEqualTo(consumers[1].fittness)
+        fail("Implement me")
     }
 
     @Test

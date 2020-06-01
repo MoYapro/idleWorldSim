@@ -1,5 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.traits.Trait
+
 class DummyConsumer(override val name: String) : ResourceConsumer {
 
     private val canConsume: MutableList<String> = mutableListOf()
@@ -7,10 +9,9 @@ class DummyConsumer(override val name: String) : ResourceConsumer {
         return canConsume.contains(producer.name)
     }
 
-    override fun consumePowerIndex(producer: ResourceProducer): Double {
-        TODO("Not yet implemented")
+    override fun get(trait: Trait): List<Trait> {
+        return emptyList()
     }
-
 
     override fun equals(other: Any?): Boolean {
         return if (null == other || other !is DummyConsumer) {
