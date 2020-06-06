@@ -2,7 +2,7 @@ package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.Trait
 
-class DummyPorC(override val name: String) : PorC {
+open class DummyPorC(override val name: String) : PorC {
 
     private val canConsume: MutableList<String> = mutableListOf()
     override fun canConsume(producer: ResourceProducer): Boolean {
