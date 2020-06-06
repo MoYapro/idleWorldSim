@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.two.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import kotlin.test.fail
@@ -17,9 +18,11 @@ internal class FoodChainTest {
     @Test
     fun insertIntoFoodChain() {
         val foodChain = buildTestFoodchain()
+        val species: Species = DummyPorC("Any")
+        foodChain.add(species)
         assertThat(foodChain[poc1 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain[poc2 as ResourceProducer].size).isEqualTo(1)
-        assertThat(foodChain.producers()).isEqualTo(4)
+        assertThat(foodChain.producers()).isEqualTo(5)
         assertThat(foodChain[producer1].size).isEqualTo(3)
         assertThat(foodChain[producer2].size).isEqualTo(1)
     }

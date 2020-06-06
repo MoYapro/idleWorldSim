@@ -1,13 +1,13 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.sum
 import kotlin.math.max
 import java.lang.Double.max as doubleMax
 
-interface ResourceConsumer {
-    val name: String
+interface ResourceConsumer : Species {
     val minimumFactor: Double
         get() = 0.1
 

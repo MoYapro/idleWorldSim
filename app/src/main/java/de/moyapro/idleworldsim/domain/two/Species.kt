@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim.domain.two
 
-import de.moyapro.idleworldsim.domain.consumption.DummyPorC
+interface Species {
 
-class Species(name: String) : DummyPorC(name) {
-
+    val name: String
 }

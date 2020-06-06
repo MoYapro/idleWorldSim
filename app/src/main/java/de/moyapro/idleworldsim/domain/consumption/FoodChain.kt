@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.two.Species
 import java.lang.Integer.max
 
 /**
@@ -29,13 +30,13 @@ class FoodChain {
         consumer: ResourceConsumer
     ) = it.consumers.any { it.consumer == consumer }
 
-    fun add(poc: PorC): FoodChain {
+    private fun add(poc: PorC): FoodChain {
         add(poc as ResourceProducer)
         add(poc as ResourceConsumer)
         return this
     }
 
-    fun add(producer: ResourceProducer): FoodChain {
+    private fun add(producer: ResourceProducer): FoodChain {
         if (isProducerAlreadyInFoodchain(producer)) {
             return this // do not add producer again
         }
@@ -111,7 +112,7 @@ class FoodChain {
         return nodes.size
     }
 
-    fun add(consumer: ResourceConsumer): FoodChain {
+    private fun add(consumer: ResourceConsumer): FoodChain {
         if (isConsumerAlreadyInFoodchain(consumer)) {
             return this // do not add producer again
         }
@@ -163,6 +164,16 @@ class FoodChain {
      */
     private fun asDotNotation(node: FoodChainNode): Iterable<String> =
         node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
+
+    fun add(species: Species): FoodChain {
+        when (species) {
+            is PorC -> add(species)
+            is ResourceConsumer -> add(species as ResourceConsumer)
+            is ResourceProducer -> add(species as ResourceProducer)
+            else -> throw IllegalArgumentException("Species is of unknown type: ${species::class}")
+        }
+        return this
+    }
 
 }
 
