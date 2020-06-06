@@ -14,7 +14,7 @@ interface ResourceConsumer {
     fun canConsume(producer: ResourceProducer): Boolean
 
     /**
-     * Calculate an index indicating how got the consume can find/hunt/eat the producer
+     * Calculate an index indicating how good the consume can find/hunt/eat the producer
      */
     fun consumePowerFactor(producer: ResourceProducer): Double {
         val findFactor = levelDifferenceToFactor(producer, FindTrait)

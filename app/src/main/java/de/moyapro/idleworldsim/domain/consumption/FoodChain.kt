@@ -1,5 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import java.lang.Integer.max
+
 /**
  * Implement the food chain of a given set of producers and consumers.
  */
@@ -41,7 +43,54 @@ class FoodChain {
         nodes += newProducerNode
         findConsumersFor(producer).forEach { newProducerNode.add(producer, it) }
         addConsumersWithoutFoodsource(producer)
+        updateConsumersFoodPreferences()
         return this
+    }
+
+    private fun updateConsumersFoodPreferences() {
+        val consumerMap: Map<ResourceConsumer, List<FoodChainEdge>> = getConsumerMap()
+        updateConsumersFoodPreferences(consumerMap)
+    }
+
+    private fun updateConsumersFoodPreferences(consumerMap: Map<ResourceConsumer, List<FoodChainEdge>>) {
+        consumerMap.forEach { (consumer, producers) ->
+            updateConsumersFoodPreferences(
+                consumer,
+                producers
+            )
+        }
+    }
+
+    private fun updateConsumersFoodPreferences(
+        consumer: ResourceConsumer,
+        producers: List<FoodChainEdge>
+    ) {
+        producers.forEach { producerEdge ->
+            producerEdge.preference = calculatePreferenceIndex(consumer, producerEdge.producer)
+        }
+    }
+
+    private fun calculatePreferenceIndex(
+        consumer: ResourceConsumer,
+        producer: ResourceProducer
+    ): Int {
+        val index = 1;
+        /*
+        + resources gained relative to others
+        + number of positive traits gotten from consuming that producer
+        - number of negative traits gotten from consuming that producer
+         */
+        return max(index, 0)
+    }
+
+    private fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {
+        return nodes
+            .map { it.consumers }
+            .flatten()
+            .groupBy(
+                { it.consumer },
+                { it }
+            )
     }
 
     private fun isProducerAlreadyInFoodchain(producer: ResourceProducer) =
@@ -173,6 +222,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
  * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
  */
 data class FoodChainEdge(val producer: ResourceProducer, val consumer: ResourceConsumer) {
+    var preference: Int = 0
     var consumeFactor: Double = 0.0
 }
 
