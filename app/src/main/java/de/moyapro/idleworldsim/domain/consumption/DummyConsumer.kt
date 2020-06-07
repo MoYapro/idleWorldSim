@@ -2,7 +2,7 @@ package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.Trait
 
-class DummyConsumer(override val name: String) : ResourceConsumer {
+class DummyConsumer(name: String) : ResourceConsumer, BasicLife(name) {
 
     private val canConsume: MutableList<String> = mutableListOf()
     override fun canConsume(producer: ResourceProducer): Boolean {
@@ -29,4 +29,9 @@ class DummyConsumer(override val name: String) : ResourceConsumer {
         canConsume += producerName
         return this
     }
+
+    override fun evolveTo(vararg evolvedFeature: de.moyapro.idleworldsim.domain.traits.Feature): de.moyapro.idleworldsim.domain.two.Species {
+        TODO("Not yet implemented")
+    }
+
 }

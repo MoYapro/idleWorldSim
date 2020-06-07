@@ -2,7 +2,7 @@ package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.Trait
 
-class DummyProducer(override val name: String) : ResourceProducer {
+class DummyProducer(name: String) : ResourceProducer, BasicLife(name) {
 
 
     override fun equals(other: Any?): Boolean {

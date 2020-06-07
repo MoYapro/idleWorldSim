@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain.two
 
 import de.moyapro.idleworldsim.domain.consumption.FoodChain
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
+import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 
 class Biome() {
@@ -23,7 +24,7 @@ class Biome() {
         return populations[species] ?: Population(0.0)
     }
 
-    fun settle(producer: ResourceProducer): Biome {
-        return this
+    fun provides(): Resources {
+        return Resources()
     }
 }

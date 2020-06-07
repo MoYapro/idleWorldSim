@@ -3,9 +3,14 @@ package de.moyapro.idleworldsim
 import de.moyapro.idleworldsim.domain.consumption.DummyConsumer
 import de.moyapro.idleworldsim.domain.consumption.DummyPorC
 import de.moyapro.idleworldsim.domain.consumption.DummyProducer
+import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.ProduceResource
 import de.moyapro.idleworldsim.domain.two.Biome
 import de.moyapro.idleworldsim.domain.two.Species
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -30,8 +35,8 @@ internal class BiomeTwoTest {
 
     @Test
     fun addBasicResources() {
-        val biome = Biome().settle(DummyProducer("WATER"))
-//        assertThat(biome.provides())
+        val biome = Biome().settle(DummyProducer("WATER").evolveTo(Feature( ProduceResource(Water, Level(3)))))
+        assertThat(biome.provides()[Water]).isEqualTo(Resource(Water, 8.0))
     }
 
 }
