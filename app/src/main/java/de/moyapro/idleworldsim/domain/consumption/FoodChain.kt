@@ -67,7 +67,7 @@ class FoodChain {
         producers: List<FoodChainEdge>
     ) {
         producers.forEach { producerEdge ->
-            producerEdge.preference = calculatePreferenceIndex(consumer, producerEdge.producer)
+            producerEdge.consumerPreference = calculatePreferenceIndex(consumer, producerEdge.producer)
         }
     }
 
@@ -241,7 +241,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
  * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
  */
 data class FoodChainEdge(val producer: ResourceProducer, val consumer: ResourceConsumer) {
-    var preference: Int = 0
+    var consumerPreference: Int = 0
     var consumeFactor: Double = 0.0
 }
 
