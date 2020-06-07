@@ -42,7 +42,7 @@ class FoodChain {
         }
         val newProducerNode = FoodChainNode(this, producer)
         nodes += newProducerNode
-        findConsumersFor(producer).forEach { newProducerNode.add(producer, it) }
+        findConsumersOf(producer).forEach { newProducerNode.add(producer, it) }
         addConsumersWithoutFoodsource(producer)
         updateConsumersFoodPreferences()
         return this
@@ -84,7 +84,7 @@ class FoodChain {
         return max(index, 0)
     }
 
-    private fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {
+    fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {
         return nodes
             .map { it.consumers }
             .flatten()
@@ -97,7 +97,7 @@ class FoodChain {
     private fun isProducerAlreadyInFoodchain(producer: ResourceProducer) =
         nodes.any { it.producer == producer }
 
-    private fun findConsumersFor(producer: ResourceProducer): Iterable<ResourceConsumer> {
+    private fun findConsumersOf(producer: ResourceProducer): Iterable<ResourceConsumer> {
         return nodes
             .map { node ->
                 node.consumers.filter {
@@ -108,8 +108,10 @@ class FoodChain {
             .flatten()
     }
 
-    fun producers(): Int {
-        return nodes.size
+    fun producers(): List<ResourceProducer> {
+        return nodes
+            .map { it.producer }
+            .distinct()
     }
 
     private fun add(consumer: ResourceConsumer): FoodChain {
@@ -173,6 +175,12 @@ class FoodChain {
             else -> throw IllegalArgumentException("Species is of unknown type: ${species::class}")
         }
         return this
+    }
+
+    fun getRelations(): List<FoodChainEdge> {
+        return nodes
+            .map { it.consumers }
+            .flatten()
     }
 
 }
