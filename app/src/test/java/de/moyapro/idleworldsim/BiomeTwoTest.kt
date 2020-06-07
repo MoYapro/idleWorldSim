@@ -3,13 +3,14 @@ package de.moyapro.idleworldsim
 import de.moyapro.idleworldsim.domain.consumption.DummyConsumer
 import de.moyapro.idleworldsim.domain.consumption.DummyPorC
 import de.moyapro.idleworldsim.domain.consumption.DummyProducer
+import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
 import de.moyapro.idleworldsim.domain.two.Biome
 import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -35,8 +36,29 @@ internal class BiomeTwoTest {
 
     @Test
     fun addBasicResources() {
-        val biome = Biome().settle(DummyProducer("WATER").evolveTo(Feature( ProduceResource(Water, Level(3)))))
-        assertThat(biome.provides()[Water]).isEqualTo(Resource(Water, 8.0))
+        val producer = DummyProducer(
+            "WATER",
+            listOf(Feature(ProduceResource(Water, Level(3))))
+        )
+        assertThat(Biome().settle(producer)).isNotNull
+    }
+
+    @Test
+    fun addConsumer() {
+    }
+
+    @Test
+    fun consumerConsumesProducer() {
+        val soil = DummyProducer("soil", listOf(Feature(ProduceResource(Minerals))))
+        val gras = DummyConsumer("gras", listOf(Feature(ConsumerTrait(Minerals))))
+        val biome = Biome()
+            .settle(soil)
+            .settle(gras).process()
+        val populationDifference: Map<Species, Population> = biome.getPopulationChanges()
+        assertThat(populationDifference[soil]?.populationSize).isEqualTo(0.0)
+        assertThat(populationDifference[gras]?.populationSize).isGreaterThan(0.0)
+
+
     }
 
 }

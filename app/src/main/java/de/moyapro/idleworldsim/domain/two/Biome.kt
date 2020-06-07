@@ -1,8 +1,6 @@
 package de.moyapro.idleworldsim.domain.two
 
 import de.moyapro.idleworldsim.domain.consumption.FoodChain
-import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
-import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 
 class Biome() {
@@ -11,6 +9,8 @@ class Biome() {
 
 
     fun process(): Biome {
+        val changes = getPopulationChanges()
+        populations += changes
         return this
     }
 
@@ -24,7 +24,16 @@ class Biome() {
         return populations[species] ?: Population(0.0)
     }
 
-    fun provides(): Resources {
-        return Resources()
+
+    /**
+     * Get difference in population per species. This should be the same changes as process but not applied to the biome
+     */
+    fun getPopulationChanges(): Map<Species, Population> {
+        //     foodChain[soil].sortedBy { it.preference }.forEach { it.consumer.consume(it.producer) }
+        return populations
+            .map { (species, _) -> Pair(species, Population(0.0)) }
+            .associate { it }
     }
+
+
 }
