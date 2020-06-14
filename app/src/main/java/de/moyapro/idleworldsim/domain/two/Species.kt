@@ -38,7 +38,7 @@ interface Species {
         population: Population,
         availableResources: Resources
     ): Population {
-        TODO("Not yet implemented")
+        return Population(3.1415)
     }
 
 }
