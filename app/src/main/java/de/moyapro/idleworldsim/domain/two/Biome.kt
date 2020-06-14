@@ -56,7 +56,7 @@ class Biome() {
         val resourcesAquiredByConsumer: Resources =
             battleRelation.producer.getResourcesPerIndividuum() * producerPopulationDifference
         val consumerPopulationDifference: Population =
-            battleRelation.consumer.grow(resourcesAquiredByConsumer)
+            battleRelation.consumer.grow(consumerPopulation, resourcesAquiredByConsumer)
 
         resultMap[battleRelation.consumer] = consumerPopulationDifference
         resultMap[battleRelation.producer] = producerPopulationDifference
