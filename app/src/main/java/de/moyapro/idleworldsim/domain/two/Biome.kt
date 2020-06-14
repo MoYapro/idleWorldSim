@@ -4,6 +4,8 @@ import de.moyapro.idleworldsim.domain.consumption.FoodChain
 import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.addPopulationMaps
+import de.moyapro.idleworldsim.util.sumUsing
 
 class Biome() {
     private val foodChain = FoodChain()
@@ -31,11 +33,14 @@ class Biome() {
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
     fun getPopulationChanges(): Map<Species, Population> {
-        foodChain.getRelations()
+        val populationChanges = foodChain.getRelations()
             .sortedBy { it.consumerPreference }
-            .forEach { battle(it) }
+            .map { battle(it) }
 
-        return emptyMap()
+        return populationChanges.sumUsing(
+            ::addPopulationMaps
+        ) { mutableMapOf() }
+            ?: emptyMap()
     }
 
     /**
