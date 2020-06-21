@@ -68,14 +68,14 @@ internal class TraitTest {
     fun predatorsCanOnlyEatSomeSpecies() {
         // this test is failing sometimes. it may depend on the order in which the species are processed
         val gras = Species("Gras")
-            .evolve(Feature.sunlightConsumer())
+//            .evolve(Feature.sunlightConsumer())
         val wolf = Species("Wolf").evolve(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
         val biome = Biome("Earth", Resources())
             .settle(gras)
             .settle(wolf)
             .process()
 
-        assertThat(biome.resources[gras].populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
+        assertThat(biome.resources[gras as Species].populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
         assertThat(biome.resources[wolf].populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
@@ -99,5 +99,11 @@ internal class TraitTest {
         assertThat(biome.resources[lowDeathSpecies].populationSize).isLessThan(biome.resources[species].populationSize)
         assertThat(biome.resources[species].populationSize).isGreaterThan(biome.resources[highDeathSpecies].populationSize)
     }
+
+    @Test
+    fun canCounter() {
+        assertThat(Stealth().canCounter(Vision())).isTrue()
+    }
+
 
 }

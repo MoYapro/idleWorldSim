@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Trait
 
 class DummyConsumer(override val name: String, override val features: List<Feature> = emptyList()) :
     ResourceConsumer {
@@ -11,9 +10,6 @@ class DummyConsumer(override val name: String, override val features: List<Featu
         return canConsume.contains(producer.name)
     }
 
-    override fun get(trait: Trait): List<Trait> {
-        return emptyList()
-    }
 
     override fun equals(other: Any?): Boolean {
         return if (null == other || other !is DummyConsumer) {

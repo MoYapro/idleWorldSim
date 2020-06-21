@@ -2,9 +2,11 @@ package de.moyapro.idleworldsim.domain.two
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.Trait
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import kotlin.reflect.KClass
 
 interface Species {
     val features: List<Feature>
@@ -39,6 +41,15 @@ interface Species {
         availableResources: Resources
     ): Population {
         return Population(3.1415)
+    }
+
+    fun traits(): List<Trait> {
+        return this.features.map { it.getTraits() }.flatten()
+    }
+
+    operator fun get(traitClass: KClass<out Trait>): List<Trait> {
+        return this.traits().filter{ it::class.isInstance(traitClass)}
+
     }
 
 }
