@@ -5,10 +5,15 @@ import kotlin.reflect.KClass
 open class FindTrait(canCounter: Set<KClass<out Trait>> = emptySet()) : Trait(canCounter = canCounter)
 
 
-class Vision : FindTrait()
+open class Vision : FindTrait()
+class SuperVision : Vision()
+
+
+
 class Smell : FindTrait()
 class Hearing : FindTrait()
 
 // vvvvvvvvvvvvvvvvvvv some counters vvvvvvvvvvvvvvvvvvvvvv
 
-class Stealth : FindTrait(canCounter = setOf(Vision::class))
+open class Stealth : FindTrait(canCounter = setOf(Vision::class))
+class SuperStealth : Stealth()

@@ -13,7 +13,7 @@ abstract class Trait internal constructor(
         val otherTraitClass:KClass<out Trait> = otherTrait::class
         return canCounter
             .asSequence()
-            .any { otherTraitClass.isInstance(it::class) }
+            .any { otherTraitClass == it }
     }
 }
 

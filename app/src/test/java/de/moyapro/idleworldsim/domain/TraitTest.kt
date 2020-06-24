@@ -105,5 +105,15 @@ internal class TraitTest {
         assertThat(Stealth().canCounter(Vision())).isTrue()
     }
 
+    @Test
+    fun canCounterSubclass() {
+        assertThat(SuperStealth().canCounter(Vision())).isTrue()
+    }
+
+    @Test
+    fun subclassIsNotCountered() {
+        assertThat(Stealth().canCounter(SuperVision())).isFalse()
+    }
+
 
 }
