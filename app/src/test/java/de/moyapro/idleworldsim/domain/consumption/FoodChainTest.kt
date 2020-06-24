@@ -12,13 +12,13 @@ internal class FoodChainTest {
     private val consumer1: ResourceConsumer = DummyConsumer("c1").canConsume("p1")
     private val consumer2: ResourceConsumer =
         DummyConsumer("c2").canConsume("pc2").canConsume("pc1").canConsume("p2")
-    private val poc1: PorC = DummyPorC("pc1").canConsume("p1")
-    private val poc2: PorC = DummyPorC("pc2").canConsume("p1")
+    private val poc1: ProducerAndConsumer = SpeciesImpl("pc1").canConsume("p1")
+    private val poc2: ProducerAndConsumer = SpeciesImpl("pc2").canConsume("p1")
 
     @Test
     fun insertIntoFoodChain() {
         val foodChain = buildTestFoodchain()
-        val species: Species = DummyPorC("Any")
+        val species: Species = SpeciesImpl("Any")
         foodChain.add(species)
         assertThat(foodChain[poc1 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain[poc2 as ResourceProducer].size).isEqualTo(1)

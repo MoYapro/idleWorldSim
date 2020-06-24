@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-import de.moyapro.idleworldsim.domain.consumption.DummyPorC
+import de.moyapro.idleworldsim.domain.consumption.SpeciesImpl
 import de.moyapro.idleworldsim.domain.two.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,7 +19,7 @@ internal class PopulationTest {
 
     @Test
     fun addPopulationMaps_WithOnePopEach_OfSameSpecies() {
-        val species = DummyPorC("the test species")
+        val species = SpeciesImpl("the test species")
         assertThat(
             addPopulationMaps(
                 mapOf(Pair(species, Population(1.0))),
@@ -30,9 +30,9 @@ internal class PopulationTest {
 
     @Test
     fun addPopulationMaps_WithMultiplePopEach_SomeOfSameSpecies() {
-        val species1 = DummyPorC("one")
-        val species2 = DummyPorC("two")
-        val species3 = DummyPorC("three")
+        val species1 = SpeciesImpl("one")
+        val species2 = SpeciesImpl("two")
+        val species3 = SpeciesImpl("three")
         val map1: Map<Species, Population> = mapOf(
             Pair(species1, Population(1.0)),
             Pair(species2, Population(1.0))

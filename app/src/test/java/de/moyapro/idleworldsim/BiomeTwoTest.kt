@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.consumption.DummyConsumer
-import de.moyapro.idleworldsim.domain.consumption.DummyPorC
+import de.moyapro.idleworldsim.domain.consumption.SpeciesImpl
 import de.moyapro.idleworldsim.domain.consumption.DummyProducer
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
@@ -19,7 +19,7 @@ internal class BiomeTwoTest {
 
     @Test
     fun settle() {
-        val species: Species = DummyPorC("X")
+        val species: Species = SpeciesImpl("X")
         assertThat(Biome().settle(species, Population(3.0))[species]).isEqualTo(Population(3.0))
     }
 

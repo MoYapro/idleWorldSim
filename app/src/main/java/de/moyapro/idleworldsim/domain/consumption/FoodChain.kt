@@ -30,7 +30,7 @@ class FoodChain {
         consumer: ResourceConsumer
     ) = it.consumers.any { it.consumer == consumer }
 
-    private fun add(poc: PorC): FoodChain {
+    private fun add(poc: ProducerAndConsumer): FoodChain {
         add(poc as ResourceProducer)
         add(poc as ResourceConsumer)
         return this
@@ -169,7 +169,7 @@ class FoodChain {
 
     fun add(species: Species): FoodChain {
         when (species) {
-            is PorC -> add(species)
+            is ProducerAndConsumer -> add(species)
             is ResourceConsumer -> add(species as ResourceConsumer)
             is ResourceProducer -> add(species as ResourceProducer)
             else -> throw IllegalArgumentException("Species is of unknown type: ${species::class}")
