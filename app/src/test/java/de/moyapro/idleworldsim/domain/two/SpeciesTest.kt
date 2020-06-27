@@ -59,4 +59,12 @@ internal class SpeciesTest {
         assertThat(species[FindTrait::class]).isEqualTo(listOf(Vision(), SuperVision(), Hearing()))
     }
 
+    @Test
+    fun getCounters() {
+        val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty))
+        val producer = SpeciesImpl("Producer", Feature(Stealth(), Meaty, Smell()))
+        assertThat(producer.getCounters(traitsToCounter)).isEqualTo(listOf(Stealth()))
+
+    }
+
 }
