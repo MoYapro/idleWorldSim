@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Trait
 
 class DummyProducer(override val name: String, override val features: List<Feature> = emptyList()) :
     ResourceProducer {
@@ -18,9 +17,4 @@ class DummyProducer(override val name: String, override val features: List<Featu
     override fun hashCode(): Int {
         return name.hashCode()
     }
-
-    override fun get(trait: Trait): List<Trait> {
-        return emptyList()
-    }
-
 }

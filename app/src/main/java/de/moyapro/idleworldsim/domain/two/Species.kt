@@ -47,9 +47,9 @@ interface Species {
         return this.features.map { it.getTraits() }.flatten()
     }
 
-    operator fun get(traitClass: KClass<out Trait>): List<Trait> {
-        return this.traits().filter{ it::class.isInstance(traitClass)}
-
+    operator fun get(traitClass: KClass<out Trait>): Iterable<Trait> {
+        return traits().filterIsInstance(traitClass.javaObjectType)
     }
+
 
 }

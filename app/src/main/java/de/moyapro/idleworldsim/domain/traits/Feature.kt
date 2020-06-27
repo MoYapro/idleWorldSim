@@ -69,7 +69,7 @@ open class Feature(private val name: String = "GenericFeature", private val trai
 
     operator fun get(trait: Trait): Level {
         return this.traits
-            .filter { it::class == trait::class }
+            .filterIsInstance(trait::class.javaObjectType)
             .map { it.level }
             .maxBy { it.level }
             ?: Level(0)

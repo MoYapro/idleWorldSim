@@ -1,8 +1,7 @@
 package de.moyapro.idleworldsim.domain.two
 
 import de.moyapro.idleworldsim.domain.consumption.SpeciesImpl
-import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
-import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -52,6 +51,12 @@ internal class SpeciesTest {
         val species2 = SpeciesImpl("same")
         assertThat(species1).isEqualTo(species2)
         assertThat(species1.hashCode()).isEqualTo(species2.hashCode())
+    }
+
+    @Test
+    fun getTraits() {
+        val species = SpeciesImpl("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty) ))
+        assertThat(species[FindTrait::class]).isEqualTo(listOf(Vision(), SuperVision(), Hearing()))
     }
 
 }
