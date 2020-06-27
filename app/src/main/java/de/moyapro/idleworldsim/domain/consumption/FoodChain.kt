@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.two.Species
-import java.lang.Integer.max
 
 /**
  * Implement the food chain of a given set of producers and consumers.
@@ -67,21 +66,8 @@ class FoodChain {
         producers: List<FoodChainEdge>
     ) {
         producers.forEach { producerEdge ->
-            producerEdge.consumerPreference = calculatePreferenceIndex(consumer, producerEdge.producer)
+            producerEdge.consumerPreference = consumer.calculatePreferenceIndex(producerEdge.producer)
         }
-    }
-
-    private fun calculatePreferenceIndex(
-        consumer: ResourceConsumer,
-        producer: ResourceProducer
-    ): Int {
-        val index = 1;
-        /*
-        + resources gained relative to others
-        + number of positive traits gotten from consuming that producer
-        - number of negative traits gotten from consuming that producer
-         */
-        return max(index, 0)
     }
 
     fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {

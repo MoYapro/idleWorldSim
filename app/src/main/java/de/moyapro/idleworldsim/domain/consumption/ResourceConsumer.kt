@@ -27,6 +27,17 @@ interface ResourceConsumer : Species {
         return findFactor * catchFactor * killFactor
     }
 
+    fun calculatePreferenceIndex(producer: ResourceProducer): Int {
+        val index = 1;
+        /*
+        + resources gained relative to others
+        + number of positive traits gotten from consuming that producer
+        - number of negative traits gotten from consuming that producer
+         */
+        return Integer.max(index, 0)
+    }
+
+
     fun levelDifferenceToFactor(producer: ResourceProducer, trait: KClass<out Trait>) =
         levelDifferenceToFactor(sum(producer[trait]), sum(getCounters(producer[trait])))
 
@@ -39,14 +50,11 @@ interface ResourceConsumer : Species {
     /**
      * Get all consumer's traits that counter given traits
      */
-    fun getCounters(traits: List<Trait>): List<Trait> {
+    fun getCounters(traits: Iterable<Trait>): Iterable<Trait> {
         return this.traits()
             .filter { consumerTrait -> traits.any { consumerTrait.canCounter(it) } }
 
     }
-
-
-
 
 
 }
