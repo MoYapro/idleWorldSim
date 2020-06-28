@@ -7,13 +7,11 @@ import de.moyapro.idleworldsim.domain.traits.Trait
 import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.sum
-import kotlin.math.max
 import kotlin.reflect.KClass
-import java.lang.Double.max as doubleMax
 
 interface ResourceConsumer : Species {
     val minimumFactor: Double
-        get() = 0.1
+        get() = 0.01
 
     fun canConsume(producer: ResourceProducer): Boolean
 
@@ -39,22 +37,21 @@ interface ResourceConsumer : Species {
 
 
     fun levelDifferenceToFactor(producer: ResourceProducer, trait: KClass<out Trait>) =
-        levelDifferenceToFactor(sum(producer[trait]), sum(getCounters(producer[trait])))
+        levelDifferenceToFactor(sum(producer[trait]), sum(producer.getCounters(this[trait])))
 
 
     fun levelDifferenceToFactor(actionLevel: Level, counterLevel: Level): Double {
-        val differenceFactor = 1.0 / max((actionLevel - counterLevel).level, 1)
-        return doubleMax(differenceFactor, minimumFactor)
+        val maxChance = 0.99
+        val minChance = 0.01
+        val medianChance = 0.5
+        val actionValue = actionLevel.level
+        val counterValue = counterLevel.level
+        return when {
+            0 == counterValue -> maxChance
+            actionValue == counterValue -> medianChance
+            actionValue > counterValue -> maxChance
+            actionValue < counterValue -> minChance
+            else -> throw IllegalStateException("Missed a case when calculating levelDifferenceToFactor for actionLevel: $actionLevel and counterLevel: $counterLevel")
+        }
     }
-
-    /**
-     * Get all consumer's traits that counter given traits
-     */
-    fun getCounters(traits: Iterable<Trait>): Iterable<Trait> {
-        return this.traits()
-            .filter { consumerTrait -> traits.any { consumerTrait.canCounter(it) } }
-
-    }
-
-
 }

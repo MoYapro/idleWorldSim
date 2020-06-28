@@ -51,5 +51,14 @@ interface Species {
         return traits().filterIsInstance(traitClass.javaObjectType)
     }
 
+    /**
+     * Get all consumer's traits that counter given traits
+     */
+    fun getCounters(traits: Iterable<Trait>): Iterable<Trait> {
+        return this.traits()
+            .filter { consumerTrait -> traits.any { consumerTrait.canCounter(it) } }
+
+    }
+
 
 }
