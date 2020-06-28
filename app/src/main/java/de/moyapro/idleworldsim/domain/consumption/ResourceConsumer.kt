@@ -7,7 +7,9 @@ import de.moyapro.idleworldsim.domain.traits.Trait
 import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.sum
+import kotlin.math.pow
 import kotlin.reflect.KClass
+
 
 interface ResourceConsumer : Species {
     val minimumFactor: Double
@@ -42,15 +44,15 @@ interface ResourceConsumer : Species {
 
     fun levelDifferenceToFactor(actionLevel: Level, counterLevel: Level): Double {
         val maxChance = 0.99
-        val minChance = 0.01
         val medianChance = 0.5
         val actionValue = actionLevel.level
         val counterValue = counterLevel.level
+        val graphStretchFactor = 1.6
         return when {
             0 == counterValue -> maxChance
             actionValue == counterValue -> medianChance
-            actionValue > counterValue -> maxChance
-            actionValue < counterValue -> minChance
+            actionValue > counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
+            actionValue < counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
             else -> throw IllegalStateException("Missed a case when calculating levelDifferenceToFactor for actionLevel: $actionLevel and counterLevel: $counterLevel")
         }
     }
