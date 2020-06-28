@@ -27,14 +27,17 @@ interface ResourceConsumer : Species {
         return findFactor * catchFactor * killFactor
     }
 
-    fun calculatePreferenceIndex(producer: ResourceProducer): Int {
-        val index = 1;
+    fun calculatePreferenceIndex(producer: ResourceProducer, consumePowerFactor: Double): Double {
+        return when (canConsume(producer)) {
+                false -> 0.0
+                true -> consumePowerFactor * producer.getResourcesPerIndividuum().getQuantities().sumByDouble { it.amount }
+            }
+
         /*
         + resources gained relative to others
         + number of positive traits gotten from consuming that producer
         - number of negative traits gotten from consuming that producer
          */
-        return Integer.max(index, 0)
     }
 
 

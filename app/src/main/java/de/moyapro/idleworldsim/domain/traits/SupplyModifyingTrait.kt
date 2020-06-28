@@ -14,7 +14,7 @@ abstract class SupplyModifyingTrait : Trait() {
     abstract fun influence(consumption: Consumption): Consumption
 }
 
-class Predator(private val preyTrait: Trait) : SupplyModifyingTrait() {
+class Predator(val preyTrait: Trait) : SupplyModifyingTrait() {
 
     override fun influence(consumption: Consumption): Consumption {
         val huntingEfficiency = 0.01
