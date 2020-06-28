@@ -1,19 +1,21 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.Meaty
+import de.moyapro.idleworldsim.domain.traits.Predator
 import de.moyapro.idleworldsim.domain.two.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import kotlin.test.fail
 
 internal class FoodChainTest {
 
-    private val producer1: ResourceProducer = DummyProducer("p1")
+    private val producer1: ResourceProducer = DummyProducer("p1", listOf(Feature(Meaty)))
     private val producer2: ResourceProducer = DummyProducer("p2")
     private val consumer1: ResourceConsumer = DummyConsumer("c1").canConsume("p1")
     private val consumer2: ResourceConsumer =
         DummyConsumer("c2").canConsume("pc2").canConsume("pc1").canConsume("p2")
-    private val poc1: ProducerAndConsumer = SpeciesImpl("pc1").canConsume("p1")
-    private val poc2: ProducerAndConsumer = SpeciesImpl("pc2").canConsume("p1")
+    private val poc1: ProducerAndConsumer = SpeciesImpl("pc1", Feature(Predator(Meaty)))
+    private val poc2: ProducerAndConsumer = SpeciesImpl("pc2", Feature(Predator(Meaty)))
 
     @Test
     fun insertIntoFoodChain() {
@@ -67,15 +69,6 @@ internal class FoodChainTest {
         assertThat(foodChain[consumer1].size).isEqualTo(1)
     }
 
-
-    @Test
-    fun weights() {
-        val foodChain = buildTestFoodchain()
-        val consumers = foodChain[producer1]
-//        assertThat(consumers[0].fittness).`as`("First consumer should have higher consume fittness")
-//            .isGreaterThanOrEqualTo(consumers[1].fittness)
-        fail("Implement me")
-    }
 
     @Test
     fun dotNotation() {

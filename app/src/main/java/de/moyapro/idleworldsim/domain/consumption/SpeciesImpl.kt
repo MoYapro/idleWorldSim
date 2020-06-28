@@ -33,9 +33,4 @@ open class SpeciesImpl(
         return name.hashCode() * 13 + traits().sumBy { it.hashCode() * 23 }
     }
 
-    @Deprecated("This should not be used any more. Can consume will be based on traits not on predetermined relation")
-    fun canConsume(producerName: String): ProducerAndConsumer {
-        canConsume += producerName
-        return this
-    }
 }
