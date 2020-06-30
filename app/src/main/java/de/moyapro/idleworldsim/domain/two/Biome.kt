@@ -1,13 +1,11 @@
 package de.moyapro.idleworldsim.domain.two
 
-import de.moyapro.idleworldsim.domain.consumption.FoodChain
-import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
-import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.addPopulationMaps
 import de.moyapro.idleworldsim.util.sumUsing
 
-class Biome() {
+class Biome {
     private val foodChain = FoodChain()
     private val populations: MutableMap<Species, Population> = mutableMapOf()
 
@@ -37,10 +35,7 @@ class Biome() {
             .sortedBy { it.consumerPreference }
             .map { battle(it) }
 
-        return populationChanges.sumUsing(
-            ::addPopulationMaps
-        ) { mutableMapOf() }
-            ?: emptyMap()
+        return populationChanges.sumUsing(::addPopulationMaps) { mutableMapOf() } ?: emptyMap()
     }
 
     /**
@@ -59,13 +54,18 @@ class Biome() {
                 battleRelation.consumeFactor
             )
         val resourcesAquiredByConsumer: Resources =
-            battleRelation.producer.getResourcesPerIndividuum() * producerPopulationDifference
+            battleRelation.producer.getResourcesPerInstance() * producerPopulationDifference
         val consumerPopulationDifference: Population =
-            battleRelation.consumer.grow(consumerPopulation, resourcesAquiredByConsumer)
+            battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
         resultMap[battleRelation.consumer] = consumerPopulationDifference
         resultMap[battleRelation.producer] = producerPopulationDifference
 
         return resultMap.toMap()
+    }
+
+    fun addResourceProducer(producer: ResourceProducer): Biome {
+        foodChain.add(producer)
+        return this
     }
 }

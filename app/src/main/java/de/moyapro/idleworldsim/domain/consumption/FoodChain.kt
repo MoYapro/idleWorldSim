@@ -35,7 +35,7 @@ class FoodChain {
         return this
     }
 
-    private fun add(producer: ResourceProducer): FoodChain {
+    fun add(producer: ResourceProducer): FoodChain {
         if (isProducerAlreadyInFoodchain(producer)) {
             return this // do not add producer again
         }

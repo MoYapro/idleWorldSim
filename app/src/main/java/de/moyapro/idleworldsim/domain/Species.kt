@@ -2,9 +2,9 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.Consumption
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.Trait
 import de.moyapro.idleworldsim.domain.valueObjects.*
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import de.moyapro.idleworldsim.util.applyTo
 
 /**
@@ -90,21 +90,6 @@ class Species(val name: String, private val features: MutableSet<Feature> = muta
     }
 
 }
-
-fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
-    return Species(
-        name, Feature(
-            ConsumerTrait(Water),
-            ConsumerTrait(Minerals),
-            ConsumerTrait(Energy),
-            NeedResource(Water),
-            NeedResource(Minerals),
-            NeedResource(Energy),
-            ProduceResource(EvolutionPoints)
-        )
-    )
-}
-
 
 object SpeciesConstants {
     val GROWTH_RATE = GrowthRate(1.1)

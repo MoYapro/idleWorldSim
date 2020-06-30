@@ -4,14 +4,14 @@ import de.moyapro.idleworldsim.domain.traits.CatchTrait
 import de.moyapro.idleworldsim.domain.traits.FindTrait
 import de.moyapro.idleworldsim.domain.traits.KillTrait
 import de.moyapro.idleworldsim.domain.traits.Trait
-import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.sum
 import kotlin.math.pow
 import kotlin.reflect.KClass
 
 
-interface ResourceConsumer : Species {
+interface ResourceConsumer: TraitBearer {
     val minimumFactor: Double
         get() = 0.01
 
@@ -29,9 +29,9 @@ interface ResourceConsumer : Species {
 
     fun calculatePreferenceIndex(producer: ResourceProducer, consumePowerFactor: Double): Double {
         return when (canConsume(producer)) {
-                false -> 0.0
-                true -> consumePowerFactor * producer.getResourcesPerIndividuum().getQuantities().sumByDouble { it.amount }
-            }
+            false -> 0.0
+            true -> consumePowerFactor * producer.getResourcesPerInstance().getQuantities().sumByDouble { it.amount }
+        }
 
         /*
         + resources gained relative to others
@@ -59,4 +59,9 @@ interface ResourceConsumer : Species {
             else -> throw IllegalStateException("Missed a case when calculating levelDifferenceToFactor for actionLevel: $actionLevel and counterLevel: $counterLevel")
         }
     }
+
+    /**
+     * consume available resources and may update its populations
+     */
+    fun consume(consumerPopulation: Population, availableResources: Resources): Population
 }
