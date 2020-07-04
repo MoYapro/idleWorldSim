@@ -40,6 +40,9 @@ open class Species(
     }
 
     override fun consume(consumerPopulation: Population, availableResources: Resources): Population {
+        if (0 >= availableResources.getQuantities().sumByDouble { it.amount }) {
+            return consumerPopulation * .95
+        }
         return consumerPopulation * 1.01
     }
 
