@@ -16,15 +16,13 @@ open class Species(
 
 
     override fun getResourcesPerInstance(): Resources {
-        TODO("Not yet implemented")
+        return Resources()
     }
 
     override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {
         return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) as T }
     }
 
-    @Deprecated("This should not be used any more. CanConsume() should be based on traits")
-    private val canConsume: MutableList<String> = mutableListOf()
     override fun canConsume(producer: ResourceProducer) = canHuntFood(producer) || canConsumeFood(producer)
 
     private fun canConsumeFood(producer: ResourceProducer): Boolean {

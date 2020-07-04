@@ -29,7 +29,7 @@ class FoodChain {
         consumer: ResourceConsumer
     ) = it.consumers.any { it.consumer == consumer }
 
-    private fun add(poc: Species): FoodChain {
+    fun add(poc: Species): FoodChain {
         add(poc as ResourceProducer)
         add(poc as ResourceConsumer)
         return this
@@ -100,7 +100,7 @@ class FoodChain {
             .distinct()
     }
 
-    private fun add(consumer: ResourceConsumer): FoodChain {
+    fun add(consumer: ResourceConsumer): FoodChain {
         if (isConsumerAlreadyInFoodchain(consumer)) {
             return this // do not add producer again
         }

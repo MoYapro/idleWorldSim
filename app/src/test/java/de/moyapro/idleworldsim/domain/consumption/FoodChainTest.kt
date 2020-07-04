@@ -1,25 +1,23 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Meaty
-import de.moyapro.idleworldsim.domain.traits.Predator
+import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.two.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 internal class FoodChainTest {
 
-    private val producer1 = Species("p1", listOf(Feature(Meaty)))
-    private val producer2 = Species("p2")
-    private val consumer1 = Species("c1")//.canConsume("p1")
-    private val consumer2 = Species("c2")//.canConsume("pc2").canConsume("pc1").canConsume("p2")
-    private val poc1 = Species("pc1", Feature(Predator(Meaty)))
-    private val poc2 = Species("pc2", Feature(Predator(Meaty)))
+    private val producer1: ResourceProducer = Species("p1", Feature(Meaty))
+    private val producer2: ResourceProducer = Species("p2", Feature.sunlightConsumer())
+    private val consumer1: ResourceConsumer = Species("c1", Feature(Predator(Meaty)))
+    private val consumer2: ResourceConsumer = Species("c2", Feature.oxygenConsumer())
+    private val poc1 = Species("pc1", Feature(Predator(Meaty)), Feature.sunlightConsumer())
+    private val poc2 = Species("pc2", Feature(Predator(Meaty)), Feature.sunlightConsumer())
 
     @Test
     fun insertIntoFoodChain() {
         val foodChain = buildTestFoodchain()
-        val species: Species = Species("Any")
+        val species = Species("Any")
         foodChain.add(species)
         assertThat(foodChain[poc1 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain[poc2 as ResourceProducer].size).isEqualTo(1)
