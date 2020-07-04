@@ -71,4 +71,8 @@ class Biome {
         foodChain.add(producer)
         return this
     }
+
+    fun population(): Map<Species, Population> {
+        return populations.toMap()
+    }
 }

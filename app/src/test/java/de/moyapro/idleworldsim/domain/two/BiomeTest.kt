@@ -3,7 +3,9 @@ package de.moyapro.idleworldsim.domain.two
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 internal class BiomeTest {
@@ -14,7 +16,7 @@ internal class BiomeTest {
 
     @Test
     fun defaultBiomeIsStable() {
-        assertEquals(Biome(), Biome().process())
+        assertThat(Biome().population()).isEqualTo(Biome().process().population())
     }
 
     @Test
@@ -26,7 +28,8 @@ internal class BiomeTest {
     @Test
     fun populationSizeIsChanging() {
         val species = defaultSpecies()
-        val biome = Biome().settle(species)
+        val waterSource = Species("Water", Feature(ProduceResource(Water)))
+        val biome = Biome().settle(species).settle(waterSource)
         val initialSpeciesSize = biome[species]
         biome.process()
         assertNotEquals(

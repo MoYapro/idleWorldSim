@@ -40,7 +40,7 @@ open class Species(
     }
 
     override fun consume(consumerPopulation: Population, availableResources: Resources): Population {
-        TODO("Not yet implemented")
+        return consumerPopulation * 1.01
     }
 
     override fun equals(other: Any?): Boolean {
