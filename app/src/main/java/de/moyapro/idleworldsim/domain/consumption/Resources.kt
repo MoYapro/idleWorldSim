@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.SpeciesConstants
+import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import java.util.*
@@ -11,6 +10,8 @@ data class Resources(
     val quantities: MutableMap<ResourceType, Double> = mutableMapOf(*(values().map { Pair(it, if (it == EvolutionPoints) 0.0 else 1000.0) }).toTypedArray()),
     var populations: MutableMap<Species, Population> = mutableMapOf()
 ) {
+    private val MINIMAL_POPULATION = Population(.01)
+
     @Deprecated("Should use Resource value object instead")
     constructor(quantitiesMap: Map<ResourceType, Double>) : this(quantitiesMap.toMutableMap())
     constructor(resource: ResourceType, quantity: Double = 1.0) : this(quantities = mutableMapOf(Pair(resource, quantity)))
@@ -21,7 +22,7 @@ data class Resources(
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMutableMap())
 
     fun setPopulation(species: Species, population: Population = Population(1.0)): Resources {
-        this.populations[species] = if (population < SpeciesConstants.MINIMAL_POPULATION) Population(0.0) else population
+        this.populations[species] = if (population < MINIMAL_POPULATION) Population(0.0) else population
         return this
     }
 

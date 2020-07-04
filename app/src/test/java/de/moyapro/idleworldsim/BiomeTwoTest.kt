@@ -1,8 +1,5 @@
 package de.moyapro.idleworldsim
 
-import de.moyapro.idleworldsim.domain.consumption.DummyConsumer
-import de.moyapro.idleworldsim.domain.consumption.SpeciesImpl
-import de.moyapro.idleworldsim.domain.consumption.DummyProducer
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
@@ -19,14 +16,14 @@ internal class BiomeTwoTest {
 
     @Test
     fun settle() {
-        val species: Species = SpeciesImpl("X")
+        val species: Species = Species("X")
         assertThat(Biome().settle(species, Population(3.0))[species]).isEqualTo(Population(3.0))
     }
 
     @Test
     fun settleMultiple() {
-        val speciesX = DummyProducer("X")
-        val speciesU = DummyConsumer("U")
+        val speciesX = Species("X")
+        val speciesU = Species("U")
         val biome = Biome()
             .settle(speciesX, Population(3.0))
             .settle(speciesU, Population(99.0))
@@ -36,7 +33,7 @@ internal class BiomeTwoTest {
 
     @Test
     fun addBasicResources() {
-        val producer = DummyProducer(
+        val producer = Species(
             "WATER",
             listOf(Feature(ProduceResource(Water, Level(3))))
         )
@@ -49,9 +46,8 @@ internal class BiomeTwoTest {
 
     @Test
     fun consumerConsumesProducer() {
-        val soil = DummyProducer("soil", listOf(Feature(ProduceResource(Minerals))))
-        val gras = DummyConsumer("gras", listOf(Feature(ConsumerTrait(Minerals))))
-        gras.canConsume("soil")
+        val soil = Species("soil", listOf(Feature(ProduceResource(Minerals))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals))))
         val biome = Biome()
             .settle(soil)
             .settle(gras)

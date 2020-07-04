@@ -1,8 +1,10 @@
 package de.moyapro.idleworldsim
 
-import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.defaultSpecies
+import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.WaterSaver
+import de.moyapro.idleworldsim.domain.two.Biome
+import de.moyapro.idleworldsim.domain.two.defaultSpecies
+import de.moyapro.idleworldsim.domain.two.evolveTo
 import de.moyapro.idleworldsim.util.QuickAndDirty
 
 @QuickAndDirty
@@ -13,16 +15,17 @@ object Game {
         biome
             .settle(
                 defaultSpecies("3")
-                    .evolve(WaterSaver).evolve(WaterSaver).evolve(
-                        WaterSaver
-                    )
+                    .evolveTo(Feature(WaterSaver))
+                    .evolveTo(Feature(WaterSaver))
+                    .evolveTo(Feature(WaterSaver))
             )
             .settle(
                 defaultSpecies("2")
-                    .evolve(WaterSaver).evolve(WaterSaver)
+                    .evolveTo(Feature(WaterSaver))
+                    .evolveTo(Feature(WaterSaver))
             )
             .settle(defaultSpecies("0"))
-            .settle(defaultSpecies("1").evolve(WaterSaver))
+            .settle(defaultSpecies("1").evolveTo(Feature(WaterSaver)))
     }
 
     fun process() {
@@ -38,4 +41,8 @@ fun main(args: Array<String>) {
         Game.process()
         Thread.sleep(10)
     }
+}
+
+private fun Biome.getStatusText(): String {
+    return "hello world"
 }

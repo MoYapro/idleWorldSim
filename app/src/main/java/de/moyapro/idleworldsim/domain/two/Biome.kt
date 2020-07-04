@@ -1,6 +1,9 @@
 package de.moyapro.idleworldsim.domain.two
 
-import de.moyapro.idleworldsim.domain.consumption.*
+import de.moyapro.idleworldsim.domain.consumption.FoodChain
+import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
+import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
+import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.addPopulationMaps
 import de.moyapro.idleworldsim.util.sumUsing
@@ -58,8 +61,8 @@ class Biome {
         val consumerPopulationDifference: Population =
             battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
-        resultMap[battleRelation.consumer] = consumerPopulationDifference
-        resultMap[battleRelation.producer] = producerPopulationDifference
+        resultMap[battleRelation.consumer as Species] = consumerPopulationDifference
+        resultMap[battleRelation.producer as Species] = producerPopulationDifference
 
         return resultMap.toMap()
     }

@@ -8,9 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
-import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.two.Biome
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
-import de.moyapro.idleworldsim.util.toShortDecimalStr
 import kotlinx.android.synthetic.main.fragment_resource.view.*
 
 /**
@@ -18,8 +17,8 @@ import kotlinx.android.synthetic.main.fragment_resource.view.*
  * specified [OnResourceInteractionListener].
  */
 class ResourceRecyclerViewAdapter(
-        val biome: Biome,
-        private val mListener: OnResourceInteractionListener?
+    val biome: Biome,
+    private val mListener: OnResourceInteractionListener?
 ) : RecyclerView.Adapter<ResourceRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -52,9 +51,9 @@ class ResourceRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val resource = ResourceType.values()[position]
-        val quantity = biome.resources[resource]
-        holder.mIdView.text = resource.displayName
-        holder.mContentView.text = quantity.amount.toShortDecimalStr()
+//        val quantity = biome.resources[resource]
+//        holder.mIdView.text = resource.displayName
+//        holder.mContentView.text = quantity.amount.toShortDecimalStr()
 
         with(holder.mView) {
             tag = resource

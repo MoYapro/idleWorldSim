@@ -1,6 +1,5 @@
 package de.moyapro.idleworldsim.domain.two
 
-import de.moyapro.idleworldsim.domain.consumption.SpeciesImpl
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
@@ -12,57 +11,57 @@ internal class SpeciesTest {
 
     @Test
     fun nullNotEqual() {
-        assertThat(SpeciesImpl("any")).isNotEqualTo(null)
+        assertThat(Species("any")).isNotEqualTo(null)
     }
 
     @Test
     fun otherTypeNotEqual() {
-        assertThat(SpeciesImpl("any")).isNotEqualTo("any")
-        assertThat(SpeciesImpl("any").hashCode()).isNotEqualTo("any".hashCode())
+        assertThat(Species("any")).isNotEqualTo("any")
+        assertThat(Species("any").hashCode()).isNotEqualTo("any".hashCode())
     }
 
     @Test
     fun defaultSpeciesShouldCreateDifferent() {
-        val species1 = SpeciesImpl("one")
-        val species2 = SpeciesImpl("two")
+        val species1 = Species("one")
+        val species2 = Species("two")
         assertThat(species1).isNotEqualTo(species2)
         assertThat(species1.hashCode()).isNotEqualTo(species2.hashCode())
     }
 
     @Test
     fun speciesWithDifferentTraitsAreDifferent() {
-        val species1 = SpeciesImpl("any", Feature(ConsumerTrait(Minerals)))
-        val species2 = SpeciesImpl("any", Feature(ConsumerTrait(Water)))
+        val species1 = Species("any", Feature(ConsumerTrait(Minerals)))
+        val species2 = Species("any", Feature(ConsumerTrait(Water)))
         assertThat(species1).isNotEqualTo(species2)
         assertThat(species1.hashCode()).isNotEqualTo(species2.hashCode())
     }
 
     @Test
     fun speciesWithSameTraitsAreEqual() {
-        val species1 = SpeciesImpl("same", Feature(ConsumerTrait(Minerals)))
-        val species2 = SpeciesImpl("same", Feature(ConsumerTrait(Minerals)))
+        val species1 = Species("same", Feature(ConsumerTrait(Minerals)))
+        val species2 = Species("same", Feature(ConsumerTrait(Minerals)))
         assertThat(species1).isEqualTo(species2)
         assertThat(species1.hashCode()).isEqualTo(species2.hashCode())
     }
 
     @Test
-    fun equalSpeciesImpl() {
-        val species1 = SpeciesImpl("same")
-        val species2 = SpeciesImpl("same")
+    fun equalSpecies() {
+        val species1 = Species("same")
+        val species2 = Species("same")
         assertThat(species1).isEqualTo(species2)
         assertThat(species1.hashCode()).isEqualTo(species2.hashCode())
     }
 
     @Test
     fun getTraits() {
-        val species = SpeciesImpl("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty) ))
+        val species = Species("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty)))
         assertThat(species[FindTrait::class]).isEqualTo(listOf(Vision(), SuperVision(), Hearing()))
     }
 
     @Test
     fun getCounters() {
         val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty))
-        val producer = SpeciesImpl("Producer", Feature(Stealth(), Meaty, Smell()))
+        val producer = Species("Producer", Feature(Stealth(), Meaty, Smell()))
         assertThat(producer.getCounters(traitsToCounter)).isEqualTo(listOf(Stealth()))
 
     }

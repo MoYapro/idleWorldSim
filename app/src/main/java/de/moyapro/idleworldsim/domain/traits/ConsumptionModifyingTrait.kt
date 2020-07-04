@@ -7,7 +7,7 @@ abstract class ConsumptionModifyingTrait : Trait() {
     abstract fun influence(consumption: Consumption): Consumption
 }
 
-class ConsumerTrait(private val influencedResource: ResourceType) : ConsumptionModifyingTrait() {
+class ConsumerTrait(val influencedResource: ResourceType) : ConsumptionModifyingTrait() {
     override fun influence(consumption: Consumption): Consumption {
         consumption.usableSupply[influencedResource] = consumption.supply[influencedResource]
         return consumption

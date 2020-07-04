@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.two.Species
+
 
 /**
  * A fragment representing a list of Items.

@@ -3,7 +3,7 @@ package de.moyapro.idleworldsim.app.ui.biome
 import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.two.Biome
 import java.util.*
 
 class BiomeViewUpdateHandler<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
@@ -24,10 +24,10 @@ class BiomeViewUpdateHandler<X : RecyclerView.ViewHolder, T : RecyclerView.Adapt
     }
 
     fun startObservation() {
-        biome.onBiomeProcess.addObserver(this)
+//        biome.onBiomeProcess.addObserver(this)
     }
 
     fun stopObservation() {
-        biome.onBiomeProcess.deleteObserver(this)
+//        biome.onBiomeProcess.deleteObserver(this)
     }
 }

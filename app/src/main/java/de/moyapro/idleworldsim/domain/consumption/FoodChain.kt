@@ -29,7 +29,7 @@ class FoodChain {
         consumer: ResourceConsumer
     ) = it.consumers.any { it.consumer == consumer }
 
-    private fun add(poc: ProducerAndConsumer): FoodChain {
+    private fun add(poc: Species): FoodChain {
         add(poc as ResourceProducer)
         add(poc as ResourceConsumer)
         return this
@@ -152,16 +152,6 @@ class FoodChain {
      */
     private fun asDotNotation(node: FoodChainNode): Iterable<String> =
         node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
-
-    fun add(species: Species): FoodChain {
-        when (species) {
-            is ProducerAndConsumer -> add(species)
-            is ResourceConsumer -> add(species as ResourceConsumer)
-            is ResourceProducer -> add(species as ResourceProducer)
-            else -> throw IllegalArgumentException("Species is of unknown type: ${species::class}")
-        }
-        return this
-    }
 
     fun getRelations(): List<FoodChainEdge> {
         return nodes

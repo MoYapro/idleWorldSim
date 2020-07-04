@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
@@ -10,9 +11,9 @@ class CalculateConsumeFactorTest {
 
     @Test
     fun countersReducePowerFactor() {
-        val producerWithoutConter: ResourceProducer = SpeciesImpl("producerWithoutCounter", Feature(Meaty))
-        val producerWithCounter: ResourceProducer = SpeciesImpl("producerWithCounter", Feature(Meaty, Stealth()))
-        val consumer: ResourceConsumer = SpeciesImpl("consumer", Feature(Predator(Meaty), Vision()))
+        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty))
+        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty, Stealth()))
+        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty), Vision()))
         assertThat(producerWithCounter.getCounters(consumer.traits())).isNotEmpty
         val powerFactorWithCounter = consumer.consumePowerFactor(producerWithCounter)
         val powerFactorWithoutCounter = consumer.consumePowerFactor(producerWithoutConter)
@@ -21,9 +22,9 @@ class CalculateConsumeFactorTest {
 
     @Test
     fun countersReduceConsumerPreference() {
-        val producerWithoutConter: ResourceProducer = SpeciesImpl("producerWithoutCounter", Feature(Meaty))
-        val producerWithCounter: ResourceProducer = SpeciesImpl("producerWithCounter", Feature(Meaty, Stealth()))
-        val consumer: ResourceConsumer = SpeciesImpl("consumer", Feature(Predator(Meaty), Vision()))
+        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty))
+        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty, Stealth()))
+        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty), Vision()))
         val factorWithCounter = consumer.calculatePreferenceIndex(producerWithCounter, consumer.consumePowerFactor(producerWithCounter))
         val factorWithoutCounter = consumer.calculatePreferenceIndex(producerWithoutConter, consumer.consumePowerFactor(producerWithCounter))
         assertThat(factorWithCounter).isGreaterThan(factorWithoutCounter)
@@ -31,7 +32,7 @@ class CalculateConsumeFactorTest {
 
     @Test
     fun levelDifferenceToFactor() {
-        val species = SpeciesImpl("default")
+        val species = Species("default")
         assertThat(species.levelDifferenceToFactor(Level(1), Level(1))).`as`("Equal level should result in 50% chance").isEqualTo(0.5, Offset.offset(0.0001))
         assertThat(species.levelDifferenceToFactor(Level(1), Level(0))).`as`("No counter should result in max chance").isEqualTo(0.99, Offset.offset(0.0001))
         assertThat(species.levelDifferenceToFactor(Level(2), Level(0))).`as`("No counter should result in max chance").isEqualTo(0.99, Offset.offset(0.0001))
@@ -43,9 +44,9 @@ class CalculateConsumeFactorTest {
 
     @Test
     fun calculatePreferenceIndex() {
-        val consumer = SpeciesImpl("consumer", Feature(Predator(Meaty)))
-        val producer = SpeciesImpl("producer", Feature(Meaty))
-        val noProducer = SpeciesImpl("producer")
+        val consumer = Species("consumer", Feature(Predator(Meaty)))
+        val producer = Species("producer", Feature(Meaty))
+        val noProducer = Species("producer")
         assertThat(consumer.calculatePreferenceIndex(noProducer, consumer.consumePowerFactor(producer))).`as`("Index is 0 when producer cannot be consumed").isEqualTo(0.0)
         assertThat(consumer.calculatePreferenceIndex(producer, consumer.consumePowerFactor(noProducer))).`as`("Index is > 1 when producer can be consumed").isGreaterThan(1.0)
     }

@@ -9,24 +9,23 @@ import org.junit.Test
 
 internal class FoodChainTest {
 
-    private val producer1: ResourceProducer = DummyProducer("p1", listOf(Feature(Meaty)))
-    private val producer2: ResourceProducer = DummyProducer("p2")
-    private val consumer1: ResourceConsumer = DummyConsumer("c1").canConsume("p1")
-    private val consumer2: ResourceConsumer =
-        DummyConsumer("c2").canConsume("pc2").canConsume("pc1").canConsume("p2")
-    private val poc1: ProducerAndConsumer = SpeciesImpl("pc1", Feature(Predator(Meaty)))
-    private val poc2: ProducerAndConsumer = SpeciesImpl("pc2", Feature(Predator(Meaty)))
+    private val producer1 = Species("p1", listOf(Feature(Meaty)))
+    private val producer2 = Species("p2")
+    private val consumer1 = Species("c1")//.canConsume("p1")
+    private val consumer2 = Species("c2")//.canConsume("pc2").canConsume("pc1").canConsume("p2")
+    private val poc1 = Species("pc1", Feature(Predator(Meaty)))
+    private val poc2 = Species("pc2", Feature(Predator(Meaty)))
 
     @Test
     fun insertIntoFoodChain() {
         val foodChain = buildTestFoodchain()
-        val species: Species = SpeciesImpl("Any")
+        val species: Species = Species("Any")
         foodChain.add(species)
         assertThat(foodChain[poc1 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain[poc2 as ResourceProducer].size).isEqualTo(1)
         assertThat(foodChain.producers().size).isEqualTo(5)
-        assertThat(foodChain[producer1].size).isEqualTo(3)
-        assertThat(foodChain[producer2].size).isEqualTo(1)
+        assertThat(foodChain[producer1 as ResourceProducer].size).isEqualTo(3)
+        assertThat(foodChain[producer2 as ResourceProducer].size).isEqualTo(1)
     }
 
     @Test
@@ -35,8 +34,8 @@ internal class FoodChainTest {
             .add(poc2)
             .add(consumer2)
             .add(producer2)
-        assertThat(foodChain[producer2].map { it.consumer }).contains(consumer2)
-        assertThat(foodChain[consumer2].map { it.producer }).contains(producer2)
+        assertThat(foodChain[producer2 as ResourceProducer].map { it.consumer }).contains(consumer2)
+        assertThat(foodChain[consumer2 as ResourceConsumer].map { it.producer }).contains(producer2)
     }
 
     @Test
@@ -45,8 +44,8 @@ internal class FoodChainTest {
             .add(poc1)
             .add(producer1)
             .add(consumer1)
-        assertThat(foodChain[producer1].map { it.consumer }).contains(consumer1)
-        assertThat(foodChain[consumer1].map { it.producer }).contains(producer1)
+        assertThat(foodChain[producer1 as ResourceProducer].map { it.consumer }).contains(consumer1)
+        assertThat(foodChain[consumer1 as ResourceConsumer].map { it.producer }).contains(producer1)
     }
 
     @Test
@@ -55,8 +54,8 @@ internal class FoodChainTest {
             .add(producer1)
             .add(consumer1)
             .add(consumer1)
-        assertThat(foodChain[producer1].size).isEqualTo(1)
-        assertThat(foodChain[consumer1].size).isEqualTo(1)
+        assertThat(foodChain[producer1 as ResourceProducer].size).isEqualTo(1)
+        assertThat(foodChain[consumer1 as ResourceConsumer].size).isEqualTo(1)
     }
 
     @Test
@@ -65,8 +64,8 @@ internal class FoodChainTest {
             .add(producer1)
             .add(consumer1)
             .add(producer1)
-        assertThat(foodChain[producer1].size).isEqualTo(1)
-        assertThat(foodChain[consumer1].size).isEqualTo(1)
+        assertThat(foodChain[producer1 as ResourceProducer].size).isEqualTo(1)
+        assertThat(foodChain[consumer1 as ResourceConsumer].size).isEqualTo(1)
     }
 
 

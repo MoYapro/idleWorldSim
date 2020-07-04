@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.domain.consumption
+package de.moyapro.idleworldsim.domain.two
 
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.Trait
@@ -11,8 +11,7 @@ interface TraitBearer {
     /**
      * get all traits this traitbearer has
      */
-    fun traits(): Iterable<Trait> =
-        this.features.map { it.getTraits() }.flatten()
+    fun traits(): Iterable<Trait> = this.features.map { it.getTraits() }.flatten()
 
     /**
      * Get all consumer's traits that counter given traits
@@ -28,10 +27,9 @@ interface TraitBearer {
         traits()
             .filterIsInstance(traitClass.javaObjectType)
 
-    /**
-     * create a new instance with name and features
-     */
-    fun <T> creator(name: String, features: List<Feature>): T
+    fun <T: TraitBearer> T.creator(): (String, Iterable<Feature>) -> T
+
+
 }
 
 /**
@@ -43,6 +41,6 @@ fun <T : TraitBearer> T.evolveTo(vararg evolvedFeature: Feature, name: String? =
     val newFeatures = mutableListOf(*evolvedFeature)
     newFeatures.addAll(features)
     val newName = name ?: "${this.name}+"
-    return creator(newName, newFeatures)
+    return creator<T>().invoke(newName, newFeatures) as T
 }
 

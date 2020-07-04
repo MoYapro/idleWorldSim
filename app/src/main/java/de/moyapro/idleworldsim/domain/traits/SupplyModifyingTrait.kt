@@ -1,7 +1,8 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idleworldsim.domain.Species
+
 import de.moyapro.idleworldsim.domain.consumption.Consumption
+import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -36,7 +37,7 @@ class Predator(val preyTrait: Trait) : SupplyModifyingTrait() {
     }
 
     private fun findPrey(populations: Map<Species, Population>): Map<Species, Population> {
-        return populations.filter { it.key.hasTrait(preyTrait) }
+        return populations.filter { it.key.traits().contains(preyTrait) }
     }
 
     override fun equals(other: Any?): Boolean {
