@@ -1,10 +1,6 @@
 package de.moyapro.idleworldsim.domain.traits
 
 
-import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.two.Species
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -52,21 +48,6 @@ internal class FeatureTest {
     @Test
     fun hasTraitNeed() {
         assertThat(Feature(NeedResource(Water)).hasTrait(NeedResource(Water))).isTrue()
-    }
-
-
-    @Test
-    fun featureInfluencesLikeTraits() {
-        val needs = Resources()
-            .setQuantity(
-                Resource(Water, 3.0)
-            )
-        val supply = Resources()
-            .setQuantity(Resource(Water, 100.0))
-        val usableWater = Feature(ConsumerTrait(Water))
-            .influenceConsumption(Consumption(Species("Consumer"), needs, supply))
-            .usableSupply[Water]
-        assertThat(usableWater.amount).isGreaterThan(0.0)
     }
 
 

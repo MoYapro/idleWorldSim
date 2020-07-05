@@ -14,7 +14,7 @@ class SpeciesGrowAndDieTest {
         val species = defaultSpecies()
         assertThat(
             species.consume(
-                Population(1.0), Resources().setPopulation(species)
+                Population(1.0), Resources()
             ).populationSize
         ).isGreaterThan(1.0)
     }
@@ -24,7 +24,7 @@ class SpeciesGrowAndDieTest {
         val species = defaultSpecies()
         assertThat(
             species.consume(
-                Population(1.0), emptyResources().setPopulation(species)
+                Population(1.0), emptyResources()
             ).populationSize
         ).isLessThan(1.0)
     }

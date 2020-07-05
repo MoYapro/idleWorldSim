@@ -39,7 +39,12 @@ data class Resources(
     }
 
 
-    operator fun minus(otherResource: Resources) = Resources(subtractQuantities(this.quantities, otherResource.quantities))
+    operator fun minus(otherResource: Resources): Resources {
+        val resources = Resources(subtractQuantities(this.quantities, otherResource.quantities))
+        return if (resources.quantities.all { 0 <= it.value })
+            resources
+        else throw IllegalStateException()
+    }
 
     private fun subtractQuantities(initialAmount: Map<ResourceType, Double>, toBeRemoved: Map<ResourceType, Double>): Map<ResourceType, Double> {
         val amountCopy = HashMap(initialAmount)
@@ -48,7 +53,7 @@ data class Resources(
     }
 
     operator fun times(population: Population): Resources = this * population.populationSize
-    private operator fun times(scalar: Double) = Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
+    operator fun times(scalar: Double) = Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
 
     operator fun times(factor: ResourceFactor): Resources =
         Resources(

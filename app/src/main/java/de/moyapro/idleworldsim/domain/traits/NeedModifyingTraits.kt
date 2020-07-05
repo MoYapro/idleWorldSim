@@ -2,7 +2,6 @@ package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Level
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 abstract class NeedModifyingTrait(val resourceType: ResourceType, level: Level = Level(1)) : Trait(level) {
@@ -24,20 +23,17 @@ abstract class NeedModifyingTrait(val resourceType: ResourceType, level: Level =
 
 class NeedResource(resourceType: ResourceType) : NeedModifyingTrait(resourceType) {
     override fun influenceNeed(need: Resources): Resources {
-        need[resourceType] = Resource(resourceType, 1.0)
-        return need
+        return Resources(
+            need.quantities
+                .map { Pair(it.key, if (it.key == resourceType) 1.0 else it.value) }
+                .associate { it }
+        )
     }
 }
 
-class ProduceResource(resourceType: ResourceType, level: Level = Level(1)) : NeedModifyingTrait(resourceType, level) {
-    override fun influenceNeed(need: Resources): Resources {
-        need[resourceType] = Resource(resourceType, -1.0)
-        return need
-    }
-
+class ProduceResource(val resourceType: ResourceType, level: Level = Level(1)) : Trait(level) {
     override fun toString(): String {
         return "NeedResource[$resourceType]"
     }
-
 }
 

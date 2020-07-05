@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idleworldsim.domain.consumption.Consumption
+
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
@@ -19,11 +19,6 @@ open class Feature(private val name: String = "GenericFeature", private val trai
 
     fun getTraits(): Set<Trait> {
         return traits;
-    }
-
-    fun influenceConsumption(consumption: Consumption): Consumption {
-        val availableConsumption = traits.applyTo(consumption, SupplyModifyingTrait::influence)
-        return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
     }
 
     fun influenceGrowthRate(growthRate: GrowthRate): GrowthRate {
