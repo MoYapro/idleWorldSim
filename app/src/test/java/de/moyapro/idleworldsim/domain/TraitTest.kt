@@ -53,12 +53,12 @@ internal class TraitTest {
     @Test
     fun predatorsNeedWater() {
         val sheep = defaultSpecies("sheep").evolveTo(Feature(Meaty))
-        val wolf = Species("Wolf", Feature(Predator(Meaty), ConsumerTrait(Water)))
+        val wolf = Species("Wolf", Feature(Predator(Meaty), NeedResource(Water)))
         assertThat(
             Biome().settle(wolf).settle(sheep).process()[wolf].populationSize
 //                .consume().resources[wolf].populationSize
         ).`as`("Wolf needs water")
-            .isLessThan(1.0)
+            .isLessThanOrEqualTo(1.0)
     }
 
     @Test

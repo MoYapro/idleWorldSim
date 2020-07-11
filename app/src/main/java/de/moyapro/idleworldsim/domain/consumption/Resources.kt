@@ -12,6 +12,7 @@ data class Resources(
     val quantities: Map<ResourceType, Double> = values().associateBy({ it }, { if (it == EvolutionPoints) 0.0 else 1000.0 })
 ) {
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMap())
+    constructor(resource: Resource) : this(listOf(resource))
 
     fun canProvide(resources: Resources): Map<ResourceType, Boolean> {
         // negative value in resources means production

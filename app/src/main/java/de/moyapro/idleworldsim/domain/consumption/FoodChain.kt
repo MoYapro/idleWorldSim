@@ -196,7 +196,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
             .map() { (consumer, _) -> consumer }
             .withIndex()
             .forEach() { (rank, consumer) ->
-                foodChainNode[consumer]?.consumeFactor = calculateConsumeFactor(rank)
+                foodChainNode[consumer]?.consumeFactor = calculateConsumeFactor(rank + 1)
             }
 
     }

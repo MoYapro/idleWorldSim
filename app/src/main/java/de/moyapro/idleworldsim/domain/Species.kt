@@ -10,8 +10,11 @@ import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 class Species(
     override val name: String,
     override val features: List<Feature> = emptyList()
-) : ResourceProducer, ResourceConsumer,
-    TraitBearer {
+) : ResourceProducer, ResourceConsumer, TraitBearer {
+    companion object {
+        private const val MAX_GROWTH = 1.01
+    }
+
     constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
 
 
@@ -40,10 +43,22 @@ class Species(
     }
 
     override fun consume(consumerPopulation: Population, availableResources: Resources): Population {
-        if (0 >= availableResources.getQuantities().sumByDouble { it.amount }) {
-            return consumerPopulation * .95
-        }
-        return consumerPopulation * 1.01
+        val numberOfUnfullfilledNeeds = needs()
+            .map { Pair(it.key, availableResources[it.key].amount >= it.value) }
+            .sumBy {
+                when (it.second) {
+                    true -> 0
+                    false -> 1
+                }
+            }
+        return consumerPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+    }
+
+    private fun needs(): Map<ResourceType, Int> {
+        return traits().filterIsInstance<NeedResource>()
+            .groupBy { it.resourceType }
+            .map { Pair(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
+            .associate { it }
     }
 
     override fun equals(other: Any?): Boolean {

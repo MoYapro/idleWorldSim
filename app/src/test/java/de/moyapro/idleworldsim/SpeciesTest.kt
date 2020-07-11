@@ -2,11 +2,10 @@ package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
@@ -73,8 +72,10 @@ internal class SpeciesTest {
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
         val initialSize = 10.0
-        val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
-        Assertions.assertThat(species.consume(Population(initialSize), emptyResources()).populationSize)
+        val species = Species("I", Feature(NeedResource(Water), NeedResource(Minerals), ConsumerTrait(Water), ConsumerTrait(Minerals)))
+        Assertions.assertThat(
+            species.consume(Population(initialSize), Resources(Resource(Oxygen, 1000))).populationSize
+        )
             .isLessThan(initialSize)
     }
 
@@ -82,7 +83,10 @@ internal class SpeciesTest {
     fun speciesShouldGrowOnResourceSurplus() {
         val initialSize = 10.0
         val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
-        Assertions.assertThat(species.consume(Population(initialSize), Resources()).populationSize)
+        val availableResources = Resources(Resource(Water, 1000))
+        Assertions.assertThat(
+            species.consume(Population(initialSize), availableResources).populationSize
+        )
             .isGreaterThan(initialSize)
     }
 
