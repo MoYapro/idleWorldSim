@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 
-class CalculateConsumeFactorTest {
+internal class CalculateConsumeFactorTest {
 
     @Test
     fun countersReducePowerFactor() {

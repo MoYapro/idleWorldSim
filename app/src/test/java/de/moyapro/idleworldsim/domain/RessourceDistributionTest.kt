@@ -10,8 +10,7 @@ import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.junit.jupiter.api.Test
 
-@Suppress("MapGetWithNotNullAssertionOperator")
-class RessourceDistributionTest {
+internal class RessourceDistributionTest {
 
 
     @Test

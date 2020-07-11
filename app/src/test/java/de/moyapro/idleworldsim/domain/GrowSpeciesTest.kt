@@ -6,7 +6,7 @@ import de.moyapro.idleworldsim.domain.valueObjects.Population
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class SpeciesGrowAndDieTest {
+internal class SpeciesGrowAndDieTest {
 
     @Test
     fun grow() {
