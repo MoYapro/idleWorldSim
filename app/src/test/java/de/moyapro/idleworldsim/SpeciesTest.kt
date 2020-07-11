@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
@@ -75,6 +76,14 @@ internal class SpeciesTest {
         val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
         Assertions.assertThat(species.consume(Population(initialSize), emptyResources()).populationSize)
             .isLessThan(initialSize)
+    }
+
+    @Test
+    fun speciesShouldGrowOnResourceSurplus() {
+        val initialSize = 10.0
+        val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
+        Assertions.assertThat(species.consume(Population(initialSize), Resources()).populationSize)
+            .isGreaterThan(initialSize)
     }
 
 }
