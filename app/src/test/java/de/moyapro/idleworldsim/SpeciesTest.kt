@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.domain.two
+package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.*

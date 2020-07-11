@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.domain
+package de.moyapro.idleworldsim.domain.valueObjects
 
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import org.assertj.core.api.Assertions.assertThat
