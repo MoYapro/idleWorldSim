@@ -1,7 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.two.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

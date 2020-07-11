@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.moyapro.idleworldsim.domain.two.TraitBearer
+import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 
 interface ResourceProducer  : TraitBearer {

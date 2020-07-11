@@ -4,9 +4,6 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.NeedResource
-import de.moyapro.idleworldsim.domain.two.Biome
-import de.moyapro.idleworldsim.domain.two.Species
-import de.moyapro.idleworldsim.domain.two.evolveTo
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals

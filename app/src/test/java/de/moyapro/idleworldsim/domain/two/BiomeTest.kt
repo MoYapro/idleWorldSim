@@ -1,5 +1,9 @@
 package de.moyapro.idleworldsim.domain.two
 
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.defaultSpecies
+import de.moyapro.idleworldsim.domain.evolveTo
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water

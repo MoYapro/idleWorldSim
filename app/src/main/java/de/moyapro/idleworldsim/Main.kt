@@ -1,10 +1,10 @@
 package de.moyapro.idleworldsim
 
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.defaultSpecies
+import de.moyapro.idleworldsim.domain.evolveTo
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.WaterSaver
-import de.moyapro.idleworldsim.domain.two.Biome
-import de.moyapro.idleworldsim.domain.two.defaultSpecies
-import de.moyapro.idleworldsim.domain.two.evolveTo
 import de.moyapro.idleworldsim.util.QuickAndDirty
 
 @QuickAndDirty

@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.moyapro.idleworldsim.domain.two.Species
+import de.moyapro.idleworldsim.domain.Species
 
 /**
  * Implement the food chain of a given set of producers and consumers.

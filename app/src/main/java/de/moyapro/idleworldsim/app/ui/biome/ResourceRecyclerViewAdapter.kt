@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
-import de.moyapro.idleworldsim.domain.two.Biome
+import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import kotlinx.android.synthetic.main.fragment_resource.view.*
 

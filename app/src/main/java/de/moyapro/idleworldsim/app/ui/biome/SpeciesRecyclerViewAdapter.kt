@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.app.ui.biome.SpeciesFragment.OnSpeciesInteractionListener
-import de.moyapro.idleworldsim.domain.two.Biome
-import de.moyapro.idleworldsim.domain.two.Species
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import kotlinx.android.synthetic.main.fragment_species.view.*
 

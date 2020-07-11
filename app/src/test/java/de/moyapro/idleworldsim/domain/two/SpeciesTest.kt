@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.two
 
+import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water

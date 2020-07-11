@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-import de.moyapro.idleworldsim.domain.two.Species
+import de.moyapro.idleworldsim.domain.Species
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

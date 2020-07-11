@@ -1,10 +1,10 @@
 package de.moyapro.idleworldsim
 
+import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
-import de.moyapro.idleworldsim.domain.two.Biome
-import de.moyapro.idleworldsim.domain.two.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals

@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.domain.two
+package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
@@ -7,7 +7,7 @@ import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
-open class Species(
+class Species(
     override val name: String,
     override val features: List<Feature> = emptyList()
 ) : ResourceProducer, ResourceConsumer,

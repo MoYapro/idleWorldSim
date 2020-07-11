@@ -1,10 +1,10 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.domain.traits.CatchTrait
 import de.moyapro.idleworldsim.domain.traits.FindTrait
 import de.moyapro.idleworldsim.domain.traits.KillTrait
 import de.moyapro.idleworldsim.domain.traits.Trait
-import de.moyapro.idleworldsim.domain.two.TraitBearer
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.sum

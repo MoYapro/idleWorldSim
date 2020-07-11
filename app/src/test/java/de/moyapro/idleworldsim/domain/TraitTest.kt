@@ -1,10 +1,6 @@
 package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.two.Biome
-import de.moyapro.idleworldsim.domain.two.Species
-import de.moyapro.idleworldsim.domain.two.defaultSpecies
-import de.moyapro.idleworldsim.domain.two.evolveTo
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
