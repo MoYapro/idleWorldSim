@@ -1,9 +1,12 @@
 package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 
@@ -64,7 +67,14 @@ internal class SpeciesTest {
         val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty))
         val producer = Species("Producer", Feature(Stealth(), Meaty, Smell()))
         assertThat(producer.getCounters(traitsToCounter)).isEqualTo(listOf(Stealth()))
+    }
 
+    @Test
+    fun speciesShouldShrinkOnResourceShortage() {
+        val initialSize = 10.0
+        val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
+        Assertions.assertThat(species.consume(Population(initialSize), emptyResources()).populationSize)
+            .isLessThan(initialSize)
     }
 
 }

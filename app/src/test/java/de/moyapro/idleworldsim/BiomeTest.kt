@@ -94,7 +94,6 @@ internal class BiomeTest {
 
     }
 
-
 //    @Test
 //    fun speciesConsumeWater() {
 //        val initialWaterLevel = Resource(Water, 100_000.0)
@@ -105,14 +104,6 @@ internal class BiomeTest {
 //
 //    }
 //
-//    @Test
-//    fun speciesShouldShrinkOnResourceShortage() {
-//        val species1 = Species("I").evolve(NeedResource(Water), ConsumerTrait(Water))
-//        val species2 = Species("II").evolve(NeedResource(Water), ConsumerTrait(Water))
-//        val usualGrowthResult = Biome(resources = Resources(Water, 1000.0)).settle(species1).process().resources[species1]
-//        val cappedGrowthResult = Biome(resources = emptyResources()).settle(species2).process().resources[species2]
-//        assertThat(cappedGrowthResult.populationSize).isLessThan(usualGrowthResult.populationSize)
-//    }
 //
 //    @Test
 //    fun speciesShouldNotConsumeOnResourceShortage() {
