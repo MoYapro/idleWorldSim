@@ -10,7 +10,7 @@ import de.moyapro.idleworldsim.util.sumUsing
 
 class Biome {
     private val foodChain = FoodChain()
-    private val populations: MutableMap<Species, Population> = mutableMapOf()
+    private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
 
 
     fun process(): Biome {
@@ -33,7 +33,7 @@ class Biome {
     /**
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
-    fun getPopulationChanges(): Map<Species, Population> {
+    fun getPopulationChanges(): Map<TraitBearer, Population> {
         val populationChanges = foodChain.getRelations()
             .sortedBy { it.consumerPreference }
             .map { battle(it) }
@@ -44,12 +44,11 @@ class Biome {
     /**
      * actual consumption process where producers are converted into resources for the consumer
      */
-    private fun battle(battleRelation: FoodChainEdge): Map<Species, Population> {
-        val resultMap = mutableMapOf<Species, Population>()
+    private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, Population> {
         battleRelation.consumeFactor
         val producerPopulation = populations[battleRelation.producer] ?: Population(0.0)
         val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
-        val producerPopulationDifference: Population =
+        val producerPopulationEaten: Population =
             battleRelation.producer.getEaten(
                 producerPopulation,
                 consumerPopulation,
@@ -57,14 +56,14 @@ class Biome {
                 battleRelation.consumeFactor
             )
         val resourcesAquiredByConsumer: Resources =
-            battleRelation.producer.getResourcesPerInstance() * producerPopulationDifference
+            battleRelation.producer.getResourcesPerInstance() * producerPopulationEaten
         val consumerPopulationDifference: Population =
             battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
-        resultMap[battleRelation.consumer as Species] = consumerPopulationDifference
-        resultMap[battleRelation.producer as Species] = producerPopulationDifference
-
-        return resultMap.toMap()
+        return mapOf(
+            Pair(battleRelation.consumer, consumerPopulationDifference),
+            Pair(battleRelation.producer, producerPopulationEaten)
+        )
     }
 
     fun addResourceProducer(producer: ResourceProducer): Biome {
@@ -73,6 +72,6 @@ class Biome {
     }
 
     fun population(): Map<Species, Population> {
-        return populations.toMap()
+        return populations.filter { it.key is Species }.map { Pair(it.key as Species, it.value) }.associate { it }
     }
 }

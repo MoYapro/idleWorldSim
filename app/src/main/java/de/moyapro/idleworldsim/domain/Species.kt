@@ -7,7 +7,7 @@ import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
-class Species(
+open class Species(
     override val name: String,
     override val features: List<Feature> = emptyList()
 ) : ResourceProducer, ResourceConsumer, TraitBearer {
@@ -73,6 +73,10 @@ class Species(
 
     override fun hashCode(): Int {
         return name.hashCode() * 13 + traits().sumBy { it.hashCode() * 23 }
+    }
+
+    override fun toString(): String {
+        return "Species[$name, ${features.joinToString(",") { it.name }}]"
     }
 
 }

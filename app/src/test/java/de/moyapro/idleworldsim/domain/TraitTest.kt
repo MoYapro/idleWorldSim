@@ -2,6 +2,7 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -63,17 +64,16 @@ internal class TraitTest {
 
     @Test
     fun predatorsCanOnlyEatSomeSpecies() {
-        // this test is failing sometimes. it may depend on the order in which the species are consumeed
-//        val gras = Species("Gras")
-//            .evolveTo(Feature(Feature.sunlightConsumer())
-//        val wolf = Species("Wolf").evolveTo(Feature(Predator(Meaty), NeedResource(Minerals), NeedResource(Energy))
-//        val biome = Biome("Earth", Resources())
-//            .settle(gras)
-//            .settle(wolf)
-//            .consume()
-//
-//        assertThat(biome.resources[gras as Species].populationSize).`as`("Gras not eaten by wolf").isGreaterThan(1.0)
-//        assertThat(biome.resources[wolf].populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
+        val gras = Species("Gras")
+            .evolveTo(Feature.sunlightConsumer())
+        val wolf = Species("Wolf").evolveTo(Feature(Predator(Meaty), NeedResource(Water), NeedResource(ResourceType.Energy)))
+        val biome = Biome()
+            .settle(gras)
+            .settle(wolf)
+            .process()
+
+        assertThat(biome[gras].populationSize).`as`("Gras not eaten by wolf").isGreaterThanOrEqualTo(1.0)
+        assertThat(biome[wolf].populationSize).`as`("Wolf cannot eat anything").isLessThan(1.0)
     }
 
     @Test

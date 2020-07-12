@@ -12,7 +12,7 @@ import de.moyapro.idleworldsim.util.applyTo
  * Collection of traits.
  * Features containing the same traits are equal
  */
-open class Feature(private val name: String = "GenericFeature", private val traits: Set<Trait> = setOf()) {
+open class Feature(val name: String = "GenericFeature", private val traits: Set<Trait> = setOf()) {
     constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
 
     companion object

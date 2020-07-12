@@ -154,11 +154,18 @@ class FoodChain {
         node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
 
     fun getRelations(): List<FoodChainEdge> {
-        return nodes
+        val unrelated = consumersWithoutProducers.map { consumerWithoutProducer -> FoodChainEdge(NoghingProducer, consumerWithoutProducer, 0.0, 0.0) }
+        val related = nodes
             .map { it.consumers }
             .flatten()
+
+        return unrelated + related
     }
 
+}
+
+object NoghingProducer : Species("Nothing to Eat") {
+    override fun getResourcesPerInstance() = emptyResources()
 }
 
 /**
@@ -216,10 +223,12 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
 /**
  * Edge in the food chain connect producers to their consumers. Each edge has properties describing the order and (fill in later when implemented) other qualities of the connection
  */
-data class FoodChainEdge(val producer: ResourceProducer, val consumer: ResourceConsumer) {
-    var consumerPreference: Double = 0.0
+data class FoodChainEdge(
+    val producer: ResourceProducer,
+    val consumer: ResourceConsumer,
+    var consumerPreference: Double = 0.0,
     var consumeFactor: Double = 0.0
-}
+)
 
 
 

@@ -5,8 +5,8 @@ import de.moyapro.idleworldsim.domain.traits.Trait
 import kotlin.reflect.KClass
 
 interface TraitBearer {
-    val features: List<Feature>
     val name: String
+    val features: List<Feature>
 
     /**
      * get all traits this traitbearer has

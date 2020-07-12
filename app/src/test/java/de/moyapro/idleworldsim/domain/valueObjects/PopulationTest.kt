@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.TraitBearer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -32,11 +33,11 @@ internal class PopulationTest {
         val species1 = Species("one")
         val species2 = Species("two")
         val species3 = Species("three")
-        val map1: Map<Species, Population> = mapOf(
+        val map1: Map<TraitBearer, Population> = mapOf(
             Pair(species1, Population(1.0)),
             Pair(species2, Population(1.0))
         )
-        val map2: Map<Species, Population> = mapOf(
+        val map2: Map<TraitBearer, Population> = mapOf(
             Pair(species1, Population(2.1)),
             Pair(species3, Population(2.1))
         )

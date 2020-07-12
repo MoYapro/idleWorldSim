@@ -1,9 +1,6 @@
 package de.moyapro.idleworldsim
 
-import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.defaultSpecies
-import de.moyapro.idleworldsim.domain.evolveTo
+import de.moyapro.idleworldsim.domain.*
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
@@ -86,8 +83,7 @@ internal class BiomeTest {
         val biome = Biome()
             .settle(soil)
             .settle(gras)
-            .process()
-        val populationDifference: Map<Species, Population> = biome.getPopulationChanges()
+        val populationDifference: Map<TraitBearer, Population> = biome.getPopulationChanges()
         assertThat(populationDifference[soil]?.populationSize).isEqualTo(0.0)
         assertThat(populationDifference[gras]?.populationSize).isGreaterThan(0.0)
 

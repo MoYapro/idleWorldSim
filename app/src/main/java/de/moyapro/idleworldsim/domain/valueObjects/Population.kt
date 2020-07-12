@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.util.sumUsing
 
 class Population(val populationSize: Double) {
@@ -29,16 +29,10 @@ class Population(val populationSize: Double) {
 
 }
 
-fun Iterable<Population>.sum(): Population {
-    var sum = Population(0.0)
-    this.forEach { sum += it }
-    return sum
-}
-
 fun addPopulationMaps(
-    population1: Map<Species, Population>,
-    population2: Map<Species, Population>
-): Map<Species, Population> {
+    population1: Map<TraitBearer, Population>,
+    population2: Map<TraitBearer, Population>
+): Map<TraitBearer, Population> {
     return (population1.asSequence() + population2.asSequence())
         .distinct()
         .groupBy({ it.key }, { it.value })
