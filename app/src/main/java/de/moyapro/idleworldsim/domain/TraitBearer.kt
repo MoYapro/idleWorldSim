@@ -2,6 +2,8 @@ package de.moyapro.idleworldsim.domain
 
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.Trait
+import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.util.sumUsing
 import kotlin.reflect.KClass
 
 interface TraitBearer {
@@ -27,7 +29,13 @@ interface TraitBearer {
         traits()
             .filterIsInstance(traitClass.javaObjectType)
 
-    fun <T: TraitBearer> T.creator(): (String, Iterable<Feature>) -> T
+    fun getLevel(traitClass: KClass<out Trait>): Level =
+        this[traitClass]
+            .map { it.level }
+            .sumUsing({ t1, t2 -> t1 + t2 }, { Level(0) })
+            ?: Level(0)
+
+    fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T
 
 
 }

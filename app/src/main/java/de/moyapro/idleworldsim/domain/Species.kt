@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -19,7 +20,11 @@ open class Species(
 
 
     override fun getResourcesPerInstance(): Resources {
-        return Resources()
+        return Resources(this.getLevel(Size::class).level) + resourcesFromTraits()
+    }
+
+    private fun resourcesFromTraits(): Resources {
+        return emptyResources()
     }
 
     override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {

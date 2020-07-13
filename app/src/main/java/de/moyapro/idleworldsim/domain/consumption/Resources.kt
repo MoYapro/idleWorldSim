@@ -13,6 +13,10 @@ data class Resources(
 ) {
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMap())
     constructor(resource: Resource) : this(listOf(resource))
+    constructor(allAmounts: Int) : this(
+        ResourceType.values()
+            .map { Resource(it, allAmounts) }
+    )
 
     fun canProvide(resources: Resources): Map<ResourceType, Boolean> {
         // negative value in resources means production
@@ -65,12 +69,17 @@ data class Resources(
 
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as Resources
-        if (quantities != other.quantities) return false
-        return true
+        return when {
+            this === other -> true
+            other !is Resources -> false
+            !resourcesEqual(other) -> false
+            else -> true
+        }
     }
+
+    private fun resourcesEqual(other: Resources) =
+        ResourceType.values()
+            .all { this[it] == other[it] }
 
     override fun hashCode(): Int = quantities.entries.sumBy {
         it.key.hashCode() * it.value.hashCode()
