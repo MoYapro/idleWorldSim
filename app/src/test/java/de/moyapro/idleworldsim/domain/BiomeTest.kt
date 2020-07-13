@@ -1,6 +1,5 @@
-package de.moyapro.idleworldsim
+package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.*
 import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.traits.ProduceResource
@@ -86,27 +85,6 @@ internal class BiomeTest {
 
     }
 
-//    @Test
-//    fun speciesConsumeWater() {
-//        val initialWaterLevel = Resource(Water, 100_000.0)
-//        val biome = Biome(resources = Resources().setQuantity(initialWaterLevel))
-//            .settle(defaultSpecies())
-//            .process()
-//        assertThat(biome.resources[Water].amount).isLessThan(initialWaterLevel.amount)
-//
-//    }
-//
-//
-//    @Test
-//    fun speciesShouldNotConsumeOnResourceShortage() {
-//        val initialResources = Resources(values().map { Resource(it, 0.0) })
-//        val resourcesAfterGeneration =
-//            Biome(resources = initialResources)
-//                .settle(defaultSpecies())
-//                .process()
-//                .resources
-//        assertThat(initialResources.quantities.entries).containsExactlyInAnyOrder(*resourcesAfterGeneration.quantities.entries.toTypedArray())
-//    }
 //
 //    @Test
 //    fun biomeStatusText() {
