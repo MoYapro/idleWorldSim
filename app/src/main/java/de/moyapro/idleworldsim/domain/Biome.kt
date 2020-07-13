@@ -11,6 +11,7 @@ import de.moyapro.idleworldsim.util.sumUsing
 class Biome {
     private val foodChain = FoodChain()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
+    private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
 
 
     fun process(): Biome {
@@ -73,5 +74,11 @@ class Biome {
 
     fun population(): Map<Species, Population> {
         return populations.filter { it.key is Species }.map { Pair(it.key as Species, it.value) }.associate { it }
+    }
+
+    fun place(biomeFeature: BiomeFeature, population: Population = Population(1.0)): Biome {
+        foodChain.add(biomeFeature)
+        biomeFeatures[biomeFeature] = population
+        return this
     }
 }

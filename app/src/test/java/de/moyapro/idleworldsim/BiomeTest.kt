@@ -73,15 +73,11 @@ internal class BiomeTest {
     }
 
     @Test
-    fun addConsumer() {
-    }
-
-    @Test
     fun consumerConsumesProducer() {
-        val soil = Species("soil", listOf(Feature(ProduceResource(ResourceType.Minerals))))
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(ResourceType.Minerals))))
         val gras = Species("gras", listOf(Feature(ConsumerTrait(ResourceType.Minerals))))
         val biome = Biome()
-            .settle(soil)
+            .place(soil)
             .settle(gras)
         val populationDifference: Map<TraitBearer, Population> = biome.getPopulationChanges()
         assertThat(populationDifference[soil]?.populationSize).isEqualTo(0.0)
