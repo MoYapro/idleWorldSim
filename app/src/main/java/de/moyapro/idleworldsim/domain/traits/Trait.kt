@@ -18,7 +18,7 @@ abstract class Trait internal constructor(
             .any { otherTraitClass == it }
     }
 
-    open fun getConsumptionResources(level: Size = Size(1)): Resources = emptyResources()
+    open fun getConsumptionResources(level: Size? = Size(1)): Resources = emptyResources()
 
     override fun equals(other: Any?) = when {
         null == other -> false
@@ -28,7 +28,7 @@ abstract class Trait internal constructor(
     }
 
     override fun hashCode(): Int {
-        return super.hashCode() * 37 + this.level.level * 67 + this::class.hashCode()
+        return this.level.level * 67 + this::class.qualifiedName.hashCode()
     }
 
     override fun toString(): String {
@@ -38,7 +38,7 @@ abstract class Trait internal constructor(
 }
 
 class Meaty(level: Level = Level(1)) : Trait(level) {
-    override fun getConsumptionResources(size: Size): Resources {
-        return Resources(10) * this.level * size.level
+    override fun getConsumptionResources(size: Size?): Resources {
+        return Resources(10) * this.level * (size?.level ?: Level(1))
     }
 }

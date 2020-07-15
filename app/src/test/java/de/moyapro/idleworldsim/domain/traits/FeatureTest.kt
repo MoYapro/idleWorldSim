@@ -89,8 +89,8 @@ internal class FeatureTest {
     fun samePredatorsAreEqual() {
         val trait1 = Predator(Meaty())
         val trait2 = Predator(Meaty())
-        assertThat(Feature(trait1) == Feature(trait2)).isTrue()
-        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
+        assertThat(Feature(trait1)).isEqualTo(Feature(trait2))
+        assertThat(Feature(trait1).hashCode()).isEqualTo(Feature(trait2).hashCode())
     }
 
     @Test

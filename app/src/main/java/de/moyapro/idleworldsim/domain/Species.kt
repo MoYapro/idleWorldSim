@@ -22,7 +22,7 @@ open class Species(
     @OptIn(ExperimentalStdlibApi::class)
     override fun getResourcesPerInstance(): Resources =
         traits()
-            .map { it.getConsumptionResources(this[Size::class].first()) }
+            .map { it.getConsumptionResources(this[Size::class].firstOrNull()) }
             .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
             ?: emptyResources()
 

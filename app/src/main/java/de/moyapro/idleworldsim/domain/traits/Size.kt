@@ -4,7 +4,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 
 class Size(size: Int = 1) : Trait(Level(size)) {
-    override fun getConsumptionResources(level: Size): Resources =
+    override fun getConsumptionResources(level: Size?): Resources =
         Resources(this.level.level)
 
 }
