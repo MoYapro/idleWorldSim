@@ -24,7 +24,7 @@ abstract class Trait internal constructor(
         null == other -> false
         other !is Trait -> false
         this::class != other::class -> false
-        else -> this.level == other.level && this::class == other::class
+        else -> this.level == other.level
     }
 
     override fun hashCode(): Int {
