@@ -19,13 +19,12 @@ open class Species(
     constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
 
 
-    override fun getResourcesPerInstance(): Resources {
-        return Resources(this.getLevel(Size::class).level) + resourcesFromTraits()
-    }
-
-    private fun resourcesFromTraits(): Resources {
-        return emptyResources()
-    }
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getResourcesPerInstance(): Resources =
+        traits()
+            .map { it.getConsumptionResources(this[Size::class].first()) }
+            .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
+            ?: emptyResources()
 
     override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {
         return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) as T }

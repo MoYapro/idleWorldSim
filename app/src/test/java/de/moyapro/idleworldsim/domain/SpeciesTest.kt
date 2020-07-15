@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -59,14 +60,14 @@ internal class SpeciesTest {
 
     @Test
     fun getTraits() {
-        val species = Species("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty)))
+        val species = Species("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty())))
         assertThat(species[FindTrait::class]).isEqualTo(listOf(Vision(), SuperVision(), Hearing()))
     }
 
     @Test
     fun getCounters() {
-        val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty))
-        val producer = Species("Producer", Feature(Stealth(), Meaty, Smell()))
+        val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty()))
+        val producer = Species("Producer", Feature(Stealth(), Meaty(), Smell()))
         assertThat(producer.getCounters(traitsToCounter)).isEqualTo(listOf(Stealth()))
     }
 
@@ -94,18 +95,78 @@ internal class SpeciesTest {
 
     @Test
     fun speciesResourcesPerInstance_zero_size0_noTraits() {
-        assertThat(Species("tiny").getResourcesPerInstance()).isEqualTo(emptyResources())
+        assertThat(
+            Species("tiny")
+                .getResourcesPerInstance()
+        ).isEqualTo(emptyResources())
     }
 
     @Test
     fun speciesResourcesPerInstance_one_size1_noTraits() {
         assertThat(
-            Species("small", Feature(Size(1))).getResourcesPerInstance()
+            Species("small", Feature(Size(1)))
+                .getResourcesPerInstance()
         )
             .isEqualTo(
                 Resources(
                     ResourceType.values()
                         .map { Resource(it, 1) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size1_meatyTraits() {
+        assertThat(
+            Species("small", Feature(Size(1), Meaty(Level(1))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    ResourceType.values()
+                        .map { Resource(it, 11) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraits() {
+        assertThat(
+            Species("small", Feature(Size(2), Meaty(Level(1))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    ResourceType.values()
+                        .map { Resource(it, 22) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraitsWithScaling() {
+        assertThat(
+            Species("small", Feature(Size(1), Meaty(Level(2))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    ResourceType.values()
+                        .map { Resource(it, 21) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraitsWithSizeScaling() {
+        assertThat(
+            Species("small", Feature(Size(2), Meaty(Level(2))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    ResourceType.values()
+                        .map { Resource(it, 42) }
                 )
             )
     }

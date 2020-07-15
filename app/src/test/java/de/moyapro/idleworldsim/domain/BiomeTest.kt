@@ -104,8 +104,8 @@ internal class BiomeTest {
 //    fun speciesCanEatEachOther() {
 //        val initialResources = Resources(DoubleArray(values().size) { 2.0 })
 //        val predator = defaultSpecies("Predator")
-//        predator.evolve(Predator(Meaty))
-//        val prey = defaultSpecies("Prey").evolve(Meaty)
+//        predator.evolve(Predator(Meaty()))
+//        val prey = defaultSpecies("Prey").evolve(Meaty())
 //        val biome = Biome(resources = initialResources)
 //            .settle(predator)
 //            .settle(prey)
@@ -116,8 +116,8 @@ internal class BiomeTest {
 //
 //    @Test
 //    fun speciesEatsAnotherSpecies() {
-//        val predator = defaultSpecies("Eater").evolve(Predator(Meaty))
-//        val prey = defaultSpecies("Food").evolve(Meaty)
+//        val predator = defaultSpecies("Eater").evolve(Predator(Meaty()))
+//        val prey = defaultSpecies("Food").evolve(Meaty())
 //        val uninvolved = defaultSpecies("Uninvolved")
 //        val biome = Biome("Earth", Resources())
 //            .settle(predator)

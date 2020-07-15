@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -59,6 +60,8 @@ data class Resources(
 
     operator fun times(population: Population): Resources = this * population.populationSize
     operator fun times(scalar: Double) = Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
+    operator fun times(scalar: Int): Resources = this * scalar.toDouble()
+    operator fun times(level: Level): Resources = this * level.level
 
     operator fun times(factor: ResourceFactor): Resources =
         Resources(

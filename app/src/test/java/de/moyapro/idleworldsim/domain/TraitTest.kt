@@ -53,8 +53,8 @@ internal class TraitTest {
 
     @Test
     fun predatorsNeedWater() {
-        val sheep = defaultSpecies("sheep").evolveTo(Feature(Meaty))
-        val wolf = Species("Wolf", Feature(Predator(Meaty), NeedResource(Water)))
+        val sheep = defaultSpecies("sheep").evolveTo(Feature(Meaty()))
+        val wolf = Species("Wolf", Feature(Predator(Meaty()), NeedResource(Water)))
         assertThat(
             Biome().settle(wolf).settle(sheep).process()[wolf].populationSize
 //                .consume().resources[wolf].populationSize
@@ -66,7 +66,7 @@ internal class TraitTest {
     fun predatorsCanOnlyEatSomeSpecies() {
         val gras = Species("Gras")
             .evolveTo(Feature.sunlightConsumer())
-        val wolf = Species("Wolf").evolveTo(Feature(Predator(Meaty), NeedResource(Water), NeedResource(ResourceType.Energy)))
+        val wolf = Species("Wolf").evolveTo(Feature(Predator(Meaty()), NeedResource(Water), NeedResource(ResourceType.Energy)))
         val biome = Biome()
             .settle(gras)
             .settle(wolf)

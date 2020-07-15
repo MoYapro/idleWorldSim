@@ -37,7 +37,7 @@ internal class FeatureTest {
 
     @Test
     fun hasTraitMeaty() {
-        assertThat(Feature(Meaty).hasTrait(Meaty)).isTrue()
+        assertThat(Feature(Meaty()).hasTrait(Meaty())).isTrue()
     }
 
     @Test
@@ -72,14 +72,14 @@ internal class FeatureTest {
     @Test
     fun featuresWithTheDifferentTraitsAreNotEqual() {
         val trait1 = EnergySaver
-        val trait2 = Predator(Meaty)
+        val trait2 = Predator(Meaty())
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
     fun differentPredatorsAreNotEqual() {
-        val trait1 = Predator(Meaty)
+        val trait1 = Predator(Meaty())
         val trait2 = Predator(GrowthTrait)
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
@@ -87,8 +87,8 @@ internal class FeatureTest {
 
     @Test
     fun samePredatorsAreEqual() {
-        val trait1 = Predator(Meaty)
-        val trait2 = Predator(Meaty)
+        val trait1 = Predator(Meaty())
+        val trait2 = Predator(Meaty())
         assertThat(Feature(trait1) == Feature(trait2)).isTrue()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
     }

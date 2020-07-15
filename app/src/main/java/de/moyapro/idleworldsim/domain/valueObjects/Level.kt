@@ -15,6 +15,10 @@ class Level(val level: Int) : Comparable<Level> {
     override fun hashCode() = this.level.hashCode() * 67
     operator fun minus(other: Level) = Level(this.level - other.level)
     operator fun plus(other: Level) = Level(this.level + other.level)
+
+    override fun toString(): String {
+        return "Level[$level]"
+    }
 }
 
 

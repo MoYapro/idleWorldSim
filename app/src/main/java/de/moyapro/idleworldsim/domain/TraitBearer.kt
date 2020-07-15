@@ -25,7 +25,7 @@ interface TraitBearer {
     /**
      * get list of traits that are the given traitClass or subclass it
      */
-    operator fun get(traitClass: KClass<out Trait>): Iterable<Trait> =
+    operator fun <T : Trait> get(traitClass: KClass<out T>): Iterable<T> =
         traits()
             .filterIsInstance(traitClass.javaObjectType)
 

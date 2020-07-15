@@ -7,12 +7,12 @@ import org.junit.Test
 
 internal class FoodChainTest {
 
-    private val producer1: ResourceProducer = Species("p1", Feature(Meaty))
+    private val producer1: ResourceProducer = Species("p1", Feature(Meaty()))
     private val producer2: ResourceProducer = Species("p2", Feature.sunlightConsumer())
-    private val consumer1: ResourceConsumer = Species("c1", Feature(Predator(Meaty)))
+    private val consumer1: ResourceConsumer = Species("c1", Feature(Predator(Meaty())))
     private val consumer2: ResourceConsumer = Species("c2", Feature.oxygenConsumer())
-    private val poc1 = Species("pc1", Feature(Predator(Meaty)), Feature.sunlightConsumer())
-    private val poc2 = Species("pc2", Feature(Predator(Meaty)), Feature.sunlightConsumer())
+    private val poc1 = Species("pc1", Feature(Predator(Meaty())), Feature.sunlightConsumer())
+    private val poc2 = Species("pc2", Feature(Predator(Meaty())), Feature.sunlightConsumer())
 
     @Test
     fun insertIntoFoodChain() {

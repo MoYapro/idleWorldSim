@@ -11,9 +11,9 @@ internal class CalculateConsumeFactorTest {
 
     @Test
     fun countersReducePowerFactor() {
-        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty))
-        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty, Stealth()))
-        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty), Vision()))
+        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty()))
+        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty(), Stealth()))
+        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty()), Vision()))
         assertThat(producerWithCounter.getCounters(consumer.traits())).isNotEmpty
         val powerFactorWithCounter = consumer.consumePowerFactor(producerWithCounter)
         val powerFactorWithoutCounter = consumer.consumePowerFactor(producerWithoutConter)
@@ -22,9 +22,9 @@ internal class CalculateConsumeFactorTest {
 
     @Test
     fun countersReduceConsumerPreference() {
-        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty))
-        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty, Stealth()))
-        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty), Vision()))
+        val producerWithoutConter: ResourceProducer = Species("producerWithoutCounter", Feature(Meaty()))
+        val producerWithCounter: ResourceProducer = Species("producerWithCounter", Feature(Meaty(), Stealth()))
+        val consumer: ResourceConsumer = Species("consumer", Feature(Predator(Meaty()), Vision()))
         val factorWithCounter = consumer.calculatePreferenceIndex(producerWithCounter, consumer.consumePowerFactor(producerWithCounter))
         val factorWithoutCounter = consumer.calculatePreferenceIndex(producerWithoutConter, consumer.consumePowerFactor(producerWithoutConter))
         assertThat(factorWithoutCounter).isGreaterThan(factorWithCounter)
@@ -44,8 +44,8 @@ internal class CalculateConsumeFactorTest {
 
     @Test
     fun calculatePreferenceIndex() {
-        val consumer = Species("consumer", Feature(Predator(Meaty)))
-        val producer = Species("producer", Feature(Meaty))
+        val consumer = Species("consumer", Feature(Predator(Meaty())))
+        val producer = Species("producer", Feature(Meaty()))
         val noProducer = Species("producer")
         assertThat(consumer.calculatePreferenceIndex(noProducer, consumer.consumePowerFactor(producer))).`as`("Index is 0 when producer cannot be consumed").isEqualTo(0.0)
         assertThat(consumer.calculatePreferenceIndex(producer, consumer.consumePowerFactor(noProducer))).`as`("Index is > 1 when producer can be consumed").isGreaterThan(1.0)
