@@ -15,7 +15,7 @@ data class Resources(
     constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMap())
     constructor(resource: Resource) : this(listOf(resource))
     constructor(allAmounts: Int) : this(
-        ResourceType.values()
+        values()
             .map { Resource(it, allAmounts) }
     )
 
@@ -81,7 +81,7 @@ data class Resources(
     }
 
     private fun resourcesEqual(other: Resources) =
-        ResourceType.values()
+        values()
             .all { this[it] == other[it] }
 
     override fun hashCode(): Int = quantities.entries.sumBy {

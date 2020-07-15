@@ -18,7 +18,5 @@ data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) {
         return "Resource[$resourceType=$amount]"
     }
 
-    fun isNone() = 0.0 == amount
-
 }
 

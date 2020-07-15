@@ -70,7 +70,7 @@ class FoodChain {
         }
     }
 
-    fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {
+    private fun getConsumerMap(): Map<ResourceConsumer, List<FoodChainEdge>> {
         return nodes
             .map { it.consumers }
             .flatten()
@@ -200,9 +200,9 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
 
         relativeConsumeValuePerSpecies.entries
             .sortedBy { it.value }
-            .map() { (consumer, _) -> consumer }
+            .map { (consumer, _) -> consumer }
             .withIndex()
-            .forEach() { (rank, consumer) ->
+            .forEach { (rank, consumer) ->
                 foodChainNode[consumer]?.consumeFactor = calculateConsumeFactor(rank + 1)
             }
 

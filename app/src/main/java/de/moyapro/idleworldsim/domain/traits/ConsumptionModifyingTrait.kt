@@ -21,6 +21,6 @@ class ConsumerTrait(val influencedResource: ResourceType) : Trait() {
 
 }
 
-object EnergySaver:Trait() {}
-object WaterSaver:Trait() {}
-object MineralSaver:Trait() {}
+object EnergySaver : Trait()
+object WaterSaver : Trait()
+object MineralSaver : Trait()

@@ -49,6 +49,6 @@ fun <T : TraitBearer> T.evolveTo(vararg evolvedFeature: Feature, name: String? =
     val newFeatures = mutableListOf(*evolvedFeature)
     newFeatures.addAll(features)
     val newName = name ?: "${this.name}+"
-    return creator<T>().invoke(newName, newFeatures) as T
+    return creator().invoke(newName, newFeatures)
 }
 

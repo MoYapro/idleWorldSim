@@ -18,7 +18,7 @@ open class Feature(val name: String = "GenericFeature", private val traits: Set<
     companion object
 
     fun getTraits(): Set<Trait> {
-        return traits;
+        return traits
     }
 
     fun influenceGrowthRate(growthRate: GrowthRate): GrowthRate {
