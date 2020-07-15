@@ -1,8 +1,6 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
-import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.ProduceResource
+import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -47,7 +45,7 @@ internal class BiomeTest {
 
     @Test
     fun settle() {
-        val species: Species = Species("X")
+        val species = Species("X")
         assertThat(Biome().settle(species, Population(3.0))[species]).isEqualTo(Population(3.0))
     }
 
@@ -100,19 +98,17 @@ internal class BiomeTest {
 //        assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
 //    }
 //
-//    @Test
-//    fun speciesCanEatEachOther() {
-//        val initialResources = Resources(DoubleArray(values().size) { 2.0 })
-//        val predator = defaultSpecies("Predator")
-//        predator.evolve(Predator(Meaty()))
-//        val prey = defaultSpecies("Prey").evolve(Meaty())
-//        val biome = Biome(resources = initialResources)
-//            .settle(predator)
-//            .settle(prey)
-//            .process()
-//        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
-//        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(1.1)
-//    }
+@Test
+fun speciesCanEatEachOther() {
+    val predator = Species("Predator", Feature(Predator(Meaty())))
+    val prey = Species("Prey", Feature(Meaty()))
+    val biome = Biome()
+        .settle(predator)
+        .settle(prey)
+        .process()
+    assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+    assertThat(biome[prey].populationSize).isLessThan(1.1)
+}
 //
 //    @Test
 //    fun speciesEatsAnotherSpecies() {
