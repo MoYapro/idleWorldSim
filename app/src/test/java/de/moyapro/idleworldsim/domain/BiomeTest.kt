@@ -3,7 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -71,8 +71,8 @@ internal class BiomeTest {
 
     @Test
     fun consumerConsumesProducer() {
-        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(ResourceType.Minerals))))
-        val gras = Species("gras", listOf(Feature(ConsumerTrait(ResourceType.Minerals))))
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals))))
         val biome = Biome()
             .place(soil)
             .settle(gras)
@@ -83,7 +83,7 @@ internal class BiomeTest {
 
     }
 
-//
+    //
 //    @Test
 //    fun biomeStatusText() {
 //        val biomeName = "DefaultBiome${Math.random()}"
@@ -98,31 +98,31 @@ internal class BiomeTest {
 //        assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
 //    }
 //
-@Test
-fun speciesCanEatEachOther() {
-    val predator = Species("Predator", Feature(Predator(Meaty())))
-    val prey = Species("Prey", Feature(Meaty()))
-    val biome = Biome()
-        .settle(predator)
-        .settle(prey)
-        .process()
-    assertThat(biome[predator].populationSize).isGreaterThan(1.0)
-    assertThat(biome[prey].populationSize).isLessThan(1.1)
-}
-//
-//    @Test
-//    fun speciesEatsAnotherSpecies() {
-//        val predator = defaultSpecies("Eater").evolve(Predator(Meaty()))
-//        val prey = defaultSpecies("Food").evolve(Meaty())
-//        val uninvolved = defaultSpecies("Uninvolved")
-//        val biome = Biome("Earth", Resources())
-//            .settle(predator)
-//            .settle(prey)
-//            .settle(uninvolved)
-//            .process()
-//        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
-//        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(uninvolved.getPopulationIn(biome).populationSize)
-//    }
+    @Test
+    fun speciesCanEatEachOther() {
+        val predator = Species("Predator", Feature(Predator(Meaty())))
+        val prey = Species("Prey", Feature(Meaty()))
+        val biome = Biome()
+            .settle(predator)
+            .settle(prey)
+            .process()
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(1.1)
+    }
+
+    @Test
+    fun predatorEatsOnlySomeSpecies() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Food", Feature(Meaty()))
+        val uninvolved = Species("Uninvolved")
+        val biome = Biome()
+            .settle(predator, Population(1))
+            .settle(prey, Population(100))
+            .settle(uninvolved, Population(100))
+            .process()
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(biome[uninvolved].populationSize)
+    }
 //
 //    @Test
 //    fun biomeGeneratesResources() {

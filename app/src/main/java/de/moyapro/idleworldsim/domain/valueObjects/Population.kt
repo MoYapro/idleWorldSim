@@ -4,16 +4,18 @@ import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.util.sumUsing
 
 class Population(val populationSize: Double) {
+    constructor(populationSize: Int) : this(populationSize.toDouble())
+
     operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
     operator fun times(growthRate: GrowthRate) = Population(populationSize * growthRate.rate)
-    operator fun times(starvationRate: StarvationRate) =
-        Population(populationSize * starvationRate.rate)
-
+    operator fun times(starvationRate: StarvationRate) = Population(populationSize * starvationRate.rate)
+    operator fun times(scalar: Double) = Population(populationSize * scalar)
+    operator fun times(scalar: Int) = Population(this.populationSize * scalar)
     operator fun times(deathRate: DeathRate) = Population(populationSize * deathRate.rate)
+
     operator fun minus(other: Population) = Population(populationSize - other.populationSize)
     operator fun div(divider: Double) = Population(populationSize / divider)
-    operator fun times(scalar: Double) = Population(populationSize * scalar)
 
     override fun equals(other: Any?): Boolean {
         return other is Population && populationSize.equals(other.populationSize)
@@ -26,6 +28,7 @@ class Population(val populationSize: Double) {
     override fun toString(): String {
         return "Population[$populationSize]"
     }
+
 
 }
 

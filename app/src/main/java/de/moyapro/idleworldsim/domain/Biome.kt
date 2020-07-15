@@ -63,7 +63,7 @@ class Biome {
 
         return mapOf(
             Pair(battleRelation.consumer, consumerPopulationDifference),
-            Pair(battleRelation.producer, producerPopulationEaten)
+            Pair(battleRelation.producer, producerPopulationEaten * -1)
         )
     }
 
