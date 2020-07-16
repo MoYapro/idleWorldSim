@@ -13,6 +13,12 @@ data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) {
     }
 
     operator fun div(quotient: Int) = this.amount / quotient
+    operator fun div(other: Resource): Double {
+        if (this.resourceType != other.resourceType) {
+            throw java.lang.IllegalArgumentException("Dividing by non matching resource type: This is $resourceType, other was ${other.resourceType}")
+        }
+        return this.amount / other.amount
+    }
 
     override fun toString(): String {
         return "Resource[$resourceType=$amount]"

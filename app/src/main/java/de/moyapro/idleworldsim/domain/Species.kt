@@ -6,6 +6,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 open class Species(
@@ -43,12 +44,12 @@ open class Species(
         return traits()
             .filterIsInstance<Predator>()
             .map { it.preyTrait }
-            .any { producer.traits().contains(it) }
+            .any { it -> producer.traits().map { it::class.java }.contains(it::class.java) }
     }
 
     override fun consume(consumerPopulation: Population, availableResources: Resources): Population {
         val numberOfUnfullfilledNeeds = needs()
-            .map { Pair(it.key, availableResources[it.key].amount >= it.value) }
+            .map { Pair(it.resourceType, availableResources[it.resourceType].amount >= it.amount) }
             .sumBy {
                 when (it.second) {
                     true -> 0
@@ -58,11 +59,10 @@ open class Species(
         return consumerPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
     }
 
-    private fun needs(): Map<ResourceType, Int> {
+    override fun needs(): List<Resource> {
         return traits().filterIsInstance<NeedResource>()
             .groupBy { it.resourceType }
-            .map { Pair(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
-            .associate { it }
+            .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
     }
 
     override fun equals(other: Any?): Boolean {

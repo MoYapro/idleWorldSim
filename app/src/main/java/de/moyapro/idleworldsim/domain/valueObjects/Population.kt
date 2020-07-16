@@ -3,10 +3,10 @@ package de.moyapro.idleworldsim.domain.valueObjects
 import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.util.sumUsing
 
-class Population(val populationSize: Double) {
+class Population(val populationSize: Double) : Comparable<Population> {
     constructor(populationSize: Int) : this(populationSize.toDouble())
 
-    operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
+    override operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
     operator fun times(growthRate: GrowthRate) = Population(populationSize * growthRate.rate)
     operator fun times(starvationRate: StarvationRate) = Population(populationSize * starvationRate.rate)

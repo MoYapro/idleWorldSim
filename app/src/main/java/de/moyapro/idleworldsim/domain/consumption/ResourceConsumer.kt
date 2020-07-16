@@ -7,6 +7,7 @@ import de.moyapro.idleworldsim.domain.traits.KillTrait
 import de.moyapro.idleworldsim.domain.traits.Trait
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.sum
 import kotlin.math.pow
 import kotlin.reflect.KClass
@@ -65,4 +66,5 @@ interface ResourceConsumer: TraitBearer {
      * consume available resources and may update its populations
      */
     fun consume(consumerPopulation: Population, availableResources: Resources): Population
+    fun needs(): List<Resource>
 }

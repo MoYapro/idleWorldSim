@@ -123,4 +123,20 @@ internal class BiomeTest {
         assertThat(biome[predator].populationSize).isGreaterThan(1.0)
         assertThat(biome[prey].populationSize).isLessThan(biome[uninvolved].populationSize)
     }
+
+
+    @Test
+    fun predatorEatsUntilSatisfied() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Tasty Food", Feature(Meaty(Level(10))))
+        val lesserPrey = Species("Food", Feature(Meaty()))
+        val biome = Biome()
+            .settle(predator, Population(1))
+            .settle(lesserPrey, Population(100))
+            .settle(prey, Population(100))
+            .process()
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(biome[lesserPrey].populationSize)
+    }
+
 }

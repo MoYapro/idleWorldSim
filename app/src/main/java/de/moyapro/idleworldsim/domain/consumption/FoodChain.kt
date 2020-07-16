@@ -218,6 +218,11 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
     private fun isConsumerAlreadyAdded(newConsumer: ResourceConsumer): Boolean {
         return consumers.any { it.consumer == newConsumer }
     }
+
+    override fun toString(): String {
+        return "FoodChainNode[$producer -> ${consumers.joinToString(",")}"
+    }
+
 }
 
 /**
