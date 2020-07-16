@@ -3,7 +3,6 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
@@ -18,14 +17,6 @@ open class Species(
     }
 
     constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
-
-
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun getResourcesPerInstance(): Resources =
-        traits()
-            .map { it.getConsumptionResources(this[Size::class].firstOrNull()) }
-            .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
-            ?: emptyResources()
 
     override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {
         return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) as T }

@@ -18,7 +18,7 @@ abstract class Trait internal constructor(
             .any { otherTraitClass == it }
     }
 
-    open fun getConsumptionResources(level: Size? = Size(1)): Resources = emptyResources()
+    open fun getConsumptionResources(size: Size? = Size(1)): Resources = emptyResources()
 
     override fun equals(other: Any?) = when {
         null == other -> false

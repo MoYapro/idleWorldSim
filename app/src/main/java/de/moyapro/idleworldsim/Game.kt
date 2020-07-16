@@ -1,16 +1,22 @@
 package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Biome
+import de.moyapro.idleworldsim.domain.BiomeFeature
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.traits.ProduceResource
+import de.moyapro.idleworldsim.domain.traits.Size
+import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
 object Game {
 
 
     private val treeOfLife = defaultTreeOfLife()
 
-    private val biomes = mutableSetOf(Biome().settle(Species("Start here", autotrophic)))
+    private val biomes = mutableSetOf(createStatingBiome())
+
     var selectedBiome = biomes.first()
     var selectedSpecies: Species = selectedBiome.species().first()
     fun getStatusText(): String {
@@ -67,3 +73,24 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
         }
     }
 }
+
+private fun createStatingBiome() =
+    Biome()
+        .settle(Species("Start here", autotrophic))
+        .addResourceProducer(
+            BiomeFeature(
+                "Ocean", Feature(
+                    Size(1000),
+                    ProduceResource(ResourceType.Water, Level(99)),
+                    ProduceResource(ResourceType.Minerals, Level(1))
+                )
+            )
+        )
+        .addResourceProducer(
+            BiomeFeature(
+                "Ocean Floor", Feature(
+                    Size(100),
+                    ProduceResource(ResourceType.Minerals, Level(25))
+                )
+            )
+        )

@@ -1,11 +1,11 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) {
+data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) : Comparable<Resource> {
     internal constructor(resourceType: ResourceType, amount: Int) : this(resourceType, amount.toDouble())
 
     operator fun times(factor: Double) = Resource(resourceType, amount * factor)
     operator fun times(population: Population) = Resource(resourceType, amount * population.populationSize)
-    operator fun compareTo(other: Resource): Int {
+    override operator fun compareTo(other: Resource): Int {
         if (this.resourceType != other.resourceType) {
             throw IllegalArgumentException("Cannot compare resources of different type. Tried to compare $this with $other")
         }

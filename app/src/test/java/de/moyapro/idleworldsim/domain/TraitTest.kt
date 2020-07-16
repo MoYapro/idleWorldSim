@@ -112,5 +112,19 @@ internal class TraitTest {
         assertThat(Stealth().canCounter(SuperVision())).isFalse()
     }
 
+    @Test
+    fun resourceProducerProducesDependingOnLevel() {
+        val lowProducer = BiomeFeature("Sea", Feature(ProduceResource(Water, Level(1))))
+        val highProducer = BiomeFeature("Sea", Feature(ProduceResource(Water, Level(10))))
+        assertThat(highProducer.getResourcesPerInstance()[Water]).isGreaterThan(lowProducer.getResourcesPerInstance()[Water])
+    }
+
+    @Test
+    fun resourceProducerProducesDependingOnSize() {
+        val lowProducer = BiomeFeature("Sea", Feature(ProduceResource(Water, Level(10)), Size(1)))
+        val highProducer = BiomeFeature("Sea", Feature(ProduceResource(Water, Level(10)), Size(10)))
+        assertThat(highProducer.getResourcesPerInstance()[Water]).isGreaterThan(lowProducer.getResourcesPerInstance()[Water])
+    }
+
 
 }

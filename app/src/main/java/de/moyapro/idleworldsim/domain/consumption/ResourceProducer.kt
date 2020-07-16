@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.TraitBearer
+import de.moyapro.idleworldsim.domain.traits.Size
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 
 interface ResourceProducer : TraitBearer {
@@ -25,5 +26,10 @@ interface ResourceProducer : TraitBearer {
         }
     }
 
-    fun getResourcesPerInstance(): Resources
+    @OptIn(ExperimentalStdlibApi::class)
+    fun getResourcesPerInstance(): Resources =
+        traits()
+            .map { it.getConsumptionResources(this[Size::class].firstOrNull()) }
+            .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
+            ?: emptyResources()
 }
