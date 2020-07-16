@@ -139,4 +139,15 @@ internal class BiomeTest {
         assertThat(biome[prey].populationSize).isLessThan(biome[lesserPrey].populationSize)
     }
 
+    @Test
+    fun evolve() {
+        val originalSpecies = Species("x")
+        val biome = Biome().settle(originalSpecies)
+        assertThat(biome.species().size).isEqualTo(1)
+        val newSpecies = biome.evolve(originalSpecies, Feature.sunlightConsumer())
+        assertThat(biome.species().size).isEqualTo(2)
+        assertThat(biome.species()).contains(originalSpecies)
+        assertThat(biome.species()).contains(newSpecies)
+    }
+
 }

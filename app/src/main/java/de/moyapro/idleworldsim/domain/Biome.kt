@@ -4,6 +4,7 @@ import de.moyapro.idleworldsim.domain.consumption.FoodChain
 import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.addPopulationMaps
 import de.moyapro.idleworldsim.util.sumUsing
@@ -80,5 +81,18 @@ class Biome {
         foodChain.add(biomeFeature)
         biomeFeatures[biomeFeature] = population
         return this
+    }
+
+    fun species(): List<Species> {
+        return this.population().map { it.key }
+    }
+
+    fun <T : TraitBearer> evolve(traitBearerToEvolve: T, newFeature: Feature): T {
+        val newTraitBearer = traitBearerToEvolve.evolveTo(newFeature)
+        when (newTraitBearer) {
+            is Species -> settle(newTraitBearer)
+            is ResourceProducer -> addResourceProducer(newTraitBearer)
+        }
+        return newTraitBearer
     }
 }
