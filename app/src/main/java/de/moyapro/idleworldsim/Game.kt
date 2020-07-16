@@ -2,13 +2,15 @@ package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.traits.Meaty
 
 object Game {
 
 
-    private val biomes = mutableSetOf(Biome().settle(Species("Start here")))
+    private val treeOfLife = defaultTreeOfLife()
+
+    private val biomes = mutableSetOf(Biome().settle(Species("Start here", autotrophic)))
     var selectedBiome = biomes.first()
     var selectedSpecies: Species = selectedBiome.species().first()
     fun getStatusText(): String {
@@ -31,8 +33,8 @@ object Game {
         selectedSpecies = species
     }
 
-    fun availableFeatures(): List<Feature> {
-        return listOf(Feature("MMMM", Meaty()))
+    fun getEvolveOptions(): List<Feature> {
+        return treeOfLife.getEvolvableFeatures(*selectedSpecies.features.toTypedArray()).toList()
     }
 
 
@@ -44,4 +46,24 @@ object Game {
         Q   Quit        End the game
 """.trimIndent()
 
+}
+
+private val autotrophic = Feature("Autotrophic")
+private val photosynthesis = Feature("Photosynthesis")
+private val vertebrate = Feature("Spinal Cord")
+private val herbivore = Feature("Herbivore")
+private val carnivore = Feature("Carnivore")
+private val smallPlant = Feature("Small Plant")
+private val largePlant = Feature("Large Plant")
+private fun defaultTreeOfLife(): TreeOfLife<Feature> {
+    return TreeOfLife.build(autotrophic) {
+        branchInto(photosynthesis) {
+            branchInto(smallPlant)
+            branchInto(largePlant)
+        }
+        branchInto(vertebrate) {
+            branchInto(herbivore)
+            branchInto(carnivore)
+        }
+    }
 }

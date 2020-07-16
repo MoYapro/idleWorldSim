@@ -52,5 +52,8 @@ class TreeOfLife<T : Feature> {
         return s
     }
 
-    fun getEvolvableFeatures(feature: Feature): Set<T> = this.evolutions[feature] ?: setOf()
+    fun getEvolvableFeatures(vararg featureList: Feature): Iterable<T> =
+        featureList.map { this.evolutions[it] ?: mutableSetOf() }
+            .flatten()
+
 }

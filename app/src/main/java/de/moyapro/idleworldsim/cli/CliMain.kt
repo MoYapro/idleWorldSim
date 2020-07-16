@@ -30,11 +30,11 @@ fun executeEvolveCommand(commandArgument: String?) {
     if (null == commandArgument) {
         println(Game.selectedBiome)
         println(Game.selectedSpecies)
-        outputFeatures(Game.availableFeatures())
+        outputFeatures(Game.getEvolveOptions())
         return
     }
     val featureToSelect = commandArgument.toInt()
-    val selectedFeature = Game.availableFeatures()[featureToSelect]
+    val selectedFeature = Game.getEvolveOptions()[featureToSelect]
     val newSpecies = Game.selectedBiome.evolve(Game.selectedSpecies, selectedFeature)
     println("You created new species: $newSpecies")
 
