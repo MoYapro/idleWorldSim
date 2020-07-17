@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
             while (running) {
                 delay(1000)
                 if (running) {
-                    Game.process()
+                    Game.runSimulation()
                 }
             }
         }

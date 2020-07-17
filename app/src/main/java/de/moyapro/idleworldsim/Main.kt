@@ -19,12 +19,7 @@ object GameX {
 
 fun main(args: Array<String>) {
     init()
-
-    for (i in 1..100_000) {
-        print(Game.getStatusText())
-        Game.process()
-        Thread.sleep(10)
-    }
+        Game.runSimulation()
 }
 
 fun init() {

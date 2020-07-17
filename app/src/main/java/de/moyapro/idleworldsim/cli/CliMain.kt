@@ -4,14 +4,19 @@ import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.Feature
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
 import kotlin.system.exitProcess
 
 fun main() {
     println("Welcome")
     println(Game.help)
+    Game.runSimulation()
+    handleUserInput()
+}
 
-
+private fun handleUserInput() {
     while (true) {
         val split = readLine()!!.split(' ')
         val command = split.first()
@@ -42,9 +47,9 @@ fun executeEvolveCommand(commandArgument: String?) {
 
 
 fun executeSpeciesCommand(commandArgument: String?) {
-    if (null == commandArgument) {
+    if (null == commandArgument || "" == commandArgument) {
         println(Game.selectedBiome)
-        outputSpecies(Game.selectedBiome.species())
+        outputSpecies(Game.selectedBiome.population())
         return
     }
     val speciesToSelect = commandArgument.toInt()
@@ -71,9 +76,9 @@ fun outputFeatures(features: Iterable<Feature>) {
         .forEach { println(it) }
 }
 
-fun outputSpecies(species: Iterable<Species>) {
-    species.withIndex()
-        .map { "${it.index}\t ${it.value}" }
+fun outputSpecies(speciesPopulation: Map<Species, Population>) {
+    speciesPopulation.keys.withIndex()
+        .map { species -> "${species.index}\t\t ${speciesPopulation[species.value]?.populationSize?.toShortDecimalStr()} \t\t ${species.value}" }
         .forEach { println(it) }
 }
 

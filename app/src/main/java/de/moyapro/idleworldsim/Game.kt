@@ -7,6 +7,9 @@ import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 object Game {
 
@@ -21,8 +24,13 @@ object Game {
         return biomes.map { it.population() }.toString()
     }
 
-    fun process() {
-        TODO("Not yet implemented")
+    fun runSimulation() {
+        GlobalScope.launch {
+            while (true) {
+                delay(1000)
+                biomes.forEach { it.process() }
+            }
+        }
     }
 
     fun biomes(): List<Biome> {
