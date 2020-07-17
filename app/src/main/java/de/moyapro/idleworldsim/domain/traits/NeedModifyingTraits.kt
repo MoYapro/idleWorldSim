@@ -22,7 +22,7 @@ abstract class NeedModifyingTrait(val resourceType: ResourceType, level: Level =
     }
 }
 
-class NeedResource(resourceType: ResourceType) : NeedModifyingTrait(resourceType) {
+class NeedResource(resourceType: ResourceType, level: Level = Level(1)) : NeedModifyingTrait(resourceType, level) {
     override fun influenceNeed(need: Resources): Resources {
         return Resources(
             need.quantities

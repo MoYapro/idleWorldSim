@@ -78,7 +78,7 @@ internal class ResourcesTest {
     fun timesResourceFactors() {
         assertThat(
             Resources(values().map { Resource(it, 5.0) })
-                    * ResourceFactor(3.0, 3.0, 3.0, 3.0, oxygenFactor = 3.0)
+                    * ResourceFactor(3.0, 3.0, 3.0, 3.0, oxygenFactor = 3.0, carbonFactor = 3.0)
         )
             .isEqualTo(
                 Resources(values().map { Resource(it, 15.0) })

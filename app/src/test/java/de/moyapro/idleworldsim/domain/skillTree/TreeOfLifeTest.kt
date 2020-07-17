@@ -44,9 +44,9 @@ internal class TreeOfLifeTest {
             }
         }
 
-        assertThat(tree.getEvolvableFeatures(autotrophic)).isEqualTo(setOf(photosynthesis, vertebrate))
-        assertThat(tree.getEvolvableFeatures(vertebrate)).isEqualTo(setOf(herbivore, carnivore))
-        assertThat(tree.getEvolvableFeatures(photosynthesis)).isEqualTo(setOf(smallPlant, largePlant))
-        assertThat(tree.getEvolvableFeatures(smallPlant)).isEqualTo(setOf<Feature>())
+        assertThat(tree.getEvolvableFeatures(autotrophic)).isEqualTo(listOf(photosynthesis, vertebrate))
+        assertThat(tree.getEvolvableFeatures(vertebrate)).isEqualTo(listOf(herbivore, carnivore))
+        assertThat(tree.getEvolvableFeatures(photosynthesis)).isEqualTo(listOf(smallPlant, largePlant))
+        assertThat(tree.getEvolvableFeatures(smallPlant)).isEqualTo(listOf<Feature>())
     }
 }
