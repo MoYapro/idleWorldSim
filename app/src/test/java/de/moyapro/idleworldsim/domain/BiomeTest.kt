@@ -150,4 +150,17 @@ internal class BiomeTest {
         assertThat(biome.species()).contains(newSpecies)
     }
 
+    @Test
+    fun speciesIsAddedToBiomeTwice_ShouldJustIncreasePopulation() {
+        val someSpecies = Species("X", Feature(Meaty()))
+        val sameSpecies = Species("X", Feature(Meaty()))
+        val population = Biome()
+            .settle(someSpecies)
+            .settle(sameSpecies)
+            .population()
+        assertThat(population.size).isEqualTo(1)
+        assertThat(population[someSpecies]?.populationSize).isEqualTo(2.0)
+        assertThat(population[sameSpecies]?.populationSize).isEqualTo(2.0)
+    }
+
 }

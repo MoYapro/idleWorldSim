@@ -22,8 +22,9 @@ class Biome {
     }
 
     fun settle(species: Species, population: Population = Population(1.0)): Biome {
+        val currentPopulation = populations[species] ?: Population(0.0)
+        populations[species] = currentPopulation + population
         foodChain.add(species)
-        populations[species] = population
         return this
     }
 
