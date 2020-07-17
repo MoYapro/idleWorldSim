@@ -31,6 +31,10 @@ class Biome {
         return populations[species] ?: Population(0.0)
     }
 
+    fun getRelations(): List<FoodChainEdge> {
+        return foodChain.getRelations()
+    }
+
 
     /**
      * Get difference in population per species. This should be the same changes as process but not applied to the biome

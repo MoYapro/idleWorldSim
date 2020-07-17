@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.BiomeFeature
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
@@ -20,9 +21,6 @@ object Game {
 
     var selectedBiome = biomes.first()
     var selectedSpecies: Species = selectedBiome.species().first()
-    fun getStatusText(): String {
-        return biomes.map { it.population() }.toString()
-    }
 
     fun runSimulation() {
         GlobalScope.launch {
@@ -49,10 +47,14 @@ object Game {
         return treeOfLife.getEvolvableFeatures(*selectedSpecies.features.toTypedArray()).toList()
     }
 
+    fun speciesRelations(): Iterable<FoodChainEdge> {
+        return selectedBiome.getRelations()
+    }
+
 
     val help: String = """
         S   Species     List species in selected biome - use number to select species
-       (R)  Relations   List food chain relations between species (to be implemented)
+        R   Relations   List food chain relations between species (to be implemented)
         E   Features    List available features for selected species - use number to evolve feature in currently selected species
         B   Biomes      List biomes - use number to select biomes
         H   HELP        Print this help
@@ -89,7 +91,8 @@ private fun createStatingBiome() =
                 "Ocean", Feature(
                     Size(1000),
                     ProduceResource(Water, Level(99)),
-                    ProduceResource(Minerals, Level(1))
+                    ProduceResource(Minerals, Level(1)),
+                    ProduceResource(Carbon, Level(1))
                 )
             )
         )

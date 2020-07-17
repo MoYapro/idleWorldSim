@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.cli
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.toShortDecimalStr
@@ -22,13 +23,18 @@ private fun handleUserInput() {
         val command = split.first()
         val commandArgument: String? = if (split.size > 1) split[1] else null
         when (command.toUpperCase(Locale.getDefault())) {
-            "B" -> executeCommandBiome(commandArgument)
             "S" -> executeSpeciesCommand(commandArgument)
+            "R" -> executeRelationCommand(commandArgument)
+            "B" -> executeCommandBiome(commandArgument)
             "E" -> executeEvolveCommand(commandArgument)
             "H" -> println(Game.help)
             "Q" -> exitProcess(0)
         }
     }
+}
+
+fun executeRelationCommand(commandArgument: String?) {
+    outputRelations(Game.speciesRelations())
 }
 
 fun executeEvolveCommand(commandArgument: String?) {
@@ -86,5 +92,10 @@ fun outputBiomes(biomes: Iterable<Biome>) {
     biomes.withIndex()
         .map { "${it.index}\t ${it.value}" }
         .forEach { println(it) }
+}
 
+fun outputRelations(relations: Iterable<FoodChainEdge>) {
+    relations.forEach {
+        println("${it.producer} \t\t->\t\t ${it.consumer} --- ${it.consumeFactor} --- ${it.consumerPreference}")
+    }
 }
