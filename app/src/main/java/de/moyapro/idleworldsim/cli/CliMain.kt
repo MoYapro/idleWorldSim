@@ -1,10 +1,7 @@
 package de.moyapro.idleworldsim.cli
 
 import de.moyapro.idleworldsim.Game
-import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
-import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
@@ -27,21 +24,27 @@ private fun handleUserInput() {
             "R" -> executeRelationCommand(commandArgument)
             "B" -> executeCommandBiome(commandArgument)
             "E" -> executeEvolveCommand(commandArgument)
+            "T" -> executeTraitCommand(commandArgument)
             "H" -> println(Game.help)
             "Q" -> exitProcess(0)
         }
     }
 }
 
+fun executeTraitCommand(commandArgument: String?) {
+    outputWithIndex(Game.getTraitsOfSelectedSpecies())
+}
+
+
 fun executeRelationCommand(commandArgument: String?) {
-    outputRelations(Game.speciesRelations())
+    outputWithIndex(Game.speciesRelations())
 }
 
 fun executeEvolveCommand(commandArgument: String?) {
     if (null == commandArgument) {
         println(Game.selectedBiome)
         println(Game.selectedSpecies)
-        outputFeatures(Game.getEvolveOptions())
+        outputWithIndex(Game.getEvolveOptions())
         return
     }
     val featureToSelect = commandArgument.toInt()
@@ -66,7 +69,7 @@ fun executeSpeciesCommand(commandArgument: String?) {
 
 fun executeCommandBiome(commandArgument: String?) {
     if (null == commandArgument) {
-        outputBiomes(Game.biomes())
+        outputWithIndex(Game.biomes())
         return
     }
     val biomeToSelect = commandArgument.toInt()
@@ -75,9 +78,8 @@ fun executeCommandBiome(commandArgument: String?) {
 
 }
 
-
-fun outputFeatures(features: Iterable<Feature>) {
-    features.withIndex()
+fun outputWithIndex(traits: Iterable<Any>) {
+    traits.withIndex()
         .map { "${it.index}\t ${it.value}" }
         .forEach { println(it) }
 }
@@ -86,16 +88,4 @@ fun outputSpecies(speciesPopulation: Map<Species, Population>) {
     speciesPopulation.keys.withIndex()
         .map { species -> "${species.index}\t\t ${speciesPopulation[species.value]?.populationSize?.toShortDecimalStr()} \t\t ${species.value}" }
         .forEach { println(it) }
-}
-
-fun outputBiomes(biomes: Iterable<Biome>) {
-    biomes.withIndex()
-        .map { "${it.index}\t ${it.value}" }
-        .forEach { println(it) }
-}
-
-fun outputRelations(relations: Iterable<FoodChainEdge>) {
-    relations.forEach {
-        println("${it.producer} \t\t->\t\t ${it.consumer} --- ${it.consumeFactor} --- ${it.consumerPreference}")
-    }
 }

@@ -51,10 +51,13 @@ object Game {
         return selectedBiome.getRelations()
     }
 
+    fun getTraitsOfSelectedSpecies(): List<Trait> = selectedSpecies.traits().toList()
+
 
     val help: String = """
         S   Species     List species in selected biome - use number to select species
         R   Relations   List food chain relations between species (to be implemented)
+        T   Traits      List traits of the current species
         E   Features    List available features for selected species - use number to evolve feature in currently selected species
         B   Biomes      List biomes - use number to select biomes
         H   HELP        Print this help

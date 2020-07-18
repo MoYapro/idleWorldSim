@@ -27,7 +27,7 @@ internal class SpeciesTest {
     }
 
     @Test
-    fun defaultSpeciesShouldCreateDifferent() {
+    fun differentSpeciesAreDifferent() {
         val species1 = Species("one")
         val species2 = Species("two")
         assertThat(species1).isNotEqualTo(species2)
@@ -169,6 +169,16 @@ internal class SpeciesTest {
                         .map { Resource(it, 42) }
                 )
             )
+    }
+
+    @Test
+    fun newTraitCanRemoveOldTrait() {
+
+    }
+
+    @Test
+    fun traitsCanBeUpgraded() {
+
     }
 
 
