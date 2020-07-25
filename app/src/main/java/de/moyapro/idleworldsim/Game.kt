@@ -14,11 +14,8 @@ import kotlinx.coroutines.launch
 
 object Game {
 
-
     private val treeOfLife = defaultTreeOfLife()
-
     private val biomes = mutableSetOf(createStatingBiome())
-
     var selectedBiome = biomes.first()
     var selectedSpecies: Species = selectedBiome.species().first()
 
@@ -66,7 +63,7 @@ object Game {
 
 }
 
-private val autotrophic = Feature("Autotrophic")
+private val autotrophic = Feature("Autotrophic", ConsumerTrait(Water), ConsumerTrait(Minerals), NeedResource(Water), NeedResource(Minerals))
 private val photosynthesis = Feature("Photosynthesis", ProduceResource(Oxygen), NeedResource(Water), NeedResource(Carbon))
 private val vertebrate = Feature("Spinal Cord")
 private val herbivore = Feature("Herbivore", Meaty(), Predator(ProduceResource(Oxygen)))

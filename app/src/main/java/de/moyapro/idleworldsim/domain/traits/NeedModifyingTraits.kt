@@ -34,7 +34,7 @@ class NeedResource(resourceType: ResourceType, level: Level = Level(1)) : NeedMo
 
 class ProduceResource(val resourceType: ResourceType, level: Level = Level(1)) : Trait(level) {
     override fun toString(): String {
-        return "NeedResource[$resourceType]"
+        return "ProduceResource[$resourceType]"
     }
 
     override fun getConsumptionResources(size: Size?): Resources {
@@ -45,6 +45,19 @@ class ProduceResource(val resourceType: ResourceType, level: Level = Level(1)) :
             )
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        return when {
+            super.equals(other) -> true // same instance
+            other is ProduceResource
+                    && other.resourceType == this.resourceType
+                    && other.level == this.level -> true
+            else -> false
+        }
+    }
+
+    override fun hashCode(): Int = 31 * super.hashCode() + resourceType.hashCode()
+
 
 }
 

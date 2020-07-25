@@ -11,4 +11,27 @@ class BiomeFeature(override val name: String, override val features: List<Featur
         return { name: String, features: Iterable<Feature> -> BiomeFeature(name, features.toList()) as T }
     }
 
+    override fun toString(): String {
+        return "BiomeFeature[$name]"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BiomeFeature
+
+        if (name != other.name) return false
+        if (features != other.features) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + features.hashCode()
+        return result
+    }
+
+
 }

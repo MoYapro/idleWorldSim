@@ -12,20 +12,22 @@ internal class SpeciesGrowAndDieTest {
     @Test
     fun grow() {
         val species = defaultSpecies()
-        assertThat(
-            species.consume(
-                Population(1.0), Resources()
-            ).populationSize
-        ).isGreaterThan(1.0)
+        val initialPopulation = Population(1.0)
+        species.consume(
+            initialPopulation, Resources()
+        )
+        assertThat(species.grow(initialPopulation).populationSize)
+            .isGreaterThan(initialPopulation.populationSize)
     }
 
     @Test
     fun die() {
+        val initialPopulation = Population(1.0)
         val species = defaultSpecies()
-        assertThat(
-            species.consume(
-                Population(1.0), emptyResources()
-            ).populationSize
-        ).isLessThan(1.0)
+        species.consume(
+            initialPopulation, emptyResources()
+        )
+        assertThat(species.grow(initialPopulation).populationSize)
+            .isLessThan(initialPopulation.populationSize)
     }
 }

@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
 import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
@@ -15,6 +16,8 @@ open class Species(
     companion object {
         private const val MAX_GROWTH = 1.01
     }
+
+    private var resourcesConsumed: Resources = emptyResources()
 
     constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
 
@@ -38,16 +41,8 @@ open class Species(
             .any { it -> producer.traits().map { it::class.java }.contains(it::class.java) }
     }
 
-    override fun consume(consumerPopulation: Population, availableResources: Resources): Population {
-        val numberOfUnfullfilledNeeds = needs()
-            .map { Pair(it.resourceType, availableResources[it.resourceType].amount >= it.amount) }
-            .sumBy {
-                when (it.second) {
-                    true -> 0
-                    false -> 1
-                }
-            }
-        return consumerPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+    override fun consume(consumerPopulation: Population, availableResources: Resources) {
+        this.resourcesConsumed += availableResources
     }
 
     override fun needs(): List<Resource> {
@@ -72,6 +67,19 @@ open class Species(
 
     override fun toString(): String {
         return "Species[$name, ${features.joinToString(",") { it.name }}]"
+    }
+
+    fun grow(speciesPopulation: Population): Population {
+        val numberOfUnfullfilledNeeds = needs()
+            .map { Pair(it.resourceType, resourcesConsumed[it.resourceType].amount >= it.amount) }
+            .sumBy {
+                when (it.second) {
+                    true -> 0
+                    false -> 1
+                }
+            }
+        resourcesConsumed = emptyResources() // reset for next turn
+        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
     }
 
 }

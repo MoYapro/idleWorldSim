@@ -6,7 +6,6 @@ import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -73,23 +72,21 @@ internal class SpeciesTest {
 
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
-        val initialSize = 10.0
+        val initialPopulation = Population(10.0)
         val species = Species("I", Feature(NeedResource(Water), NeedResource(Minerals), ConsumerTrait(Water), ConsumerTrait(Minerals)))
-        Assertions.assertThat(
-            species.consume(Population(initialSize), Resources(Resource(Oxygen, 1000))).populationSize
-        )
-            .isLessThan(initialSize)
+        species.consume(initialPopulation, Resources(Resource(Oxygen, 1000)))
+        val populationChange = species.grow(initialPopulation)
+        Assertions.assertThat(populationChange.populationSize).isLessThan(initialPopulation.populationSize)
     }
 
     @Test
     fun speciesShouldGrowOnResourceSurplus() {
-        val initialSize = 10.0
+        val initialPopulation = Population(10.0)
         val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
         val availableResources = Resources(Resource(Water, 1000))
-        Assertions.assertThat(
-            species.consume(Population(initialSize), availableResources).populationSize
-        )
-            .isGreaterThan(initialSize)
+        species.consume(initialPopulation, availableResources)
+        val populationChange = species.grow(initialPopulation)
+        Assertions.assertThat(populationChange.populationSize).isGreaterThan(0.0)
     }
 
 
@@ -109,7 +106,7 @@ internal class SpeciesTest {
         )
             .isEqualTo(
                 Resources(
-                    ResourceType.values()
+                    values()
                         .map { Resource(it, 1) }
                 )
             )
@@ -123,7 +120,7 @@ internal class SpeciesTest {
         )
             .isEqualTo(
                 Resources(
-                    ResourceType.values()
+                    values()
                         .map { Resource(it, 11) }
                 )
             )
@@ -137,7 +134,7 @@ internal class SpeciesTest {
         )
             .isEqualTo(
                 Resources(
-                    ResourceType.values()
+                    values()
                         .map { Resource(it, 22) }
                 )
             )
@@ -151,7 +148,7 @@ internal class SpeciesTest {
         )
             .isEqualTo(
                 Resources(
-                    ResourceType.values()
+                    values()
                         .map { Resource(it, 21) }
                 )
             )
@@ -165,7 +162,7 @@ internal class SpeciesTest {
         )
             .isEqualTo(
                 Resources(
-                    ResourceType.values()
+                    values()
                         .map { Resource(it, 42) }
                 )
             )
@@ -178,6 +175,20 @@ internal class SpeciesTest {
 
     @Test
     fun traitsCanBeUpgraded() {
+
+    }
+
+    @Test
+    fun speciesCanFullfillNeedFromDifferentSpecies() {
+        val soil = BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
+        val air = BiomeFeature("Air", Feature(ProduceResource(Oxygen, Level(1000)), ProduceResource(Carbon, Level(1000))))
+        val grass = Species("Grass", Feature(NeedResource(Minerals), NeedResource(Water), NeedResource(Carbon), ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(Carbon)))
+        val biome = Biome()
+            .addResourceProducer(soil)
+            .addResourceProducer(air)
+            .settle(grass)
+            .process()
+        assertThat(biome[grass].populationSize).isGreaterThan(1.0)
 
     }
 

@@ -6,8 +6,6 @@ import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.addPopulationMaps
-import de.moyapro.idleworldsim.util.sumUsing
 
 class Biome {
     private val foodChain = FoodChain()
@@ -41,11 +39,11 @@ class Biome {
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
     fun getPopulationChanges(): Map<TraitBearer, Population> {
-        val populationChanges = foodChain.getRelations()
+        foodChain.getRelations()
             .sortedBy { it.consumerPreference }
-            .map { battle(it) }
-
-        return populationChanges.sumUsing(::addPopulationMaps) { mutableMapOf() } ?: emptyMap()
+            .forEach { battle(it) }
+        return species()
+            .associateBy({ it }, { it.grow(get(it)) })
     }
 
     /**
@@ -53,7 +51,7 @@ class Biome {
      */
     private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, Population> {
         battleRelation.consumeFactor
-        val producerPopulation = populations[battleRelation.producer] ?: Population(0.0)
+        val producerPopulation = populations[battleRelation.producer] ?: Population(1.0)
         val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
         val producerPopulationEaten: Population =
             battleRelation.producer.getEaten(
@@ -64,12 +62,9 @@ class Biome {
             )
         val resourcesAquiredByConsumer: Resources =
             battleRelation.producer.getResourcesPerInstance() * producerPopulationEaten
-        val consumerPopulationDifference: Population =
-            battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
-
+        battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
         return mapOf(
-            Pair(battleRelation.consumer, consumerPopulationDifference),
-            Pair(battleRelation.producer, producerPopulationEaten * -1)
+            Pair(battleRelation.producer, producerPopulationEaten * -1) // negative value indicated killed (eaten) population
         )
     }
 

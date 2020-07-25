@@ -65,6 +65,6 @@ interface ResourceConsumer: TraitBearer {
     /**
      * consume available resources and may update its populations
      */
-    fun consume(consumerPopulation: Population, availableResources: Resources): Population
+    fun consume(consumerPopulation: Population, availableResources: Resources)
     fun needs(): List<Resource>
 }
