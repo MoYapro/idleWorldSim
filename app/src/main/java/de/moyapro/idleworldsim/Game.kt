@@ -89,7 +89,7 @@ private fun createStatingBiome() =
         .addResourceProducer(
             BiomeFeature(
                 "Ocean", Feature(
-                    Size(1000),
+                    Size(10),
                     ProduceResource(Water, Level(99)),
                     ProduceResource(Minerals, Level(1)),
                     ProduceResource(Carbon, Level(1))
@@ -99,7 +99,7 @@ private fun createStatingBiome() =
         .addResourceProducer(
             BiomeFeature(
                 "Ocean Floor", Feature(
-                    Size(100),
+                    Size(3),
                     ProduceResource(Minerals, Level(25))
                 )
             )

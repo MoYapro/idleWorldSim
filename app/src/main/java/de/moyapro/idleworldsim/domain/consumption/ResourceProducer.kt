@@ -13,7 +13,7 @@ interface ResourceProducer : TraitBearer {
      */
     fun getEaten(producerPopulation: Population, consumerPopulation: Population, consumer: ResourceConsumer, consumeFactor: Double): Population {
         val productionPerProducer = getResourcesPerInstance()
-        val maxEaten = producerPopulation * consumeFactor * consumerPopulation.populationSize
+        val maxEaten = producerPopulation * consumeFactor
         val neededUntilSatisfied = Population(
             consumer.needs()
                 .map { 1 / (it / productionPerProducer[it.resourceType]) }

@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
@@ -161,6 +162,25 @@ internal class BiomeTest {
         assertThat(population.size).isEqualTo(1)
         assertThat(population[someSpecies]?.populationSize).isEqualTo(2.0)
         assertThat(population[sameSpecies]?.populationSize).isEqualTo(2.0)
+    }
+
+    @Test
+    fun speciesShouldBeCappedByAvailableResources() {
+        val soil = BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(10)), ProduceResource(Water, Level(10))))
+        val air = BiomeFeature("Air", Feature(ProduceResource(ResourceType.Oxygen, Level(10)), ProduceResource(ResourceType.Carbon, Level(10))))
+        val grass = Species("Grass", Feature(NeedResource(Minerals), NeedResource(Water), NeedResource(ResourceType.Carbon), ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(ResourceType.Carbon)))
+        var biome = Biome()
+            .addResourceProducer(soil)
+            .addResourceProducer(air)
+            .settle(grass)
+        repeat(1000) {
+            biome = biome.process()
+        }
+        biome = biome.process()
+
+        assertThat(biome[grass].populationSize).isLessThan(10.0)
+
+
     }
 
 }

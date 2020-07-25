@@ -41,7 +41,7 @@ fun executeRelationCommand(commandArgument: String?) {
 }
 
 fun executeEvolveCommand(commandArgument: String?) {
-    if (null == commandArgument) {
+    if (null == commandArgument || "" == commandArgument) {
         println(Game.selectedBiome)
         println(Game.selectedSpecies)
         outputWithIndex(Game.getEvolveOptions())
@@ -68,7 +68,7 @@ fun executeSpeciesCommand(commandArgument: String?) {
 }
 
 fun executeCommandBiome(commandArgument: String?) {
-    if (null == commandArgument) {
+    if (null == commandArgument || "" == commandArgument) {
         outputWithIndex(Game.biomes())
         return
     }

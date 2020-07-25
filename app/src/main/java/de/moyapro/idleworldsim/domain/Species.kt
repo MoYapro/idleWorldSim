@@ -71,6 +71,7 @@ open class Species(
 
     fun grow(speciesPopulation: Population): Population {
         val numberOfUnfullfilledNeeds = needs()
+            .map { it * speciesPopulation }
             .map { Pair(it.resourceType, resourcesConsumed[it.resourceType].amount >= it.amount) }
             .sumBy {
                 when (it.second) {
