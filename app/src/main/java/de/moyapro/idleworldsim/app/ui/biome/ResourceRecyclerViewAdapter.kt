@@ -10,6 +10,7 @@ import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.util.toShortDecimalStr
 import kotlinx.android.synthetic.main.fragment_resource.view.*
 
 /**
@@ -22,7 +23,7 @@ class ResourceRecyclerViewAdapter(
 ) : RecyclerView.Adapter<ResourceRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
-    private val mUpdateHandler = BiomeViewUpdateHandler(biome, this)
+    private val mUpdateHandler = BiomeViewTimer(biome, this, 0, 1000)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -41,19 +42,19 @@ class ResourceRecyclerViewAdapter(
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        mUpdateHandler.startObservation()
+        mUpdateHandler.start()
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        mUpdateHandler.stopObservation()
+        mUpdateHandler.stop()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val resource = ResourceType.values()[position]
-//        val quantity = biome.resources[resource]
-//        holder.mIdView.text = resource.displayName
-//        holder.mContentView.text = quantity.amount.toShortDecimalStr()
+        val amount = 0.0 // biome.resources[resource].amount
+        holder.mIdView.text = resource.displayName
+        holder.mContentView.text = amount.toShortDecimalStr()
 
         with(holder.mView) {
             tag = resource

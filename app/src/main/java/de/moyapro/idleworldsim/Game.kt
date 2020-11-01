@@ -14,18 +14,25 @@ import kotlinx.coroutines.launch
 
 object Game {
 
+    var running = false
     private val treeOfLife = defaultTreeOfLife()
-    private val biomes = mutableSetOf(createStatingBiome())
+    private val biomes = mutableSetOf(createStartingBiome())
     var selectedBiome = biomes.first()
     var selectedSpecies: Species = selectedBiome.species().first()
 
     fun runSimulation() {
+        running = true
         GlobalScope.launch {
-            while (true) {
+            while (running) {
                 delay(1000)
-                biomes.forEach { it.process() }
+                if (running)
+                    biomes.forEach { it.process() }
             }
         }
+    }
+
+    fun stopSimulation() {
+        running = false
     }
 
     fun biomes(): List<Biome> {
@@ -83,7 +90,7 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
     }
 }
 
-private fun createStatingBiome() =
+private fun createStartingBiome() =
     Biome()
         .settle(Species("Start here", autotrophic))
         .addResourceProducer(

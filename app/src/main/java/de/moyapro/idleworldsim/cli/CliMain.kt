@@ -5,17 +5,17 @@ import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
-import kotlin.system.exitProcess
 
 fun main() {
     println("Welcome")
     println(Game.help)
     Game.runSimulation()
     handleUserInput()
+    println("Keep yourself evolving! ;)")
 }
 
 private fun handleUserInput() {
-    while (true) {
+    while (Game.running) {
         val split = readLine()!!.split(' ')
         val command = split.first()
         val commandArgument: String? = if (split.size > 1) split[1] else null
@@ -26,7 +26,7 @@ private fun handleUserInput() {
             "E" -> executeEvolveCommand(commandArgument)
             "T" -> executeTraitCommand(commandArgument)
             "H" -> println(Game.help)
-            "Q" -> exitProcess(0)
+            "Q" -> Game.stopSimulation()
         }
     }
 }

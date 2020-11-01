@@ -4,16 +4,15 @@ import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.domain.Biome
-import java.util.*
 
-class BiomeViewUpdateHandler<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
+abstract class BiomeViewUpdater<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
     val biome: Biome,
     private val adapter: T
-) : Observer {
+) {
 
     private var updatePending: Boolean = false
 
-    override fun update(o: Observable?, arg: Any?) {
+    fun update() {
         if (updatePending)
             return
         updatePending = true
@@ -23,11 +22,7 @@ class BiomeViewUpdateHandler<X : RecyclerView.ViewHolder, T : RecyclerView.Adapt
         }
     }
 
-    fun startObservation() {
-//        biome.onBiomeProcess.addObserver(this)
-    }
-
-    fun stopObservation() {
-//        biome.onBiomeProcess.deleteObserver(this)
-    }
+    abstract fun start()
+    abstract fun stop()
 }
+

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.GameX
+import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
@@ -46,7 +46,7 @@ class ResourceFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = ResourceRecyclerViewAdapter(GameX.biome, listener)
+                adapter = ResourceRecyclerViewAdapter(Game.biomes()[0], listener)
             }
         }
         return view
