@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="resourceViewModel" type="de.moyapro.idleworldsim.app.ui.biome.ResourceRecyclerViewAdapter"/>
+        <variable name="resourceViewModel" type="de.moyapro.idleworldsim.app.ui.main.ResourceRecyclerViewAdapter"/>
     </data>
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
@@ -12,6 +12,6 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".app.ui.biome.ResourceFragment"
-            tools:listitem="@layout/fragment_resource"/>
+            tools:context=".app.ui.main.ResourceListFragment"
+            tools:listitem="@layout/fragment_resource_list_item"/>
 </layout>

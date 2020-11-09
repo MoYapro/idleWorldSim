@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main_navigation"
+            app:startDestination="@id/worldFragment">
+
+    <fragment android:id="@+id/worldFragment" android:name="de.moyapro.idleworldsim.app.ui.main.WorldFragment"
+              android:label="world_fragment" tools:layout="@layout/world_fragment">
+        <action android:id="@+id/action_worldFragment_to_biomeFragment" app:destination="@id/biomeFragment"
+                app:popUpTo="@id/biomeFragment"/>
+    </fragment>
+    <fragment android:id="@+id/biomeFragment" android:name="de.moyapro.idleworldsim.app.ui.main.BiomeFragment"
+              android:label="biome_fragment" tools:layout="@layout/biome_fragment">
+        <action android:id="@+id/action_biomeFragment_to_speciesFragment" app:destination="@id/speciesFragment"
+                app:popUpTo="@id/speciesFragment"/>
+    </fragment>
+    <fragment android:id="@+id/speciesFragment" android:name="de.moyapro.idleworldsim.app.ui.main.SpeciesFragment"
+              android:label="species_fragment" tools:layout="@layout/species_fragment">
+        <action android:id="@+id/action_speciesFragment_to_speciesRelationFragment"
+                app:destination="@id/speciesRelationFragment" app:popUpTo="@id/speciesRelationFragment"/>
+    </fragment>
+    <fragment android:id="@+id/speciesRelationFragment"
+              android:name="de.moyapro.idleworldsim.app.ui.main.SpeciesRelationFragment"
+              android:label="species_relation_fragment" tools:layout="@layout/species_relation_fragment"/>
+</navigation>

@@ -3,10 +3,9 @@ package de.moyapro.idleworldsim.app.ui.biome
 import android.os.Handler
 import android.os.Looper
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.domain.Biome
 
-abstract class BiomeViewUpdater<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
-    val biome: Biome,
+abstract class ViewUpdater<O : Any, X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
+    val observable: O,
     private val adapter: T
 ) {
 

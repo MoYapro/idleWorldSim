@@ -7,7 +7,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 
-class Biome {
+class Biome(val name: String = "Biome") {
     private val foodChain = FoodChain()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
@@ -87,7 +87,7 @@ class Biome {
         return this.population().map { it.key }
     }
 
-    fun <T : TraitBearer> evolve(traitBearerToEvolve: T, newFeature: Feature): T {
+    inline fun <reified T : TraitBearer> evolve(traitBearerToEvolve: T, newFeature: Feature): T {
         val newTraitBearer = traitBearerToEvolve.evolveTo(newFeature)
         when (newTraitBearer) {
             is Species -> settle(newTraitBearer)

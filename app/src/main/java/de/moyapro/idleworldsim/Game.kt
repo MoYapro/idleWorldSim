@@ -91,7 +91,7 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
 }
 
 private fun createStartingBiome() =
-    Biome()
+    Biome("initial biome")
         .settle(Species("Start here", autotrophic))
         .addResourceProducer(
             BiomeFeature(

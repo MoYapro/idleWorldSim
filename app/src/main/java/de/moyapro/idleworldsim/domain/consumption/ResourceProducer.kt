@@ -17,7 +17,7 @@ interface ResourceProducer : TraitBearer {
         val neededUntilSatisfied = Population(
             consumer.needs()
                 .map { 1 / (it / productionPerProducer[it.resourceType]) }
-                .max() ?: 0.0
+                .maxOrNull() ?: 0.0
         )
 
         return when {

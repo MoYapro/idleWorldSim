@@ -21,8 +21,8 @@ open class Species(
 
     constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
 
-    override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {
-        return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) as T }
+    override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> TraitBearer {
+        return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) }
     }
 
     override fun canConsume(producer: ResourceProducer) = canHuntFood(producer) || canConsumeFood(producer)
@@ -31,7 +31,9 @@ open class Species(
         return traits()
             .filterIsInstance<ConsumerTrait>()
             .map { it.influencedResource }
-            .any { consumedResource -> producer.traits().filterIsInstance<ProduceResource>().any { it.resourceType == consumedResource } }
+            .any { consumedResource ->
+                producer.traits().filterIsInstance<ProduceResource>().any { it.resourceType == consumedResource }
+            }
     }
 
     private fun canHuntFood(producer: ResourceProducer): Boolean {

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">IdleWorldSim</string>
+    <string name="resources">Resources</string>
+    <string name="species">Species</string>
+    <string name="world">World</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="biome">Biome</string>
 </resources>

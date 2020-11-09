@@ -1,21 +1,20 @@
 package de.moyapro.idleworldsim.app.ui.biome
 
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.domain.Biome
 import java.util.*
 
-class BiomeViewTimer<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
-    biome: Biome,
+class ViewTimer<O : Any, X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
+    observable: O,
     adapter: T,
     private val delay: Long,
     private val period: Long
-) : BiomeViewUpdater<X, T>(biome, adapter) {
+) : ViewUpdater<O, X, T>(observable, adapter) {
 
     var timer: Timer? = null
 
     private val timerTask = UpdateTimerTask(this)
 
-    class UpdateTimerTask<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(val owner: BiomeViewTimer<X, T>) :
+    class UpdateTimerTask<O : Any, X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(val owner: ViewTimer<O, X, T>) :
         TimerTask() {
         override fun run() {
             owner.update()

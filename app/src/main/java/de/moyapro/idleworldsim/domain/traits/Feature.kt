@@ -67,7 +67,7 @@ open class Feature(val name: String = "GenericFeature", private val traits: Set<
         return this.traits
             .filterIsInstance(trait::class.javaObjectType)
             .map { it.level }
-            .maxBy { it.level }
+            .maxByOrNull { it.level }
             ?: Level(0)
     }
 }

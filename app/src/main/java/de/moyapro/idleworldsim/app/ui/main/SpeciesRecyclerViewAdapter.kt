@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.app.ui.biome
+package de.moyapro.idleworldsim.app.ui.main
 
 
 import android.view.LayoutInflater
@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.app.ui.biome.SpeciesFragment.OnSpeciesInteractionListener
+import de.moyapro.idleworldsim.app.ui.biome.ViewTimer
+import de.moyapro.idleworldsim.app.ui.main.SpeciesListFragment.OnSpeciesInteractionListener
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.util.toShortDecimalStr
-import kotlinx.android.synthetic.main.fragment_species.view.*
+import kotlinx.android.synthetic.main.fragment_species_list_item.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [Species] and makes a call to the
@@ -23,7 +24,7 @@ class SpeciesRecyclerViewAdapter(
 ) : RecyclerView.Adapter<SpeciesRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
-    private val mUpdateHandler = BiomeViewTimer(biome, this, 0, 1000)
+    private val mUpdateHandler = ViewTimer(biome, this, 0, 1000)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -36,7 +37,7 @@ class SpeciesRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_species, parent, false)
+            .inflate(R.layout.fragment_species_list_item, parent, false)
         return ViewHolder(view)
     }
 

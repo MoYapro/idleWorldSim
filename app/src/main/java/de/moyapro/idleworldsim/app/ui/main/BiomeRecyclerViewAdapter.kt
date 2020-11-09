@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.app.ui.biome
+package de.moyapro.idleworldsim.app.ui.main
 
 
 import android.view.LayoutInflater
@@ -6,37 +6,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
+import de.moyapro.idleworldsim.app.ui.biome.ViewTimer
+import de.moyapro.idleworldsim.app.ui.main.BiomeListFragment.OnBiomeInteractionListener
 import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
-import de.moyapro.idleworldsim.util.toShortDecimalStr
-import kotlinx.android.synthetic.main.fragment_resource.view.*
+import kotlinx.android.synthetic.main.fragment_biome_list_item.view.*
 
 /**
- * [RecyclerView.Adapter] that can display a [ResourceType] and makes a call to the
- * specified [OnResourceInteractionListener].
+ * [RecyclerView.Adapter] that can display a [Biome] and makes a call to the
+ * specified [OnBiomeInteractionListener].
  */
-class ResourceRecyclerViewAdapter(
-    val biome: Biome,
-    private val mListener: OnResourceInteractionListener?
-) : RecyclerView.Adapter<ResourceRecyclerViewAdapter.ViewHolder>() {
+class BiomeRecyclerViewAdapter(
+    private val mListener: OnBiomeInteractionListener?
+) : RecyclerView.Adapter<BiomeRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
-    private val mUpdateHandler = BiomeViewTimer(biome, this, 0, 1000)
+    private val mUpdateHandler = ViewTimer(Game, this, 0, 1000)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val resource = v.tag as ResourceType
+            val biome = v.tag as Biome
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onResourceInteraction(resource)
+            mListener?.onBiomeInteraction(biome)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_resource, parent, false)
+            .inflate(R.layout.fragment_biome_list_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -51,18 +50,20 @@ class ResourceRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val resource = ResourceType.values()[position]
-        val amount = 0.0 // biome.resources[resource].amount
-        holder.mIdView.text = resource.displayName
-        holder.mContentView.text = amount.toShortDecimalStr()
+        val biomeList = Game.biomes()
+        val biome = biomeList[position]
+        holder.mIdView.text = biome.name
+//        holder.mContentView.text = (population?.populationSize)?.toShortDecimalStr(1E6) ?: "dead"
 
         with(holder.mView) {
-            tag = resource
+            tag = biome
             setOnClickListener(mOnClickListener)
         }
     }
 
-    override fun getItemCount(): Int = ResourceType.values().size
+    override fun getItemCount(): Int {
+        return Game.biomes().size
+    }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView = mView.item_number

@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.app.ui.biome
+package de.moyapro.idleworldsim.app.ui.main
 
 import android.content.Context
 import android.os.Bundle
@@ -11,19 +11,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.Species
+
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [ResourceFragment.OnResourceInteractionListener] interface.
+ * [SpeciesListFragment.OnSpeciesInteractionListener] interface.
  */
-class ResourceFragment : Fragment() {
+class SpeciesListFragment : Fragment() {
 
     // TODO: Customize parameters
     private var columnCount = 1
 
-    private var listener: OnResourceInteractionListener? = null
+    private var listener: OnSpeciesInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,7 @@ class ResourceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_resource_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_species_list, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -46,7 +47,7 @@ class ResourceFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = ResourceRecyclerViewAdapter(Game.biomes()[0], listener)
+                adapter = SpeciesRecyclerViewAdapter(Game.biomes()[0], listener)
             }
         }
         return view
@@ -54,7 +55,7 @@ class ResourceFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnResourceInteractionListener) {
+        if (context is OnSpeciesInteractionListener) {
             listener = context
         } else {
             throw RuntimeException("$context must implement OnResourceInteractionListener")
@@ -77,9 +78,9 @@ class ResourceFragment : Fragment() {
      * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnResourceInteractionListener {
+    interface OnSpeciesInteractionListener {
         // TODO: Update argument type and name
-        fun onResourceInteraction(resource: ResourceType?)
+        fun onSpeciesInteraction(species: Species?)
     }
 
     companion object {
@@ -90,7 +91,7 @@ class ResourceFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            ResourceFragment().apply {
+            SpeciesListFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

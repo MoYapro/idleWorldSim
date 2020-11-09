@@ -7,8 +7,8 @@ class BiomeFeature(override val name: String, override val features: List<Featur
     constructor(name: String, vararg features: Feature) : this(name, features.toList())
 
 
-    override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T {
-        return { name: String, features: Iterable<Feature> -> BiomeFeature(name, features.toList()) as T }
+    override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> TraitBearer {
+        return { name: String, features: Iterable<Feature> -> BiomeFeature(name, features.toList()) }
     }
 
     override fun toString(): String {

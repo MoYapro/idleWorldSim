@@ -1,4 +1,4 @@
-package de.moyapro.idleworldsim.app.ui.biome
+package de.moyapro.idleworldsim.app.ui.main
 
 import android.content.Context
 import android.os.Bundle
@@ -9,22 +9,21 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.Biome
 
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [SpeciesFragment.OnSpeciesInteractionListener] interface.
+ * [BiomeListFragment.OnBiomeInteractionListener] interface.
  */
-class SpeciesFragment : Fragment() {
+class BiomeListFragment : Fragment() {
 
     // TODO: Customize parameters
     private var columnCount = 1
 
-    private var listener: OnSpeciesInteractionListener? = null
+    private var listener: OnBiomeInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class SpeciesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_species_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_biome_list, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -47,7 +46,7 @@ class SpeciesFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = SpeciesRecyclerViewAdapter(Game.biomes()[0], listener)
+                adapter = BiomeRecyclerViewAdapter(listener)
             }
         }
         return view
@@ -55,7 +54,7 @@ class SpeciesFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnSpeciesInteractionListener) {
+        if (context is OnBiomeInteractionListener) {
             listener = context
         } else {
             throw RuntimeException("$context must implement OnResourceInteractionListener")
@@ -78,9 +77,9 @@ class SpeciesFragment : Fragment() {
      * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnSpeciesInteractionListener {
+    interface OnBiomeInteractionListener {
         // TODO: Update argument type and name
-        fun onSpeciesInteraction(species: Species?)
+        fun onBiomeInteraction(biome: Biome?)
     }
 
     companion object {
@@ -91,7 +90,7 @@ class SpeciesFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            SpeciesFragment().apply {
+            BiomeListFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

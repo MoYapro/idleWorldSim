@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".app.ui.main.BiomeFragment" android:id="@+id/frameBiomeLayout">
+    <ImageView
+            android:src="@drawable/replace_me_ocean"
+            android:layout_width="100dp"
+            android:layout_height="100dp" android:id="@+id/imageBiome" android:scaleType="fitCenter"
+            android:contentDescription="@string/biome"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp" android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="@string/biome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/textBiomeView"
+            app:layout_constraintStart_toStartOf="@+id/imageBiome"
+            app:layout_constraintTop_toBottomOf="@+id/imageBiome" android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/imageBiome"/>
+    <androidx.fragment.app.FragmentContainerView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" android:name="de.moyapro.idleworldsim.app.ui.main.SpeciesListFragment"
+            android:id="@+id/fragmentSpeciesList"
+            app:layout_constraintTop_toBottomOf="@+id/textBiomeView" android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginStart="8dp"
+            tools:layout="@layout/fragment_species_list"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

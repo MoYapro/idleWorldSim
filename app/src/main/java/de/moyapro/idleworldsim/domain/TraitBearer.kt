@@ -35,7 +35,7 @@ interface TraitBearer {
             .sumUsing({ t1, t2 -> t1 + t2 }, { Level(0) })
             ?: Level(0)
 
-    fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> T
+    fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> TraitBearer
 
 
 }
@@ -45,10 +45,12 @@ interface TraitBearer {
  *
  * This needs to be an extension function to be able to return type of instance on which it was called.
  */
-fun <T : TraitBearer> T.evolveTo(vararg evolvedFeature: Feature, name: String? = null): T {
+inline fun <reified T : TraitBearer> T.evolveTo(vararg evolvedFeature: Feature, name: String? = null): T {
     val newFeatures = mutableListOf(*evolvedFeature)
+    // TODO: hier können auch features gedoppelt werden -> das geht besser
     newFeatures.addAll(features)
     val newName = name ?: "${this.name}+"
-    return creator().invoke(newName, newFeatures)
+    // TODO: hässlichen Cast beseitigen
+    return creator().invoke(newName, newFeatures) as T
 }
 

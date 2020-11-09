@@ -19,7 +19,6 @@ class ResourceFactor(
             Minerals -> mineralsFactor
             Oxygen -> oxygenFactor
             Carbon -> carbonFactor
-            else -> throw IllegalArgumentException("unknown resourcetype: $resourceType")
         }
     }
 }

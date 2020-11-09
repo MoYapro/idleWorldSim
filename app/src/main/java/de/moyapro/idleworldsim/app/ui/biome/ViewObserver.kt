@@ -1,13 +1,12 @@
 package de.moyapro.idleworldsim.app.ui.biome
 
 import androidx.recyclerview.widget.RecyclerView
-import de.moyapro.idleworldsim.domain.Biome
 import java.util.*
 
-class BiomeViewObserver<X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
-    biome: Biome,
+class ViewObserver<O : Any, X : RecyclerView.ViewHolder, T : RecyclerView.Adapter<X>>(
+    observable: O,
     adapter: T
-) : BiomeViewUpdater<X, T>(biome, adapter), Observer {
+) : ViewUpdater<O, X, T>(observable, adapter), Observer {
 
     override fun update(o: Observable?, arg: Any?) {
         update()

@@ -192,7 +192,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
                 { it.consumer },
                 { it.consumer.consumePowerFactor(foodChainNode.producer) }
             )
-        val maxConsumeSkill = absoluteConsumeSkill.values.max() ?: 0.0
+        val maxConsumeSkill = absoluteConsumeSkill.values.maxOrNull() ?: 0.0
 
         val relativeConsumeValuePerSpecies = absoluteConsumeSkill
             .map { (consumer, consumeSkill) -> Pair(consumer, maxConsumeSkill - consumeSkill) }
