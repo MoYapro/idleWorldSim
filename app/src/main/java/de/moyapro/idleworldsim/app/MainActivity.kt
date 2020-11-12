@@ -1,13 +1,16 @@
 package de.moyapro.idleworldsim.app
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.app.ui.main.BiomeListFragment
+import de.moyapro.idleworldsim.app.ui.biome.ResourceListFragment
+import de.moyapro.idleworldsim.app.ui.biome.SpeciesListFragment
 import de.moyapro.idleworldsim.app.ui.main.MainFragment
-import de.moyapro.idleworldsim.app.ui.main.ResourceListFragment
-import de.moyapro.idleworldsim.app.ui.main.SpeciesListFragment
+import de.moyapro.idleworldsim.app.ui.world.BiomeListFragment
+import de.moyapro.idleworldsim.app.ui.world.WorldFragmentDirections
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
@@ -17,6 +20,8 @@ class MainActivity : AppCompatActivity(),
     ResourceListFragment.OnResourceInteractionListener,
     SpeciesListFragment.OnSpeciesInteractionListener,
     BiomeListFragment.OnBiomeInteractionListener {
+
+    private val navController by lazy { findNavController(R.id.fragment) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,14 +42,21 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onBiomeInteraction(biome: Biome?) {
-        val navController = findNavController(R.id.fragment)
-        navController.navigate(R.id.action_worldFragment_to_biomeFragment)
+        if (biome === null)
+            return
+        val action = WorldFragmentDirections.actionWorldFragmentToBiomeFragment(biome.id.toString())
+        navController.navigate(action)
     }
 
     override fun onBackPressed() {
-        val navController = findNavController(R.id.fragment)
         if (!navController.popBackStack()) {
             super.onBackPressed()
         }
+    }
+
+    fun onAddBiome(view: View) {
+        val biome = Game.createBiome("a new one")
+        val action = WorldFragmentDirections.actionWorldFragmentToBiomeFragment(biome.id.toString())
+        navController.navigate(action)
     }
 }

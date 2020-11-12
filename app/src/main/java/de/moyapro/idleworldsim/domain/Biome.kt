@@ -6,8 +6,9 @@ import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import java.util.*
 
-class Biome(val name: String = "Biome") {
+class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     private val foodChain = FoodChain()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()

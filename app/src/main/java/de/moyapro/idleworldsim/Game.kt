@@ -11,13 +11,14 @@ import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 object Game {
 
     var running = false
     private val treeOfLife = defaultTreeOfLife()
-    private val biomes = mutableSetOf(createStartingBiome())
-    var selectedBiome = biomes.first()
+    private val biomes = createStartingBiomes()
+    var selectedBiome = biomes.values.first()
     var selectedSpecies: Species = selectedBiome.species().first()
 
     fun runSimulation() {
@@ -26,7 +27,7 @@ object Game {
             while (running) {
                 delay(1000)
                 if (running)
-                    biomes.forEach { it.process() }
+                    biomes.forEach { it.value.process() }
             }
         }
     }
@@ -35,9 +36,15 @@ object Game {
         running = false
     }
 
-    fun biomes(): List<Biome> {
-        return biomes.toList()
+    fun biomesList(): List<Biome> {
+        return biomes.values.toList()
     }
+
+    fun createBiome(name: String) = addBiome(Biome(name))
+
+    private fun addBiome(biome: Biome) = biome.also { biomes[it.id] = it }
+
+    fun getBiome(id: UUID) = biomes[id]
 
     fun selectBiome(biome: Biome) {
         selectedBiome = biome
@@ -90,8 +97,8 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
     }
 }
 
-private fun createStartingBiome() =
-    Biome("initial biome")
+private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
+    val biome = Biome("initial biome")
         .settle(Species("Start here", autotrophic))
         .addResourceProducer(
             BiomeFeature(
@@ -111,3 +118,5 @@ private fun createStartingBiome() =
                 )
             )
         )
+    this[biome.id] = biome
+}

@@ -1,6 +1,18 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        def nav_version = "2.3.1"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -35,6 +47,17 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    '/src/main/res/layouts/world',
+                    '/src/main/res/layouts/biome',
+                    '/src/main/res/layouts/species',
+                    '/src/main/res'
+            ]
+        }
     }
 }
 

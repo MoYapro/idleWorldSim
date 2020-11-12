@@ -69,11 +69,11 @@ fun executeSpeciesCommand(commandArgument: String?) {
 
 fun executeCommandBiome(commandArgument: String?) {
     if (null == commandArgument || "" == commandArgument) {
-        outputWithIndex(Game.biomes())
+        outputWithIndex(Game.biomesList())
         return
     }
     val biomeToSelect = commandArgument.toInt()
-    Game.selectBiome(Game.biomes()[biomeToSelect])
+    Game.selectBiome(Game.biomesList()[biomeToSelect])
     println("Selected Biome: ${Game.selectedBiome}")
 
 }

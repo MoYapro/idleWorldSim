@@ -6,8 +6,8 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.idleworldsim.app.ui.main.MainFragment">
-    <fragment
+        tools:context="de.moyapro.idleworldsim.app.ui.main.MainFragment">
+    <androidx.fragment.app.FragmentContainerView
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="409dp"
             android:layout_height="692dp" app:navGraph="@navigation/main_navigation"
