@@ -52,10 +52,10 @@ android {
     sourceSets {
         main {
             res.srcDirs = [
+                    '/src/main/res',
                     '/src/main/res/layouts/world',
                     '/src/main/res/layouts/biome',
                     '/src/main/res/layouts/species',
-                    '/src/main/res'
             ]
         }
     }
