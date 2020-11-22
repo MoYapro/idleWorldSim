@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
+import de.moyapro.idleworldsim.app.ui.biome.BiomeFragmentDirections
 import de.moyapro.idleworldsim.app.ui.biome.ResourceListFragment
 import de.moyapro.idleworldsim.app.ui.biome.SpeciesListFragment
 import de.moyapro.idleworldsim.app.ui.main.MainFragment
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onSpeciesInteraction(species: Species?) {
-        // TODO: implement the onListFragmentInteraction-Method for Species class
+        if(null == species)
+            return
+        val action = BiomeFragmentDirections.actionBiomeFragmentToSpeciesFragment(species.name)
+        navController.navigate(action)
     }
 
     override fun onBiomeInteraction(biome: Biome?) {

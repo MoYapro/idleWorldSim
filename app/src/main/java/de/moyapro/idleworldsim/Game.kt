@@ -63,6 +63,12 @@ object Game {
     }
 
     fun getTraitsOfSelectedSpecies(): List<Trait> = selectedSpecies.traits().toList()
+    fun getSpecies(speciesName: String): Species {
+        return biomes.values
+                .map { it.species().filter { species -> species.name == speciesName } }
+                .flatten()
+                .first() // assuming names are unique
+    }
 
 
     val help: String = """
@@ -99,24 +105,24 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
 
 private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
     val biome = Biome("initial biome")
-        .settle(Species("Start here", autotrophic))
-        .addResourceProducer(
-            BiomeFeature(
-                "Ocean", Feature(
-                    Size(10),
-                    ProduceResource(Water, Level(99)),
-                    ProduceResource(Minerals, Level(1)),
-                    ProduceResource(Carbon, Level(1))
-                )
+            .settle(Species("Origin of life", autotrophic))
+            .addResourceProducer(
+                    BiomeFeature(
+                            "Ocean", Feature(
+                            Size(10),
+                            ProduceResource(Water, Level(99)),
+                            ProduceResource(Minerals, Level(1)),
+                            ProduceResource(Carbon, Level(1))
+                    )
+                    )
             )
-        )
-        .addResourceProducer(
-            BiomeFeature(
-                "Ocean Floor", Feature(
-                    Size(3),
-                    ProduceResource(Minerals, Level(25))
-                )
+            .addResourceProducer(
+                    BiomeFeature(
+                            "Ocean Floor", Feature(
+                            Size(3),
+                            ProduceResource(Minerals, Level(25))
+                    )
+                    )
             )
-        )
     this[biome.id] = biome
 }

@@ -19,6 +19,7 @@
               android:label="species_fragment" tools:layout="@layout/species_fragment">
         <action android:id="@+id/action_speciesFragment_to_speciesRelationFragment"
                 app:destination="@id/speciesRelationFragment" app:popUpTo="@id/speciesRelationFragment"/>
+        <argument android:name="speciesName" app:argType="string"/>
     </fragment>
     <fragment android:id="@+id/speciesRelationFragment"
               android:name="de.moyapro.idleworldsim.app.ui.species.SpeciesRelationFragment"
