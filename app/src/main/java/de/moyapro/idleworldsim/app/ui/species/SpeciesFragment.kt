@@ -32,7 +32,6 @@ class SpeciesFragment : Fragment() {
                 DataBindingUtil.inflate(inflater, R.layout.species_fragment, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
-        TODO("foobar")
-//        return binding
+        return binding.root
     }
 }
