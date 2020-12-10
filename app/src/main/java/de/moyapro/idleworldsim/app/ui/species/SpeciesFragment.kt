@@ -19,18 +19,29 @@ class SpeciesFragment : Fragment() {
     private val args: SpeciesFragmentArgs by navArgs()
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         viewModel.species = Game.getSpecies(args.speciesName)
-        val binding: SpeciesFragmentBinding =
-                DataBindingUtil.inflate(inflater, R.layout.species_fragment, container, false)
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
-        val traitsListView = binding.root.findViewById<ListView>(R.id.traits_list_view)
-        traitsListView.adapter = TraitListViewAdapter(viewModel.species.features, layoutInflater)
+        val binding: SpeciesFragmentBinding = createBinding(inflater, container)
+
         return binding.root
     }
 
+    private fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): SpeciesFragmentBinding {
+        val binding: SpeciesFragmentBinding =
+            DataBindingUtil.inflate(inflater, R.layout.species_fragment, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        val currentFeatures = viewModel.species.features
+        val availableFeatures = Game.getEvolveOptions(viewModel.species)
+
+        binding.root.findViewById<ListView>(R.id.features_list_view).adapter = FeatureListViewAdapter(currentFeatures, layoutInflater)
+        binding.root.findViewById<ListView>(R.id.available_features_list_view).adapter = FeatureListViewAdapter(availableFeatures, layoutInflater)
+        return binding
+    }
 }

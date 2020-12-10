@@ -58,6 +58,10 @@ object Game {
         return treeOfLife.getEvolvableFeatures(*selectedSpecies.features.toTypedArray()).toList()
     }
 
+    fun getEvolveOptions(species: Species): List<Feature> {
+        return treeOfLife.getEvolvableFeatures(*species.features.toTypedArray()).toList()
+    }
+
     fun speciesRelations(): Iterable<FoodChainEdge> {
         return selectedBiome.getRelations()
     }
@@ -65,9 +69,9 @@ object Game {
     fun getTraitsOfSelectedSpecies(): List<Trait> = selectedSpecies.traits().toList()
     fun getSpecies(speciesName: String): Species {
         return biomes.values
-                .map { it.species().filter { species -> species.name == speciesName } }
-                .flatten()
-                .first() // assuming names are unique
+            .map { it.species().filter { species -> species.name == speciesName } }
+            .flatten()
+            .first() // assuming names are unique
     }
 
 
@@ -105,28 +109,30 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
 
 private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
     val biome = Biome("initial biome")
-            .settle(Species("Origin of life", autotrophic))
-            .settle(Species("Small Plant", photosynthesis, smallPlant))
-            .settle(Species("Large Plant", photosynthesis, largePlant))
-            .settle(Species("Herbivore", vertebrate, herbivore))
-            .settle(Species("Carnivore", vertebrate, carnivore))
-            .addResourceProducer(
-                    BiomeFeature(
-                            "Ocean", Feature(
-                            Size(10),
-                            ProduceResource(Water, Level(99)),
-                            ProduceResource(Minerals, Level(1)),
-                            ProduceResource(Carbon, Level(1))
-                    )
-                    )
+        .settle(Species("Origin of life", autotrophic))
+        .settle(Species("Algae", photosynthesis))
+//        .settle(Species("Small Plant", photosynthesis, smallPlant))
+//        .settle(Species("Large Plant", photosynthesis, largePlant))
+        .settle(Species("Stone eater", autotrophic, vertebrate))
+//        .settle(Species("Herbivore", vertebrate, herbivore))
+//        .settle(Species("Carnivore", vertebrate, carnivore))
+        .addResourceProducer(
+            BiomeFeature(
+                "Ocean", Feature(
+                    Size(10),
+                    ProduceResource(Water, Level(99)),
+                    ProduceResource(Minerals, Level(1)),
+                    ProduceResource(Carbon, Level(1))
+                )
             )
-            .addResourceProducer(
-                    BiomeFeature(
-                            "Ocean Floor", Feature(
-                            Size(3),
-                            ProduceResource(Minerals, Level(25))
-                    )
-                    )
+        )
+        .addResourceProducer(
+            BiomeFeature(
+                "Ocean Floor", Feature(
+                    Size(3),
+                    ProduceResource(Minerals, Level(25))
+                )
             )
+        )
     this[biome.id] = biome
 }
