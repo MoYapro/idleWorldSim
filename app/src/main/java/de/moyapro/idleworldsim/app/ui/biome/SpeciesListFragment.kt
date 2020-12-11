@@ -81,7 +81,7 @@ class SpeciesListFragment : Fragment() {
      */
     interface OnSpeciesInteractionListener {
         // TODO: Update argument type and name
-        fun onSpeciesInteraction(species: Species?)
+        fun onSpeciesInteraction(biome: Biome, species: Species?)
     }
 
     companion object {

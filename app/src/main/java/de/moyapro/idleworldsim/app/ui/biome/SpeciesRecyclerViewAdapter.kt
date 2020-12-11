@@ -31,7 +31,7 @@ class SpeciesRecyclerViewAdapter(
             val species = v.tag as Species
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onSpeciesInteraction(species)
+            mListener?.onSpeciesInteraction(biome, species)
         }
     }
 

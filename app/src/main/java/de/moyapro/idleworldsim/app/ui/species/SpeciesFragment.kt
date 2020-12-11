@@ -12,6 +12,8 @@ import androidx.navigation.fragment.navArgs
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.databinding.SpeciesFragmentBinding
+import de.moyapro.idleworldsim.domain.Biome
+import java.util.*
 
 class SpeciesFragment : Fragment() {
 
@@ -24,24 +26,29 @@ class SpeciesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.species = Game.getSpecies(args.speciesName)
-        val binding: SpeciesFragmentBinding = createBinding(inflater, container)
+        val biome = Game.getBiome(UUID.fromString(args.biome)) ?: throw IllegalStateException()
+        val binding: SpeciesFragmentBinding = createBinding(inflater, container, biome)
 
         return binding.root
     }
 
     private fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
+        biome: Biome
     ): SpeciesFragmentBinding {
         val binding: SpeciesFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.species_fragment, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         val currentFeatures = viewModel.species.features
+        val currentFeaturesListView = binding.root.findViewById<ListView>(R.id.features_list_view)
         val availableFeatures = Game.getEvolveOptions(viewModel.species)
+        val availableFeaturesListView = binding.root.findViewById<ListView>(R.id.available_features_list_view)
 
-        binding.root.findViewById<ListView>(R.id.features_list_view).adapter = FeatureListViewAdapter(currentFeatures, layoutInflater)
-        binding.root.findViewById<ListView>(R.id.available_features_list_view).adapter = FeatureListViewAdapter(availableFeatures, layoutInflater)
+        currentFeaturesListView.adapter = FeatureListViewAdapter(currentFeatures, layoutInflater)
+        availableFeaturesListView.adapter = FeatureListViewAdapter(availableFeatures, layoutInflater)
+        availableFeaturesListView.onItemClickListener = EvolveClickListener(biome, viewModel.species)
         return binding
     }
 }

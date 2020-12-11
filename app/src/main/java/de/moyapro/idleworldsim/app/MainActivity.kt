@@ -38,10 +38,10 @@ class MainActivity : AppCompatActivity(),
         // TODO: implement the onListFragmentInteraction-Method for Resource class
     }
 
-    override fun onSpeciesInteraction(species: Species?) {
-        if(null == species)
+    override fun onSpeciesInteraction(biome: Biome, species: Species?) {
+        if (null == species)
             return
-        val action = BiomeFragmentDirections.actionBiomeFragmentToSpeciesFragment(species.name)
+        val action = BiomeFragmentDirections.actionBiomeFragmentToSpeciesFragment(biome.id.toString(), species.name)
         navController.navigate(action)
     }
 

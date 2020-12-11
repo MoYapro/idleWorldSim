@@ -9,7 +9,10 @@ import android.widget.TextView
 import de.moyapro.idleworldsim.domain.traits.Feature
 
 
-class FeatureListViewAdapter(private val features: List<Feature>, private val layoutInflater: LayoutInflater) : BaseAdapter() {
+class FeatureListViewAdapter(
+    private val features: List<Feature>,
+    private val layoutInflater: LayoutInflater
+) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, container: ViewGroup?): View {
         val listItem: View = convertView
@@ -21,5 +24,4 @@ class FeatureListViewAdapter(private val features: List<Feature>, private val la
     override fun getItem(position: Int) = features[position]
     override fun getItemId(position: Int) = getItem(position).hashCode().toLong()
     override fun getCount() = features.size
-
 }
