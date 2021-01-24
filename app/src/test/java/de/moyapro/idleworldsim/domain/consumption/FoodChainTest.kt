@@ -1,5 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.blox.graphview.Graph
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
@@ -69,7 +70,7 @@ internal class FoodChainTest {
 
 
     @Test
-    fun dotNotation() {
+    fun generatedotNotation() {
         val dotNotation = buildTestFoodchain().asDotNotation()
         assertThat(dotNotation).contains("digraph G {")
         assertThat(dotNotation).contains("p1 -> c1")
@@ -77,6 +78,18 @@ internal class FoodChainTest {
         assertThat(dotNotation).contains("pc2 -> c2")
         assertThat(dotNotation).contains("}")
     }
+
+    @Test
+    fun createGraphFromFoodchain() {
+        val graph: Graph = FoodChain().add(producer1).add(consumer1).generateGraph()
+        assertThat(graph.nodeCount).isEqualTo(2)
+        assertThat(graph.edges.size).isEqualTo(1)
+        assertThat(graph.nodes.map { it.data }).contains(producer1)
+        assertThat(graph.nodes.map { it.data }).contains(consumer1)
+        assertThat(graph.edges[0].source.data).isEqualTo(producer1)
+        assertThat(graph.edges[0].destination.data).isEqualTo(consumer1)
+    }
+
 
     private fun buildTestFoodchain(): FoodChain {
         return FoodChain()

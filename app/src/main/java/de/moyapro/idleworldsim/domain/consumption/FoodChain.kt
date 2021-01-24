@@ -1,5 +1,8 @@
 package de.moyapro.idleworldsim.domain.consumption
 
+import de.blox.graphview.Edge
+import de.blox.graphview.Graph
+import de.blox.graphview.Node
 import de.moyapro.idleworldsim.domain.Species
 
 /**
@@ -160,6 +163,16 @@ class FoodChain {
             .flatten()
 
         return unrelated + related
+    }
+
+    fun generateGraph(): Graph {
+        val graph = Graph()
+        nodes.forEach { producerConsumerRelation ->
+            producerConsumerRelation.consumers.forEach { consumer ->
+                graph.addEdge(Edge(Node(producerConsumerRelation.producer), Node(consumer.consumer)))
+            }
+        }
+        return graph
     }
 
 }
