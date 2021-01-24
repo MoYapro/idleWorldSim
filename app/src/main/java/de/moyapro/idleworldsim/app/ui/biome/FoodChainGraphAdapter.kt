@@ -1,28 +1,37 @@
 package de.moyapro.idleworldsim.app.ui.biome
 
+import android.R.attr
+import android.view.View
 import android.view.ViewGroup
-import de.blox.graphview.Graph
+import android.widget.TextView
 import de.blox.graphview.GraphAdapter
 import de.blox.graphview.GraphView
+import de.moyapro.idleworldsim.R
+import de.moyapro.idleworldsim.domain.consumption.FoodChain
 
-class FoodChainGraphAdapter : GraphAdapter<GraphView.ViewHolder>(Graph()) {
+class FoodChainGraphAdapter(private val foodChain: FoodChain) : GraphAdapter<GraphView.ViewHolder>(foodChain.generateGraph()) {
+
     override fun getCount(): Int {
-        TODO("Not yet implemented")
+        return graph.nodes.size
     }
 
     override fun getItem(position: Int): Any {
-        TODO("Not yet implemented")
+        return graph.nodes[position]
     }
 
     override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        return graph.nodes.isEmpty()
     }
 
     override fun onBindViewHolder(viewHolder: GraphView.ViewHolder, data: Any, position: Int) {
-        TODO("Not yet implemented")
+        (viewHolder as SimpleViewHolder).textView.setText(attr.data.toString())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GraphView.ViewHolder {
         TODO("Not yet implemented")
     }
+}
+
+internal class SimpleViewHolder(itemView: View) : GraphView.ViewHolder(itemView) {
+    var textView: TextView = itemView.findViewById(R.id.nodeText)
 }
