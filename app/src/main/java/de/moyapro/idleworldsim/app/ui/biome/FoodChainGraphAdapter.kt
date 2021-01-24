@@ -24,7 +24,7 @@ class FoodChainGraphAdapter(private val foodChain: FoodChain) : GraphAdapter<Gra
     }
 
     override fun onBindViewHolder(viewHolder: GraphView.ViewHolder, data: Any, position: Int) {
-        (viewHolder as SimpleViewHolder).textView.setText(attr.data.toString())
+        (viewHolder as SimpleViewHolder).textView.text = attr.data.toString()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GraphView.ViewHolder {
