@@ -5,6 +5,7 @@ import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+@Suppress("USELESS_CAST")
 internal class FoodChainTest {
 
     private val producer1: ResourceProducer = Species("p1", Feature(Meaty()))
