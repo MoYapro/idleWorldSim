@@ -109,12 +109,12 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
 private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
     val biome = Biome("initial biome")
         .settle(Species("Origin of life", autotrophic))
-        .settle(Species("Algae", photosynthesis))
-        .settle(Species("Small Plant", photosynthesis, smallPlant))
-        .settle(Species("Large Plant", photosynthesis, largePlant))
-        .settle(Species("Stone eater", autotrophic, vertebrate))
-        .settle(Species("Herbivore", vertebrate, herbivore))
-        .settle(Species("Carnivore", vertebrate, carnivore))
+//        .settle(Species("Algae", photosynthesis))
+//        .settle(Species("Small Plant", photosynthesis, smallPlant))
+//        .settle(Species("Large Plant", photosynthesis, largePlant))
+//        .settle(Species("Stone eater", autotrophic, vertebrate))
+//        .settle(Species("Herbivore", vertebrate, herbivore))
+//        .settle(Species("Carnivore", vertebrate, carnivore))
 //        .addResourceProducer(
 //            BiomeFeature(
 //                "Ocean", Feature(
