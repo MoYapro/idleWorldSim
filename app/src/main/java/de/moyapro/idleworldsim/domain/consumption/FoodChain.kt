@@ -168,9 +168,16 @@ class FoodChain {
     fun generateGraph(): Graph {
         val graph = Graph()
         nodes.forEach { producerConsumerRelation ->
+            val producerNode = Node(producerConsumerRelation.producer)
+            graph.addNode(producerNode)
             producerConsumerRelation.consumers.forEach { consumer ->
-                graph.addEdge(Edge(Node(producerConsumerRelation.producer), Node(consumer.consumer)))
+                val consumerNode = Node(consumer.consumer)
+                graph.addNode(consumerNode)
+                graph.addEdge(Edge(producerNode, consumerNode))
             }
+        }
+        consumersWithoutProducers.forEach {
+            graph.addNode(Node(it))
         }
         return graph
     }

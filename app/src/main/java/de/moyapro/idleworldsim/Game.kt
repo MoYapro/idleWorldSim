@@ -1,7 +1,6 @@
 package de.moyapro.idleworldsim
 
 import de.moyapro.idleworldsim.domain.Biome
-import de.moyapro.idleworldsim.domain.BiomeFeature
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
@@ -111,28 +110,28 @@ private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
     val biome = Biome("initial biome")
         .settle(Species("Origin of life", autotrophic))
         .settle(Species("Algae", photosynthesis))
-//        .settle(Species("Small Plant", photosynthesis, smallPlant))
-//        .settle(Species("Large Plant", photosynthesis, largePlant))
+        .settle(Species("Small Plant", photosynthesis, smallPlant))
+        .settle(Species("Large Plant", photosynthesis, largePlant))
         .settle(Species("Stone eater", autotrophic, vertebrate))
-//        .settle(Species("Herbivore", vertebrate, herbivore))
-//        .settle(Species("Carnivore", vertebrate, carnivore))
-        .addResourceProducer(
-            BiomeFeature(
-                "Ocean", Feature(
-                    Size(10),
-                    ProduceResource(Water, Level(99)),
-                    ProduceResource(Minerals, Level(1)),
-                    ProduceResource(Carbon, Level(1))
-                )
-            )
-        )
-        .addResourceProducer(
-            BiomeFeature(
-                "Ocean Floor", Feature(
-                    Size(3),
-                    ProduceResource(Minerals, Level(25))
-                )
-            )
-        )
+        .settle(Species("Herbivore", vertebrate, herbivore))
+        .settle(Species("Carnivore", vertebrate, carnivore))
+//        .addResourceProducer(
+//            BiomeFeature(
+//                "Ocean", Feature(
+//                    Size(10),
+//                    ProduceResource(Water, Level(99)),
+//                    ProduceResource(Minerals, Level(1)),
+//                    ProduceResource(Carbon, Level(1))
+//                )
+//            )
+//        )
+//        .addResourceProducer(
+//            BiomeFeature(
+//                "Ocean Floor", Feature(
+//                    Size(3),
+//                    ProduceResource(Minerals, Level(25))
+//                )
+//            )
+//        )
     this[biome.id] = biome
 }

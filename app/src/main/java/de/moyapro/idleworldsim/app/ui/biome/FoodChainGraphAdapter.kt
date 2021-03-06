@@ -1,34 +1,38 @@
 package de.moyapro.idleworldsim.app.ui.biome
 
-import android.R.attr
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import de.blox.graphview.Graph
 import de.blox.graphview.GraphAdapter
 import de.blox.graphview.GraphView
+import de.blox.graphview.Node
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.domain.consumption.FoodChain
+import de.moyapro.idleworldsim.domain.Species
 
-class FoodChainGraphAdapter(private val foodChain: FoodChain) : GraphAdapter<GraphView.ViewHolder>(foodChain.generateGraph()) {
+class FoodChainGraphAdapter(private val foodChainGraph: Graph) : GraphAdapter<GraphView.ViewHolder>(foodChainGraph) {
 
     override fun getCount(): Int {
-        return graph.nodes.size
+        return foodChainGraph.nodes.size
     }
 
     override fun getItem(position: Int): Any {
-        return graph.nodes[position]
+        return foodChainGraph.nodes[position]
     }
 
     override fun isEmpty(): Boolean {
-        return graph.nodes.isEmpty()
+        return foodChainGraph.nodes.isEmpty()
     }
 
     override fun onBindViewHolder(viewHolder: GraphView.ViewHolder, data: Any, position: Int) {
-        (viewHolder as SimpleViewHolder).textView.text = attr.data.toString()
+        val text = ((getItem(position) as Node).data as Species).name
+        (viewHolder as SimpleViewHolder).textView.text = text
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GraphView.ViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.node_layout, parent, false);
+        return SimpleViewHolder(view);
     }
 }
 

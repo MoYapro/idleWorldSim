@@ -62,7 +62,6 @@ android {
                 projectDir.absolutePath + '/src/main/res/layouts/species'
         ]
     }
-
 }
 
 dependencies {
@@ -95,5 +94,6 @@ kapt {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs = ["-XXLanguage:+InlineClasses", "-Xopt-in=kotlin.RequiresOptIn"]
+        kotlinOptions.useIR = true
     }
 }

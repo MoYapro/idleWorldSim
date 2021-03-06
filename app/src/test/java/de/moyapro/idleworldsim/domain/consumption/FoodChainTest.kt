@@ -1,6 +1,8 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.blox.graphview.Graph
+import de.blox.graphview.tree.BuchheimWalkerAlgorithm
+import de.blox.graphview.tree.BuchheimWalkerConfiguration
 import de.moyapro.idleworldsim.domain.Species
 import de.moyapro.idleworldsim.domain.traits.*
 import org.assertj.core.api.Assertions.assertThat
@@ -88,6 +90,20 @@ internal class FoodChainTest {
         assertThat(graph.nodes.map { it.data }).contains(consumer1)
         assertThat(graph.edges[0].source.data).isEqualTo(producer1)
         assertThat(graph.edges[0].destination.data).isEqualTo(consumer1)
+    }
+
+    @Test
+    fun graphWorking() {
+        val graph: Graph = FoodChain().add(producer1).add(consumer1).generateGraph()
+        val configuration: BuchheimWalkerConfiguration = BuchheimWalkerConfiguration.Builder()
+            .setSiblingSeparation(100)
+            .setLevelSeparation(300)
+            .setSubtreeSeparation(300)
+            .setOrientation(BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM)
+            .build()
+        val layoutAlgorithm = BuchheimWalkerAlgorithm(configuration)
+
+        layoutAlgorithm.run(graph, 0f, 0f)
     }
 
 
