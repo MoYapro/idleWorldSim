@@ -7,9 +7,9 @@ import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 internal class BiomeTest {
     @Test
@@ -32,8 +32,8 @@ internal class BiomeTest {
     @Test
     fun populationSizeIsChanging() {
         val species = defaultSpecies()
-        val waterSource = Species("Water", Feature(ProduceResource(Water)))
-        val biome = Biome().settle(species).settle(waterSource)
+        val waterSource = BiomeFeature("Water", Feature(ProduceResource(Water)))
+        val biome = Biome().settle(species).addResourceProducer(waterSource)
         val initialSpeciesSize = biome[species]
         biome.process()
         assertNotEquals(
@@ -78,10 +78,15 @@ internal class BiomeTest {
             .place(soil)
             .settle(gras)
         val populationDifference: Map<TraitBearer, Population> = biome.getPopulationChanges()
-        assertThat(populationDifference[soil]?.populationSize).isEqualTo(0.0)
-        assertThat(populationDifference[gras]?.populationSize).isGreaterThan(0.0)
+        assertThat(populationDifference[soil]?.populationSize ?: -1.0).isEqualTo(0.0)
+        assertThat(populationDifference[gras]?.populationSize ?: -1.0).isGreaterThan(0.0)
 
 
+    }
+
+    @Test
+    fun notx() {
+        fail("boo")
     }
 
     //

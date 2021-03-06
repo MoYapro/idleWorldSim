@@ -12,12 +12,25 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     val foodChain = FoodChain()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
+    var lastChanges: Map<TraitBearer, Population> = mapOf()
 
 
     fun process(): Biome {
         val changes = getPopulationChanges()
-        populations += changes
+        lastChanges = changes
+        updatePopulations(populations, changes)
         return this
+    }
+
+    private fun updatePopulations(
+        populations: MutableMap<TraitBearer, Population>,
+        changes: Map<TraitBearer, Population>
+    ) {
+        changes.forEach { (traitBearer, populationChange) ->
+            val newPopulation =
+                populations.getOrDefault(traitBearer, Population(0)) + populationChange
+            populations[traitBearer] = newPopulation
+        }
     }
 
     fun settle(species: Species, population: Population = Population(1.0)): Biome {
@@ -67,7 +80,10 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
             battleRelation.producer.getResourcesPerInstance() * producerPopulationEaten
         battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
         return mapOf(
-            Pair(battleRelation.producer, producerPopulationEaten * -1) // negative value indicated killed (eaten) population
+            Pair(
+                battleRelation.producer,
+                producerPopulationEaten * -1
+            ) // negative value indicated killed (eaten) population
         )
     }
 
@@ -77,7 +93,8 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     }
 
     fun population(): Map<Species, Population> {
-        return populations.filter { it.key is Species }.map { Pair(it.key as Species, it.value) }.associate { it }
+        return populations.filter { it.key is Species }.map { Pair(it.key as Species, it.value) }
+            .associate { it }
     }
 
     fun place(biomeFeature: BiomeFeature, population: Population = Population(1.0)): Biome {
