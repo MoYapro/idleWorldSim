@@ -14,6 +14,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'android-junit5'
 
 android {
     compileSdkVersion 29
@@ -49,15 +50,17 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     sourceSets {
-        main {
-            res.srcDirs = [
-                    projectDir.absolutePath + '/src/main/res',
-                    projectDir.absolutePath + '/src/main/res/layouts/world',
-                    projectDir.absolutePath + '/src/main/res/layouts/biome',
-                    projectDir.absolutePath + '/src/main/res/layouts/species'
-            ]
-        }
+        main.res.srcDirs = [
+                projectDir.absolutePath + '/src/main/res',
+                projectDir.absolutePath + '/src/main/res/layouts/world',
+                projectDir.absolutePath + '/src/main/res/layouts/biome',
+                projectDir.absolutePath + '/src/main/res/layouts/species'
+        ]
     }
 
 }
@@ -79,12 +82,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'de.blox:graphview:0.7.1'
     implementation 'com.otaliastudios:zoomlayout:1.8.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testImplementation 'org.assertj:assertj-core:3.15.0'
     kapt 'com.android.databinding:compiler:3.1.4'
+    testImplementation(platform("org.junit:junit-bom:5.7.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 kapt {
