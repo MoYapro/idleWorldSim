@@ -16,7 +16,7 @@ internal class SpeciesGrowAndDieTest {
         species.consume(
             initialPopulation, Resources()
         )
-        assertThat(species.grow(initialPopulation).populationSize)
+        assertThat(initialPopulation.populationSize + species.grow(initialPopulation).populationSize)
             .isGreaterThan(initialPopulation.populationSize)
     }
 

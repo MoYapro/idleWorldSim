@@ -10,10 +10,15 @@ import java.util.*
 
 
 data class Resources(
-    val quantities: Map<ResourceType, Double> = values().associateBy({ it }, { if (it == EvolutionPoints) 0.0 else 1000.0 })
+    val quantities: Map<ResourceType, Double> = values().associateBy(
+        { it },
+        { if (it == EvolutionPoints) 0.0 else 1000.0 })
 ) {
-    constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }.toMap())
+    constructor(resourcesList: List<Resource>) : this(resourcesList.associate { Pair(it.resourceType, it.amount) }
+        .toMap())
+
     constructor(resource: Resource) : this(listOf(resource))
+    constructor(vararg resource: Resource) : this(resource.asList())
     constructor(allAmounts: Int) : this(
         values()
             .map { Resource(it, allAmounts) }
@@ -35,7 +40,10 @@ data class Resources(
 
     }
 
-    private fun calculatePlus(quantities1: Map<ResourceType, Double>, quantities2: Map<ResourceType, Double>): Map<ResourceType, Double> {
+    private fun calculatePlus(
+        quantities1: Map<ResourceType, Double>,
+        quantities2: Map<ResourceType, Double>
+    ): Map<ResourceType, Double> {
         val newList = LinkedList(quantities1.entries)
         newList.addAll(quantities2.entries)
         return newList.groupBy { it.key }
@@ -49,17 +57,22 @@ data class Resources(
         val resources = Resources(subtractQuantities(this.quantities, otherResource.quantities))
         return if (resources.quantities.all { 0 <= it.value })
             resources
-        else throw IllegalStateException()
+        else throw IllegalStateException("Resources cannot be negative")
     }
 
-    private fun subtractQuantities(initialAmount: Map<ResourceType, Double>, toBeRemoved: Map<ResourceType, Double>): Map<ResourceType, Double> {
+    private fun subtractQuantities(
+        initialAmount: Map<ResourceType, Double>,
+        toBeRemoved: Map<ResourceType, Double>
+    ): Map<ResourceType, Double> {
         val amountCopy = HashMap(initialAmount)
         toBeRemoved.entries.forEach { amountCopy[it.key] = (amountCopy[it.key] ?: 0.0) - it.value }
         return amountCopy
     }
 
     operator fun times(population: Population): Resources = this * population.populationSize
-    operator fun times(scalar: Double) = Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
+    operator fun times(scalar: Double) =
+        Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
+
     operator fun times(scalar: Int): Resources = this * scalar.toDouble()
     operator fun times(level: Level): Resources = this * level.level
 
@@ -89,13 +102,22 @@ data class Resources(
     }
 
     override fun toString(): String {
-        return "Resources(${this.quantities.map { (resourceType, quantity) ->
-            resourceType.name + '=' + quantity.toBigDecimal()
-        }.joinToString(", ")})"
+        return "Resources(${
+            this.quantities.map { (resourceType, quantity) ->
+                resourceType.name + '=' + quantity.toBigDecimal()
+            }.joinToString(", ")
+        })"
     }
 
 
-    fun getQuantities(): Iterable<Resource> = quantities.map { (resourceType, amount) -> Resource(resourceType, amount) }
+    fun getQuantities(): Iterable<Resource> =
+        quantities.map { (resourceType, amount) -> Resource(resourceType, amount) }
+
+    fun toList(): List<Resource> {
+        return quantities.map { (resourceType, value) ->
+            Resource(resourceType, value)
+        }
+    }
 }
 
 fun emptyResources() = Resources(mapOf())

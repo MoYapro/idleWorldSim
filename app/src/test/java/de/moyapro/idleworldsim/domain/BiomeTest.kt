@@ -7,9 +7,9 @@ import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 
 internal class BiomeTest {
     @Test
@@ -78,15 +78,10 @@ internal class BiomeTest {
             .place(soil)
             .settle(gras)
         val populationDifference: Map<TraitBearer, Population> = biome.getPopulationChanges()
-        assertThat(populationDifference[soil]?.populationSize ?: -1.0).isEqualTo(0.0)
+        assertThat(populationDifference[soil]).isNull()
         assertThat(populationDifference[gras]?.populationSize ?: -1.0).isGreaterThan(0.0)
 
 
-    }
-
-    @Test
-    fun notx() {
-        fail("boo")
     }
 
     //
@@ -134,12 +129,12 @@ internal class BiomeTest {
     @Test
     fun predatorEatsUntilSatisfied() {
         val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
-        val prey = Species("Tasty Food", Feature(Meaty(Level(10))))
+        val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
         val lesserPrey = Species("Food", Feature(Meaty()))
         val biome = Biome()
             .settle(predator, Population(1))
-            .settle(lesserPrey, Population(100))
-            .settle(prey, Population(100))
+            .settle(lesserPrey, Population(1000))
+            .settle(prey, Population(1000))
             .process()
         assertThat(biome[predator].populationSize).isGreaterThan(1.0)
         assertThat(biome[prey].populationSize).isLessThan(biome[lesserPrey].populationSize)
@@ -171,9 +166,23 @@ internal class BiomeTest {
 
     @Test
     fun speciesShouldBeCappedByAvailableResources() {
-        val soil = BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(10)), ProduceResource(Water, Level(10))))
-        val air = BiomeFeature("Air", Feature(ProduceResource(ResourceType.Oxygen, Level(10)), ProduceResource(ResourceType.Carbon, Level(10))))
-        val grass = Species("Grass", Feature(NeedResource(Minerals), NeedResource(Water), NeedResource(ResourceType.Carbon), ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(ResourceType.Carbon)))
+        val soil =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(10)), ProduceResource(Water, Level(10))))
+        val air = BiomeFeature(
+            "Air",
+            Feature(ProduceResource(ResourceType.Oxygen, Level(10)), ProduceResource(ResourceType.Carbon, Level(10)))
+        )
+        val grass = Species(
+            "Grass",
+            Feature(
+                NeedResource(Minerals),
+                NeedResource(Water),
+                NeedResource(ResourceType.Carbon),
+                ConsumerTrait(Minerals),
+                ConsumerTrait(Water),
+                ConsumerTrait(ResourceType.Carbon)
+            )
+        )
         var biome = Biome()
             .addResourceProducer(soil)
             .addResourceProducer(air)

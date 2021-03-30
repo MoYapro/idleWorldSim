@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain.consumption
 import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.domain.traits.Size
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import kotlin.math.ceil
 
 interface ResourceProducer : TraitBearer {
 
@@ -11,13 +12,19 @@ interface ResourceProducer : TraitBearer {
      *
      * @return how many producers gets eaten
      */
-    fun getEaten(producerPopulation: Population, consumerPopulation: Population, consumer: ResourceConsumer, consumeFactor: Double): Population {
+    fun getEaten(
+        producerPopulation: Population,
+        consumerPopulation: Population,
+        consumer: ResourceConsumer,
+        consumeFactor: Double
+    ): Population {
         val productionPerProducer = getResourcesPerInstance()
         val maxEaten = producerPopulation * consumeFactor
         val neededUntilSatisfied = Population(
-            consumer.needs()
-                .map { 1 / (it / productionPerProducer[it.resourceType]) }
-                .maxOrNull() ?: 0.0
+            ceil(consumer.needs()
+                .map { neededResource -> neededResource / productionPerProducer[neededResource.resourceType] }
+                .max() ?: 0.0
+            )
         )
 
         return when {

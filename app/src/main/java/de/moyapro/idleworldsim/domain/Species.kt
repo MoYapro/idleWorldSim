@@ -48,9 +48,19 @@ open class Species(
     }
 
     override fun needs(): List<Resource> {
-        return traits().filterIsInstance<NeedResource>()
+        val totalNeeds = Resources(traits().filterIsInstance<NeedResource>()
             .groupBy { it.resourceType }
             .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
+        )
+        return resourcesConsumed.toList().map { resource ->
+            val totalAmount = totalNeeds[resource.resourceType]
+            when {
+                totalAmount > resource -> (totalAmount - resource)
+                else -> Resource(resource.resourceType, 0)
+            }
+        }
+            .filter { resource -> resource.amount > 0 }
+
     }
 
     override fun equals(other: Any?): Boolean {
@@ -73,16 +83,21 @@ open class Species(
 
     fun grow(speciesPopulation: Population): Population {
         val numberOfUnfullfilledNeeds = needs()
-            .map { it * speciesPopulation }
-            .map { Pair(it.resourceType, resourcesConsumed[it.resourceType].amount >= it.amount) }
-            .sumBy {
-                when (it.second) {
+            .map { neededResourcePerIndivituum -> neededResourcePerIndivituum * speciesPopulation }
+            .map { neededResourceTotal ->
+                Pair(
+                    neededResourceTotal.resourceType,
+                    resourcesConsumed[neededResourceTotal.resourceType].amount >= neededResourceTotal.amount
+                )
+            }
+            .sumBy { (_, hasNeedFullfilled) ->
+                when (hasNeedFullfilled) {
                     true -> 0
                     false -> 1
                 }
             }
         resourcesConsumed = emptyResources() // reset for next turn
-        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0)) - speciesPopulation
     }
 
 }

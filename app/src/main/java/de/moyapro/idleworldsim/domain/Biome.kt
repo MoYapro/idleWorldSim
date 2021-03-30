@@ -6,6 +6,7 @@ import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.util.sumUsing
 import java.util.*
 
 class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
@@ -55,18 +56,23 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
     fun getPopulationChanges(): Map<TraitBearer, Population> {
-        foodChain.getRelations()
-            .sortedBy { it.consumerPreference }
-            .forEach { battle(it) }
-        return species()
-            .associateBy({ it }, { it.grow(get(it)) })
+        val populationEaten = foodChain.getRelations()
+            .sortedByDescending { it.consumerPreference }
+            .map { battle(it) }
+            .sumUsing({ t1, t2 -> t1 + t2 }, { mutableMapOf() })
+            ?: emptyMap()
+
+        val populationGrown = species()
+            .associateBy({ species -> species }, { species -> species.grow(this[species]) })
+        val map = populationGrown - populationEaten
+        return map
+            .filter { (_, population) -> 0 < population.populationSize }
     }
 
     /**
      * actual consumption process where producers are converted into resources for the consumer
      */
     private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, Population> {
-        battleRelation.consumeFactor
         val producerPopulation = populations[battleRelation.producer] ?: Population(1.0)
         val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
         val producerPopulationEaten: Population =
@@ -82,8 +88,8 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
         return mapOf(
             Pair(
                 battleRelation.producer,
-                producerPopulationEaten * -1
-            ) // negative value indicated killed (eaten) population
+                producerPopulationEaten
+            )
         )
     }
 
