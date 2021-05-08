@@ -32,7 +32,7 @@ operator fun <T> Map<T, Population>.plus(other: Map<T, Population>): Map<T, Popu
 }
 
 operator fun <T, X : T> Map<T, Population>.minus(other: Map<X, Population>): Map<T, Population> {
-    require(other.all { (key, _) -> null != this[key] }) { "Cannot subtract if element is not in original map" }
+    require(other.all { (key, value) -> value.isEmpty() || null != this[key] }) { "Cannot subtract if element is not in original map" }
     return this.map { (key, value) ->
         val newValue = value - (other[key] ?: Population(0.0))
         Pair(key, newValue)

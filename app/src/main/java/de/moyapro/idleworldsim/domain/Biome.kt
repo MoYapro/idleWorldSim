@@ -57,8 +57,9 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
     fun getPopulationChanges(): Map<TraitBearer, Population> {
-        val populationEaten: Map<TraitBearer, Population> = foodChain.getRelations()
+        val sortedByDescending = foodChain.getRelations()
             .sortedByDescending { it.consumerPreference }
+        val populationEaten: Map<TraitBearer, Population> = sortedByDescending
             .map { battle(it) }
             .sumUsing({ t1, t2 -> t1 + t2 }, { mutableMapOf() })
             ?: emptyMap()

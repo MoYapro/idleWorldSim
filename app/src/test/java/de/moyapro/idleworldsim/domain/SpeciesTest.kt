@@ -6,9 +6,9 @@ import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 
@@ -73,10 +73,13 @@ internal class SpeciesTest {
     @Test
     fun speciesShouldShrinkOnResourceShortage() {
         val initialPopulation = Population(10.0)
-        val species = Species("I", Feature(NeedResource(Water), NeedResource(Minerals), ConsumerTrait(Water), ConsumerTrait(Minerals)))
+        val species = Species(
+            "I",
+            Feature(NeedResource(Water), NeedResource(Minerals), ConsumerTrait(Water), ConsumerTrait(Minerals))
+        )
         species.consume(initialPopulation, Resources(Resource(Oxygen, 1000)))
         val populationChange = species.grow(initialPopulation)
-        Assertions.assertThat(populationChange.populationSize).isLessThan(initialPopulation.populationSize)
+        assertThat(populationChange.populationSize).isLessThan(initialPopulation.populationSize)
     }
 
     @Test
@@ -86,7 +89,7 @@ internal class SpeciesTest {
         val availableResources = Resources(Resource(Water, 1000))
         species.consume(initialPopulation, availableResources)
         val populationChange = species.grow(initialPopulation)
-        Assertions.assertThat(populationChange.populationSize).isGreaterThan(0.0)
+        assertThat(populationChange.populationSize).isGreaterThan(0.0)
     }
 
 
@@ -180,15 +183,37 @@ internal class SpeciesTest {
 
     @Test
     fun speciesCanFullfillNeedFromDifferentSpecies() {
-        val soil = BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
-        val air = BiomeFeature("Air", Feature(ProduceResource(Oxygen, Level(1000)), ProduceResource(Carbon, Level(1000))))
-        val grass = Species("Grass", Feature(NeedResource(Minerals), NeedResource(Water), NeedResource(Carbon), ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(Carbon)))
+        val soil =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
+        val air =
+            BiomeFeature("Air", Feature(ProduceResource(Oxygen, Level(1000)), ProduceResource(Carbon, Level(1000))))
+        val grass = Species(
+            "Grass",
+            Feature(
+                NeedResource(Minerals),
+                NeedResource(Water),
+                NeedResource(Carbon),
+                ConsumerTrait(Minerals),
+                ConsumerTrait(Water),
+                ConsumerTrait(Carbon)
+            )
+        )
         val biome = Biome()
             .addResourceProducer(soil)
             .addResourceProducer(air)
             .settle(grass)
             .process()
         assertThat(biome[grass].populationSize).isGreaterThan(1.0)
+    }
+
+    @Test
+    fun needs() {
+        val requiredResources: Set<ResourceType> = setOf(Minerals, Water, Carbon)
+        val consumesResources: Set<Trait> = setOf(ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(Carbon))
+        val grass =
+            Species("Grass", Feature("Needy", requiredResources.map { NeedResource(it) }.toSet() + consumesResources))
+        val grassNeeds = grass.needs()
+        assertThat(grassNeeds.map { it.resourceType }).containsExactlyInAnyOrder(*requiredResources.toTypedArray())
 
     }
 

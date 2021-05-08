@@ -52,15 +52,13 @@ open class Species(
             .groupBy { it.resourceType }
             .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
         )
-        return resourcesConsumed.toList().map { resource ->
-            val totalAmount = totalNeeds[resource.resourceType]
+        return totalNeeds.toList().mapNotNull { resource ->
+            val alreadyConsumed = resourcesConsumed[resource.resourceType]
             when {
-                totalAmount > resource -> (totalAmount - resource)
-                else -> Resource(resource.resourceType, 0)
+                alreadyConsumed < resource -> (resource - alreadyConsumed)
+                else -> null // this resource is satisfied
             }
         }
-            .filter { resource -> resource.amount > 0 }
-
     }
 
     override fun equals(other: Any?): Boolean {
