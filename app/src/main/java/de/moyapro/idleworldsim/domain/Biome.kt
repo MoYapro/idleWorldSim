@@ -6,6 +6,7 @@ import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.util.minus
 import de.moyapro.idleworldsim.util.sumUsing
 import java.util.*
 
@@ -56,17 +57,17 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
     fun getPopulationChanges(): Map<TraitBearer, Population> {
-        val populationEaten = foodChain.getRelations()
+        val populationEaten: Map<TraitBearer, Population> = foodChain.getRelations()
             .sortedByDescending { it.consumerPreference }
             .map { battle(it) }
             .sumUsing({ t1, t2 -> t1 + t2 }, { mutableMapOf() })
             ?: emptyMap()
 
-        val populationGrown = species()
+        val populationGrown: Map<TraitBearer, Population> = species()
             .associateBy({ species -> species }, { species -> species.grow(this[species]) })
-        val map = populationGrown - populationEaten
+        val map: Map<TraitBearer, Population> = populationGrown.minus(populationEaten)
         return map
-            .filter { (_, population) -> 0 < population.populationSize }
+            .filter { (_, population) -> population.isNotEmpty() }
     }
 
     /**

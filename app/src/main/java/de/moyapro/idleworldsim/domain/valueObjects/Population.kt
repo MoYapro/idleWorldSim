@@ -29,6 +29,10 @@ class Population(val populationSize: Double) : Comparable<Population> {
         return "Population[$populationSize]"
     }
 
+    fun isNotEmpty(): Boolean = 0 < this.populationSize
+
+    fun isEmpty(): Boolean = 0 >= this.populationSize
+
 
 }
 

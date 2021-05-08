@@ -55,4 +55,17 @@ internal class PopulationTest {
         )
     }
 
+    @Test
+    fun population_isNotEmpty() {
+        assertThat(Population(1).isNotEmpty()).isTrue()
+        assertThat(Population(0).isNotEmpty()).isFalse()
+    }
+
+    @Test
+    fun population_isEmpty() {
+        assertThat(Population(1).isEmpty()).isFalse()
+        assertThat(Population(0).isEmpty()).isTrue()
+    }
+
+
 }
