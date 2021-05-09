@@ -1,13 +1,10 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
-import de.moyapro.idleworldsim.domain.TraitBearer
-import de.moyapro.idleworldsim.util.sumUsing
-
 class Population(val populationSize: Double) : Comparable<Population> {
     constructor(populationSize: Int) : this(populationSize.toDouble())
 
     init {
-        require(0 <= populationSize) { "Population size must not be negative. Perhaps you would like to use PopulationChange or StarvationRate" }
+        require(0 <= populationSize) { "Population size must not be negative but was $populationSize. Perhaps you would like to use PopulationChange or StarvationRate" }
     }
 
     override operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
@@ -42,22 +39,21 @@ class Population(val populationSize: Double) : Comparable<Population> {
     fun isNotEmpty(): Boolean = 0 < this.populationSize
 
     fun isEmpty(): Boolean = 0 >= this.populationSize
-    fun asPopulationChange() = PopulationChange(this.populationSize)
-
 
 }
 
-fun addPopulationMaps(
-    population1: Map<TraitBearer, Population>,
-    population2: Map<TraitBearer, Population>
-): Map<TraitBearer, Population> {
-    return (population1.asSequence() + population2.asSequence())
-        .distinct()
-        .groupBy({ it.key }, { it.value })
-        .mapValues { (_, populations) ->
-            populations.sumUsing(
-                { p1, p2 -> p1 + p2 },
-                { Population(0.0) })
-                ?: Population(0.0)
+fun <T> Map<T, Population>.applyChanges(changes: Map<T, PopulationChange>): Map<T, Population> {
+    val newPopulationValues = changes.map { (species, change) ->
+        val newPopulation: Population = (this[species] ?: Population(0)) + change
+        species to newPopulation
+    }.associate { it }
+        .toMutableMap()
+
+    this.forEach { (species, unchangedValue) ->
+        val speciesIsUnchanged = null == newPopulationValues[species]
+        if (speciesIsUnchanged) {
+            newPopulationValues[species] = unchangedValue
         }
+    }
+    return newPopulationValues.filter { it.value.isNotEmpty() }
 }

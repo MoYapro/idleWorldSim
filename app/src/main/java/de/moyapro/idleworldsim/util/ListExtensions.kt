@@ -1,7 +1,5 @@
 package de.moyapro.idleworldsim.util
 
-import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import kotlin.reflect.KFunction2
 
 
@@ -20,26 +18,4 @@ inline fun <T> Iterable<T>.sumUsing(sumFunction: (T, T) -> T, zeroElementProvide
     else this.reduce(sumFunction)
 }
 
-operator fun <T> Map<T, Population>.plus(other: Map<T, Population>): Map<T, Population> {
-
-    val sumExisting = this.map { (key, population) -> Pair(key, population + (other[key] ?: Population(0.0))) }
-        .toMap()
-        .toMutableMap()
-    other
-        .filter { (key, _) -> null == this[key] }
-        .forEach { (key, value) -> sumExisting[key] = value }
-
-    return sumExisting
-}
-
-operator fun <T, X : T> Map<T, Population>.minus(changeMap: Map<X, PopulationChange>): Map<T, Population> {
-    require(changeMap.all { (key, value) -> value.isUnchanged() || null != this[key] }) { "Cannot subtract if element is not in original map" }
-    return this.map { (key, value) ->
-        val newValue = value - (changeMap[key] ?: PopulationChange(0.0))
-        Pair(key, newValue)
-
-    }
-        .filter { (_, value) -> 0 < value.populationSize }
-        .toMap()
-}
 
