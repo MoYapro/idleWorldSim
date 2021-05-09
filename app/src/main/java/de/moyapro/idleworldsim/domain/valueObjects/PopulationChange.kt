@@ -8,7 +8,7 @@ data class PopulationChange(val changeSize: Double) : Comparable<PopulationChang
     }
 
     operator fun plus(other: PopulationChange): PopulationChange = PopulationChange(this.changeSize + other.changeSize)
-
+    operator fun times(other: Int): PopulationChange = PopulationChange(this.changeSize * other)
     override fun compareTo(other: PopulationChange): Int {
         return this.changeSize.compareTo(other.changeSize)
     }

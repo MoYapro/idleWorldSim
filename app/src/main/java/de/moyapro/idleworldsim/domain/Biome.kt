@@ -87,7 +87,7 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
                 battleRelation.consumeFactor
             )
         val resourcesAquiredByConsumer: Resources =
-            battleRelation.producer.getResourcesPerInstance() * producerPopulationEaten
+            battleRelation.producer.getResourcesForConsumption(producerPopulationEaten)
         battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
         return mapOf(
             Pair(

@@ -102,8 +102,8 @@ internal class BiomeTest {
 //
     @Test
     fun speciesCanEatEachOther() {
-        val predator = Species("Predator", Feature(Predator(Meaty())))
-        val prey = Species("Prey", Feature(Meaty()))
+        val predator = Species("Predator", Feature(Predator(Meaty()), NeedResource(Minerals)))
+        val prey = Species("Prey", Feature(Meaty(), ProduceResource(Minerals)))
         val biome = Biome()
             .settle(predator)
             .settle(prey)

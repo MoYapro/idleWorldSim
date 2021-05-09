@@ -20,12 +20,13 @@ interface ResourceProducer : TraitBearer {
         consumeFactor: Double
     ): PopulationChange {
         val productionPerProducer = getResourcesPerInstance()
-        val maxEaten = producerPopulation * consumeFactor
+        val maxEaten = producerPopulation * consumeFactor * -1
         val neededUntilSatisfied = PopulationChange(
             ceil(consumer.needs()
                 .map { neededResource -> neededResource / productionPerProducer[neededResource.resourceType] }
                 .max() ?: 0.0
             )
+                    * -1 // eating removed population -> negative change value
         )
 
         return when {
@@ -40,4 +41,7 @@ interface ResourceProducer : TraitBearer {
             .map { it.getConsumptionResources(this[Size::class].firstOrNull()) }
             .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
             ?: emptyResources()
+
+    fun getResourcesForConsumption(producerPopulationEaten: PopulationChange): Resources =
+        getResourcesPerInstance() * (producerPopulationEaten * -1)
 }
