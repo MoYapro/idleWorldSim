@@ -67,5 +67,10 @@ internal class PopulationTest {
         assertThat(Population(0).isEmpty()).isTrue()
     }
 
+    @Test
+    fun plusPopulationChange() {
+        assertThat((Population(1) + PopulationChange(1)).populationSize).isEqualTo(2.0)
+    }
+
 
 }

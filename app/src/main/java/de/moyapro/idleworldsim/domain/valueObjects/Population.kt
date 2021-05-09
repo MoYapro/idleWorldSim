@@ -6,15 +6,25 @@ import de.moyapro.idleworldsim.util.sumUsing
 class Population(val populationSize: Double) : Comparable<Population> {
     constructor(populationSize: Int) : this(populationSize.toDouble())
 
+    init {
+        require(0 <= populationSize) { "Population size must not be negative. Perhaps you would like to use PopulationChange or StarvationRate" }
+    }
+
     override operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
+    operator fun plus(other: PopulationChange) = Population(this.populationSize + other.changeSize)
     operator fun times(growthRate: GrowthRate) = Population(populationSize * growthRate.rate)
-    operator fun times(starvationRate: StarvationRate) = Population(populationSize * starvationRate.rate)
-    operator fun times(scalar: Double) = Population(populationSize * scalar)
-    operator fun times(scalar: Int) = Population(this.populationSize * scalar)
-    operator fun times(deathRate: DeathRate) = Population(populationSize * deathRate.rate)
+    operator fun times(starvationRate: StarvationRate) = PopulationChange(populationSize * starvationRate.rate)
+    operator fun times(scalar: Double) = PopulationChange(populationSize * scalar)
+    operator fun times(scalar: Int) = PopulationChange(this.populationSize * scalar)
+    operator fun times(deathRate: DeathRate): PopulationChange {
+        return when {
+            deathRate.rate >= 1 -> PopulationChange(populationSize)
+            else -> PopulationChange(populationSize * deathRate.rate)
+        }
+    }
 
-    operator fun minus(other: Population) = Population(populationSize - other.populationSize)
+    operator fun minus(other: PopulationChange) = Population(populationSize - other.changeSize)
     operator fun div(divider: Double) = Population(populationSize / divider)
 
     override fun equals(other: Any?): Boolean {
@@ -32,6 +42,7 @@ class Population(val populationSize: Double) : Comparable<Population> {
     fun isNotEmpty(): Boolean = 0 < this.populationSize
 
     fun isEmpty(): Boolean = 0 >= this.populationSize
+    fun asPopulationChange() = PopulationChange(this.populationSize)
 
 
 }

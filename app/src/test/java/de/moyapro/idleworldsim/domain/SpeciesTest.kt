@@ -79,7 +79,7 @@ internal class SpeciesTest {
         )
         species.consume(initialPopulation, Resources(Resource(Oxygen, 1000)))
         val populationChange = species.grow(initialPopulation)
-        assertThat(populationChange.populationSize).isLessThan(initialPopulation.populationSize)
+        assertThat(populationChange.changeSize).isLessThan(initialPopulation.populationSize)
     }
 
     @Test
@@ -89,7 +89,7 @@ internal class SpeciesTest {
         val availableResources = Resources(Resource(Water, 1000))
         species.consume(initialPopulation, availableResources)
         val populationChange = species.grow(initialPopulation)
-        assertThat(populationChange.populationSize).isGreaterThan(0.0)
+        assertThat(populationChange.changeSize).isGreaterThan(0.0)
     }
 
 

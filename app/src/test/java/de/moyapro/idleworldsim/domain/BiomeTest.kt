@@ -3,6 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
@@ -77,9 +78,9 @@ internal class BiomeTest {
         val biome = Biome()
             .place(soil)
             .settle(gras)
-        val populationDifference: Map<TraitBearer, Population> = biome.getPopulationChanges()
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
         assertThat(populationDifference[soil]).isNull()
-        assertThat(populationDifference[gras]?.populationSize ?: -1.0).isGreaterThan(0.0)
+        assertThat(populationDifference[gras]?.changeSize ?: -1.0).isGreaterThan(0.0)
 
 
     }

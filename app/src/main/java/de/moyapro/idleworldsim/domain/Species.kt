@@ -6,6 +6,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
@@ -79,7 +80,7 @@ open class Species(
         return "Species[$name, ${features.joinToString(",") { it.name }}]"
     }
 
-    fun grow(speciesPopulation: Population): Population {
+    fun grow(speciesPopulation: Population): PopulationChange {
         val numberOfUnfullfilledNeeds = needs()
             .map { neededResourcePerIndivituum -> neededResourcePerIndivituum * speciesPopulation }
             .map { neededResourceTotal ->
@@ -95,7 +96,7 @@ open class Species(
                 }
             }
         resourcesConsumed = emptyResources() // reset for next turn
-        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0)) - speciesPopulation
+        return speciesPopulation * (1 - (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0)))
     }
 
 }

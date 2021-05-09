@@ -1,9 +1,6 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.moyapro.idleworldsim.domain.valueObjects.Level
-import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.EvolutionPoints
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.values
 import java.util.*
@@ -70,6 +67,7 @@ data class Resources(
     }
 
     operator fun times(population: Population): Resources = this * population.populationSize
+    operator fun times(population: PopulationChange): Resources = this * population.changeSize
     operator fun times(scalar: Double) =
         Resources(this.quantities.map { Pair(it.key, it.value * scalar) }.associate { it }.toMap())
 

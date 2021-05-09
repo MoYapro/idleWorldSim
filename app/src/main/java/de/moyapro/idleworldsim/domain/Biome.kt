@@ -6,7 +6,7 @@ import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.util.minus
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import de.moyapro.idleworldsim.util.sumUsing
 import java.util.*
 
@@ -14,7 +14,7 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     val foodChain = FoodChain()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
-    var lastChanges: Map<TraitBearer, Population> = mapOf()
+    var lastChanges: Map<TraitBearer, PopulationChange> = mapOf()
 
 
     fun process(): Biome {
@@ -26,11 +26,12 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
 
     private fun updatePopulations(
         populations: MutableMap<TraitBearer, Population>,
-        changes: Map<TraitBearer, Population>
+        changes: Map<TraitBearer, PopulationChange>
     ) {
         changes.forEach { (traitBearer, populationChange) ->
+            val oldPopulation = populations.getOrDefault(traitBearer, Population(0))
             val newPopulation =
-                populations.getOrDefault(traitBearer, Population(0)) + populationChange
+                oldPopulation.plus(populationChange)
             populations[traitBearer] = newPopulation
         }
     }
@@ -56,28 +57,28 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     /**
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */
-    fun getPopulationChanges(): Map<TraitBearer, Population> {
+    fun getPopulationChanges(): Map<TraitBearer, PopulationChange> {
         val sortedByDescending = foodChain.getRelations()
             .sortedByDescending { it.consumerPreference }
-        val populationEaten: Map<TraitBearer, Population> = sortedByDescending
+        val populationEaten: Map<TraitBearer, PopulationChange> = sortedByDescending
             .map { battle(it) }
             .sumUsing({ t1, t2 -> t1 + t2 }, { mutableMapOf() })
             ?: emptyMap()
 
-        val populationGrown: Map<TraitBearer, Population> = species()
+        val populationGrown: Map<TraitBearer, PopulationChange> = species()
             .associateBy({ species -> species }, { species -> species.grow(this[species]) })
-        val map: Map<TraitBearer, Population> = populationGrown.minus(populationEaten)
+        val map: Map<TraitBearer, PopulationChange> = populationGrown + populationEaten
         return map
-            .filter { (_, population) -> population.isNotEmpty() }
+            .filter { (_, change) -> change.isUnchanged() }
     }
 
     /**
      * actual consumption process where producers are converted into resources for the consumer
      */
-    private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, Population> {
+    private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, PopulationChange> {
         val producerPopulation = populations[battleRelation.producer] ?: Population(1.0)
         val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
-        val producerPopulationEaten: Population =
+        val producerPopulationEaten: PopulationChange =
             battleRelation.producer.getEaten(
                 producerPopulation,
                 consumerPopulation,

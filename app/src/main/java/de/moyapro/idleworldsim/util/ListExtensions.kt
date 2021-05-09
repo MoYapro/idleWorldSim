@@ -1,6 +1,7 @@
 package de.moyapro.idleworldsim.util
 
 import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import kotlin.reflect.KFunction2
 
 
@@ -31,10 +32,10 @@ operator fun <T> Map<T, Population>.plus(other: Map<T, Population>): Map<T, Popu
     return sumExisting
 }
 
-operator fun <T, X : T> Map<T, Population>.minus(other: Map<X, Population>): Map<T, Population> {
-    require(other.all { (key, value) -> value.isEmpty() || null != this[key] }) { "Cannot subtract if element is not in original map" }
+operator fun <T, X : T> Map<T, Population>.minus(changeMap: Map<X, PopulationChange>): Map<T, Population> {
+    require(changeMap.all { (key, value) -> value.isUnchanged() || null != this[key] }) { "Cannot subtract if element is not in original map" }
     return this.map { (key, value) ->
-        val newValue = value - (other[key] ?: Population(0.0))
+        val newValue = value - (changeMap[key] ?: PopulationChange(0.0))
         Pair(key, newValue)
 
     }
