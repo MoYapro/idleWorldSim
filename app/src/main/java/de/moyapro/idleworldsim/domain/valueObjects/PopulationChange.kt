@@ -14,6 +14,7 @@ data class PopulationChange(val changeSize: Double) : Comparable<PopulationChang
     }
 
     fun isUnchanged(): Boolean = 0.0 == this.changeSize
+    fun hasChanged(): Boolean = !isUnchanged()
 
 }
 
@@ -32,3 +33,8 @@ fun <T> Map<T, PopulationChange>.combineWith(other: Map<T, PopulationChange>): M
             Pair(key, newValue)
         }.associate { it }
 }
+
+fun <T> Map<T, PopulationChange>.removeUnchanged(): Map<T, PopulationChange> {
+    return this.filter { it.value.hasChanged() }
+}
+

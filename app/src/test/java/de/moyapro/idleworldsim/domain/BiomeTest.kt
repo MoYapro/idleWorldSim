@@ -40,7 +40,7 @@ internal class BiomeTest {
         assertNotEquals(
             initialSpeciesSize,
             biome[species],
-            "Should update speciesSize when generating in biome"
+            "Should update speciesSize when processing biome"
         )
     }
 
@@ -109,7 +109,7 @@ internal class BiomeTest {
             .settle(prey)
             .process()
         assertThat(biome[predator].populationSize).isGreaterThan(1.0)
-        assertThat(biome[prey].populationSize).isLessThan(1.1)
+        assertThat(biome[prey].populationSize).isLessThan(1.0)
     }
 
     @Test

@@ -166,6 +166,37 @@ internal class PopulationTest {
                 species2 to PopulationChange(-1)
             )
         )
+
+
+        @Test
+        fun isUnchanged() {
+            assertThat(PopulationChange.NO_CHANGE.isUnchanged()).isTrue()
+            assertThat(PopulationChange(0).isUnchanged()).isTrue()
+            assertThat(PopulationChange(1).isUnchanged()).isFalse()
+        }
+
+        @Test
+        fun removeUnchangedFromMap_allUnchanged() {
+            val changesMap = mapOf(1 to PopulationChange.NO_CHANGE)
+            assertThat(changesMap.removeUnchanged()).isEmpty()
+        }
+
+        @Test
+        fun removeUnchangedFromMap_allChanged() {
+            val changesMap = mapOf(1 to PopulationChange(1))
+            assertThat(changesMap.removeUnchanged()).isNotEmpty()
+        }
+
+        @Test
+        fun removeUnchangedFromMap_mixed() {
+            val changesMap = mapOf(
+                1 to PopulationChange(1),
+                2 to PopulationChange.NO_CHANGE
+            )
+            assertThat(changesMap.removeUnchanged()).hasSize(1)
+        }
+
+
     }
 
 

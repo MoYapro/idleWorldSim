@@ -15,7 +15,7 @@ open class Species(
     override val features: List<Feature> = emptyList()
 ) : ResourceProducer, ResourceConsumer, TraitBearer {
     companion object {
-        private const val MAX_GROWTH = 1.01
+        private const val MAX_GROWTH = 0.01
     }
 
     private var resourcesConsumed: Resources = emptyResources()
@@ -96,7 +96,7 @@ open class Species(
                 }
             }
         resourcesConsumed = emptyResources() // reset for next turn
-        return speciesPopulation * (1 - (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0)))
+        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
     }
 
 }
