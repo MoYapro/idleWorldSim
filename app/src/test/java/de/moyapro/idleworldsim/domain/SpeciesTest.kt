@@ -3,10 +3,7 @@ package de.moyapro.idleworldsim.domain
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.Level
-import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.*
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -214,7 +211,21 @@ internal class SpeciesTest {
             Species("Grass", Feature("Needy", requiredResources.map { NeedResource(it) }.toSet() + consumesResources))
         val grassNeeds = grass.needs()
         assertThat(grassNeeds.map { it.resourceType }).containsExactlyInAnyOrder(*requiredResources.toTypedArray())
+    }
 
+    @Test
+    fun neededUntilSatisfied() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
+        assertThat(prey.calculateNeededUntilSatisfied(predator.needs())).isEqualTo(PopulationChange(-1))
+    }
+
+    @Test
+    fun neededUntilSatisfied_emptyProducer() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Oxygen)))
+        val food =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
+        assertThat(food.calculateNeededUntilSatisfied(predator.needs())).isEqualTo(PopulationChange(Double.NEGATIVE_INFINITY))
     }
 
 

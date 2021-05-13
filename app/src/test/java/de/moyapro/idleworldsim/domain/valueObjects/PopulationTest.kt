@@ -117,6 +117,13 @@ internal class PopulationTest {
     }
 
     @Test
+    fun subtractPopulations_infinity() {
+        val species1 = Species("one")
+        val leftover = Population(99) + PopulationChange(Double.NEGATIVE_INFINITY)
+        assertThat(leftover.populationSize).isEqualTo(0.0)
+    }
+
+    @Test
     fun subtractPopulations_error_notInList() {
         val species1 = Species("one")
         val species2 = Species("two")

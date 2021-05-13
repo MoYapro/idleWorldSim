@@ -4,6 +4,7 @@ import de.moyapro.idleworldsim.domain.TraitBearer
 import de.moyapro.idleworldsim.domain.traits.Size
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import kotlin.math.ceil
 
 interface ResourceProducer : TraitBearer {
@@ -19,20 +20,26 @@ interface ResourceProducer : TraitBearer {
         consumer: ResourceConsumer,
         consumeFactor: Double
     ): PopulationChange {
-        val productionPerProducer = getResourcesPerInstance()
         val maxEaten = producerPopulation * consumeFactor * -1
-        val neededUntilSatisfied = PopulationChange(
-            ceil(consumer.needs()
-                .map { neededResource -> neededResource / productionPerProducer[neededResource.resourceType] }
-                .max() ?: 0.0
-            )
-                    * -1 // eating removed population -> negative change value
-        )
+        val neededUntilSatisfied = calculateNeededUntilSatisfied(consumer.needs())
 
         return when {
             neededUntilSatisfied < maxEaten -> neededUntilSatisfied
             else -> maxEaten
         }
+    }
+
+    fun calculateNeededUntilSatisfied(
+        needs: List<Resource>
+    ): PopulationChange {
+        val productionPerProducer = getResourcesPerInstance()
+        return PopulationChange(
+            ceil(needs
+                .map { neededResource -> neededResource / productionPerProducer[neededResource.resourceType] }
+                .max() ?: 0.0
+            )
+                    * -1 // eating removed population -> negative change value
+        )
     }
 
     @OptIn(ExperimentalStdlibApi::class)

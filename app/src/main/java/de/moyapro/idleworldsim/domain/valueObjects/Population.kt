@@ -9,7 +9,14 @@ class Population(val populationSize: Double) : Comparable<Population> {
 
     override operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
-    operator fun plus(other: PopulationChange) = Population(this.populationSize + other.changeSize)
+    operator fun plus(other: PopulationChange): Population {
+        return when (other.changeSize) {
+            Double.NEGATIVE_INFINITY -> Population(0)
+            Double.POSITIVE_INFINITY -> throw IllegalStateException("Cannot add inifity population")
+            else -> Population(this.populationSize + other.changeSize)
+        }
+    }
+
     operator fun times(growthRate: GrowthRate) = Population(populationSize * growthRate.rate)
     operator fun times(starvationRate: StarvationRate) = PopulationChange(populationSize * starvationRate.rate)
     operator fun times(scalar: Double) = PopulationChange(populationSize * scalar)
@@ -21,7 +28,6 @@ class Population(val populationSize: Double) : Comparable<Population> {
         }
     }
 
-    operator fun minus(other: PopulationChange) = Population(populationSize - other.changeSize)
     operator fun div(divider: Double) = Population(populationSize / divider)
 
     override fun equals(other: Any?): Boolean {
