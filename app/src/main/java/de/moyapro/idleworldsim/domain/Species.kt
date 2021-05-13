@@ -48,10 +48,11 @@ open class Species(
         this.resourcesConsumed += availableResources
     }
 
-    override fun needs(): List<Resource> {
+    override fun currentNeed(population: Population): List<Resource> {
         val totalNeeds = Resources(traits().filterIsInstance<NeedResource>()
             .groupBy { it.resourceType }
             .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
+            .map { neededResourcePerIndivituum -> neededResourcePerIndivituum * population }
         )
         val currentNeeds = totalNeeds.toList().mapNotNull { resource ->
             val alreadyConsumed = resourcesConsumed[resource.resourceType]
@@ -82,14 +83,15 @@ open class Species(
     }
 
     fun grow(speciesPopulation: Population): PopulationChange {
-        val numberOfUnfullfilledNeeds = needs()
-            .map { neededResourcePerIndivituum -> neededResourcePerIndivituum * speciesPopulation }
+        val needsPerPopulation = currentNeed(speciesPopulation)
+        val fullfilledPerResource = needsPerPopulation
             .map { neededResourceTotal ->
                 Pair(
                     neededResourceTotal.resourceType,
                     resourcesConsumed[neededResourceTotal.resourceType].amount >= neededResourceTotal.amount
                 )
             }
+        val numberOfUnfullfilledNeeds = fullfilledPerResource
             .sumBy { (_, hasNeedFullfilled) ->
                 when (hasNeedFullfilled) {
                     true -> 0

@@ -21,7 +21,7 @@ interface ResourceProducer : TraitBearer {
         consumeFactor: Double
     ): PopulationChange {
         val maxEaten = producerPopulation * consumeFactor * -1
-        val neededUntilSatisfied = calculateNeededUntilSatisfied(consumer.needs(), consumerPopulation)
+        val neededUntilSatisfied = calculateNeededUntilSatisfied(consumer.currentNeed(consumerPopulation))
 
         return when {
             neededUntilSatisfied.abs() < maxEaten.abs() -> neededUntilSatisfied
@@ -30,12 +30,11 @@ interface ResourceProducer : TraitBearer {
     }
 
     fun calculateNeededUntilSatisfied(
-        needsPerIndivitual: List<Resource>,
-        consumerPopulation: Population
+        needs: List<Resource>
     ): PopulationChange {
         val productionPerProducer = getResourcesPerInstance()
         return PopulationChange(
-            ceil(needsPerIndivitual.map { resourceNeededByIndividual -> resourceNeededByIndividual * consumerPopulation }
+            ceil(needs
                 .map { neededResource -> neededResource / productionPerProducer[neededResource.resourceType] }
                 .max() // use highest resource as base to ensure consumer gets what it needs
                 ?: 0.0

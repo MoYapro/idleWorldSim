@@ -209,7 +209,7 @@ internal class SpeciesTest {
         val consumesResources: Set<Trait> = setOf(ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(Carbon))
         val grass =
             Species("Grass", Feature("Needy", requiredResources.map { NeedResource(it) }.toSet() + consumesResources))
-        val grassNeeds = grass.needs()
+        val grassNeeds = grass.currentNeed(Population(1))
         assertThat(grassNeeds.map { it.resourceType }).containsExactlyInAnyOrder(*requiredResources.toTypedArray())
     }
 
@@ -218,7 +218,7 @@ internal class SpeciesTest {
         val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
         val predatorPopulation = Population(1)
         val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
-        assertThat(prey.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)).isEqualTo(
+        assertThat(prey.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))).isEqualTo(
             PopulationChange(
                 -1
             )
@@ -232,7 +232,7 @@ internal class SpeciesTest {
         val food =
             BiomeFeature("Soil", Feature(ProduceResource(Oxygen), ProduceResource(Water)))
         val predatorWantsToEatThisPopulationOfFood =
-            food.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)
+            food.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))
         assertThat(predatorWantsToEatThisPopulationOfFood).isEqualTo(PopulationChange(-1337))
     }
 
@@ -242,7 +242,7 @@ internal class SpeciesTest {
         val predatorPopulation = Population(1)
         val food =
             BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
-        assertThat(food.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)).isEqualTo(
+        assertThat(food.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))).isEqualTo(
             PopulationChange(
                 Double.NEGATIVE_INFINITY
             )
