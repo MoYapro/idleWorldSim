@@ -79,27 +79,20 @@ internal class BiomeTest {
             .place(soil)
             .settle(gras)
         val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
-        assertThat(populationDifference[soil]).isNull()
         assertThat(populationDifference[gras]?.changeSize ?: -1.0).isGreaterThan(0.0)
-
-
     }
 
-    //
-//    @Test
-//    fun biomeStatusText() {
-//        val biomeName = "DefaultBiome${Math.random()}"
-//        val expectedBiomeStatus = """
-//            BiomeStatus: $biomeName
-//            Resources(Minerals=999.0, Oxygen=1000.0, EvolutionPoints=1.0, Energy=999.0, Water=999.0)[[Species[Species2 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.0, Species[Species1 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.1]]
-//            Species1: 1.1M -> 1.21M
-//            Species2: 1.0M -> 1.1M
-//            """.trimIndent()
-//        val biome = Biome(biomeName, Resources()).settle(defaultSpecies(name = "Species1")).process()
-//            .settle(defaultSpecies("Species2"))
-//        assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
-//    }
-//
+    @Test
+    fun biomeFeaturesDoNotChangeInPopulation() {
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals))))
+        val biome = Biome()
+            .place(soil)
+            .settle(gras)
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
+        assertThat(populationDifference[soil]).isNull()
+    }
+
     @Test
     fun speciesCanEatEachOther() {
         val predator = Species("Predator", Feature(Predator(Meaty()), NeedResource(Minerals)))
@@ -191,7 +184,6 @@ internal class BiomeTest {
         repeat(1000) {
             biome = biome.process()
         }
-        biome = biome.process()
 
         assertThat(biome[grass].populationSize).isLessThan(10.0)
 

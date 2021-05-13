@@ -203,6 +203,12 @@ internal class PopulationTest {
             assertThat(changesMap.removeUnchanged()).hasSize(1)
         }
 
+        @Test
+        fun absolutePopulationChange() {
+            assertThat(PopulationChange(-4).abs()).isEqualTo(PopulationChange(4))
+            assertThat(PopulationChange(-8).abs()).isEqualTo(PopulationChange(8))
+        }
+
 
     }
 

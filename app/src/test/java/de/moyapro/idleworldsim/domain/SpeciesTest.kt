@@ -216,16 +216,37 @@ internal class SpeciesTest {
     @Test
     fun neededUntilSatisfied() {
         val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val predatorPopulation = Population(1)
         val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
-        assertThat(prey.calculateNeededUntilSatisfied(predator.needs())).isEqualTo(PopulationChange(-1))
+        assertThat(prey.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)).isEqualTo(
+            PopulationChange(
+                -1
+            )
+        )
+    }
+
+    @Test
+    fun neededUntilSatisfied_scalesWithPredatorPopulation() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Oxygen)))
+        val predatorPopulation = Population(1337)
+        val food =
+            BiomeFeature("Soil", Feature(ProduceResource(Oxygen), ProduceResource(Water)))
+        val predatorWantsToEatThisPopulationOfFood =
+            food.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)
+        assertThat(predatorWantsToEatThisPopulationOfFood).isEqualTo(PopulationChange(-1337))
     }
 
     @Test
     fun neededUntilSatisfied_emptyProducer() {
         val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Oxygen)))
+        val predatorPopulation = Population(1)
         val food =
             BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
-        assertThat(food.calculateNeededUntilSatisfied(predator.needs())).isEqualTo(PopulationChange(Double.NEGATIVE_INFINITY))
+        assertThat(food.calculateNeededUntilSatisfied(predator.needs(), predatorPopulation)).isEqualTo(
+            PopulationChange(
+                Double.NEGATIVE_INFINITY
+            )
+        )
     }
 
 

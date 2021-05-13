@@ -89,12 +89,16 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
         val resourcesAquiredByConsumer: Resources =
             battleRelation.producer.getResourcesForConsumption(producerPopulationEaten)
         battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
-        return mapOf(
-            Pair(
-                battleRelation.producer,
-                producerPopulationEaten
+
+        return when (battleRelation.producer) {
+            is BiomeFeature -> emptyMap()
+            else -> mapOf(
+                Pair(
+                    battleRelation.producer,
+                    producerPopulationEaten
+                )
             )
-        )
+        }
     }
 
     fun addResourceProducer(producer: ResourceProducer): Biome {

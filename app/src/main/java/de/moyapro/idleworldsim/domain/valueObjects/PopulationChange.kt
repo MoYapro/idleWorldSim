@@ -1,5 +1,7 @@
 package de.moyapro.idleworldsim.domain.valueObjects
 
+import kotlin.math.abs
+
 data class PopulationChange(val changeSize: Double) : Comparable<PopulationChange> {
     constructor(populationSize: Int) : this(populationSize.toDouble())
 
@@ -15,6 +17,7 @@ data class PopulationChange(val changeSize: Double) : Comparable<PopulationChang
 
     fun isUnchanged(): Boolean = 0.0 == this.changeSize
     fun hasChanged(): Boolean = !isUnchanged()
+    fun abs(): PopulationChange = PopulationChange(abs(this.changeSize))
 
 }
 
