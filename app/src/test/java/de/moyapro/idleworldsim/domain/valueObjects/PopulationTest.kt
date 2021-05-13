@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
+@Suppress("unused")
 internal class PopulationTest {
 
     @Test
@@ -118,7 +119,6 @@ internal class PopulationTest {
 
     @Test
     fun subtractPopulations_infinity() {
-        val species1 = Species("one")
         val leftover = Population(99) + PopulationChange(Double.NEGATIVE_INFINITY)
         assertThat(leftover.populationSize).isEqualTo(0.0)
     }
@@ -191,7 +191,7 @@ internal class PopulationTest {
         @Test
         fun removeUnchangedFromMap_allChanged() {
             val changesMap = mapOf(1 to PopulationChange(1))
-            assertThat(changesMap.removeUnchanged()).isNotEmpty()
+            assertThat(changesMap.removeUnchanged()).isNotEmpty
         }
 
         @Test

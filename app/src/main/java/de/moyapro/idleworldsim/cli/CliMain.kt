@@ -86,6 +86,6 @@ fun outputWithIndex(traits: Iterable<Any>) {
 
 fun outputSpecies(speciesPopulation: Map<Species, Population>) {
     speciesPopulation.keys.withIndex()
-        .map { species -> "${species.index}\t\t ${speciesPopulation[species.value]?.populationSize?.toShortDecimalStr()} \t\t ${species.value}" }
+        .map { species -> "${species.index}\t\t ${speciesPopulation[species.value]?.toShortDecimalStr()} \t\t ${species.value}" }
         .forEach { println(it) }
 }

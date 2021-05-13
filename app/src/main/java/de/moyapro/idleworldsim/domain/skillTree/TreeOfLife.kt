@@ -39,7 +39,7 @@ class TreeOfLife<T : Feature> {
     private var evolutions: MutableMap<T, MutableSet<T>> = mutableMapOf()
 
     fun add(ancestor: T, descendant: T): TreeOfLife<T> {
-        this.evolutions.getOrPut(ancestor, { mutableSetOf() }) += descendant
+        this.evolutions.getOrPut(ancestor) { mutableSetOf() } += descendant
         return this
     }
 

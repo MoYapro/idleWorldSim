@@ -23,17 +23,13 @@ class SpeciesRecyclerViewAdapter(
     private val mListener: OnSpeciesInteractionListener?
 ) : RecyclerView.Adapter<SpeciesRecyclerViewAdapter.ViewHolder>() {
 
-    private val mOnClickListener: View.OnClickListener
-    private val mUpdateHandler = ViewTimer(biome, this, 0, 1000)
-
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val species = v.tag as Species
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onSpeciesInteraction(biome, species)
-        }
+    private val mOnClickListener: View.OnClickListener = View.OnClickListener { v ->
+        val species = v.tag as Species
+        // Notify the active callbacks interface (the activity, if the fragment is attached to
+        // one) that an item has been selected.
+        mListener?.onSpeciesInteraction(biome, species)
     }
+    private val mUpdateHandler = ViewTimer(biome, this, 0, 1000)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -57,7 +53,7 @@ class SpeciesRecyclerViewAdapter(
         val species = speciesList[position]
         val population = populationMap[species]
         holder.mIdView.text = species.name
-        holder.mContentView.text = (population?.populationSize)?.toShortDecimalStr(1E6) ?: "dead"
+        holder.mContentView.text = population?.toShortDecimalStr(1E6) ?: "dead"
 
         with(holder.mView) {
             tag = species

@@ -228,7 +228,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
 
     }
 
-    private operator fun get(consumer: ResourceConsumer): FoodChainEdge? =
+    private operator fun get(consumer: ResourceConsumer): FoodChainEdge =
         this.consumers.first { it.consumer == consumer } // consumer is unique
 
 
