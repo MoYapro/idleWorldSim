@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 internal class GameTest {
     @Test
     fun speciesHasEvolveOptions() {
+        Game.selectedSpecies = Game.selectedBiome.species().first()
         val evolveOptions: List<Feature> = Game.getEvolveOptions()
         assertThat(evolveOptions).isNotEmpty
     }
