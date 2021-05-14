@@ -2,6 +2,8 @@ package de.moyapro.idleworldsim.cli
 
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.consumption.FoodChain
+import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.util.toShortDecimalStr
 import java.util.*
@@ -28,7 +30,13 @@ private fun handleUserInput() {
             "H" -> println(Game.help)
             "Q" -> Game.stopSimulation()
         }
+        printState()
     }
+}
+
+fun printState() {
+    println("Selected biome: ${Game.selectedBiome}")
+    println("Selected species: ${Game.selectedSpecies}")
 }
 
 fun executeTraitCommand(commandArgument: String?) {
@@ -37,10 +45,36 @@ fun executeTraitCommand(commandArgument: String?) {
 
 
 fun executeRelationCommand(commandArgument: String?) {
-    outputWithIndex(Game.speciesRelations())
+    if (null == Game.selectedSpecies) {
+        outputWithIndex(Game.speciesRelations())
+    } else {
+        println("Selected Species food:")
+        outputWithIndex(getFood(Game.selectedBiome.foodChain, Game.selectedSpecies))
+        println("Selected Species gets eaten by:")
+        outputWithIndex(getEatenBy(Game.selectedBiome.foodChain, Game.selectedSpecies))
+    }
+
+}
+
+fun getFood(foodChain: FoodChain, selectedSpecies: Species?): Iterable<Any> {
+    selectedSpecies ?: return emptyList()
+    return foodChain.getRelations()
+        .filter { relation -> relation.consumer == selectedSpecies }
+        .map { relation -> relation.producer }
+}
+
+fun getEatenBy(foodChain: FoodChain, selectedSpecies: Species?): List<ResourceConsumer> {
+    selectedSpecies ?: return emptyList()
+    return foodChain.getRelations()
+        .filter { relation -> relation.producer == selectedSpecies }
+        .map { relation -> relation.consumer }
 }
 
 fun executeEvolveCommand(commandArgument: String?) {
+    if (null == Game.selectedSpecies) {
+        println("Select species first")
+        return
+    }
     if (null == commandArgument || "" == commandArgument) {
         println(Game.selectedBiome)
         println(Game.selectedSpecies)
@@ -49,7 +83,7 @@ fun executeEvolveCommand(commandArgument: String?) {
     }
     val featureToSelect = commandArgument.toInt()
     val selectedFeature = Game.getEvolveOptions()[featureToSelect]
-    val newSpecies = Game.selectedBiome.evolve(Game.selectedSpecies, selectedFeature)
+    val newSpecies = Game.selectedBiome.evolve(Game.selectedSpecies!!, selectedFeature)
     println("You created new species: $newSpecies")
 
 }
@@ -63,8 +97,6 @@ fun executeSpeciesCommand(commandArgument: String?) {
     }
     val speciesToSelect = commandArgument.toInt()
     Game.selectSpecies(Game.selectedBiome.species()[speciesToSelect])
-    println("Selected Biome: ${Game.selectedBiome}")
-    println("Selected Species: ${Game.selectedSpecies}")
 }
 
 fun executeCommandBiome(commandArgument: String?) {

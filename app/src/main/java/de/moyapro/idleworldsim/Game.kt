@@ -19,7 +19,7 @@ object Game {
     private val treeOfLife = defaultTreeOfLife()
     private val biomes = createStartingBiomes()
     var selectedBiome = biomes.values.first()
-    var selectedSpecies: Species = selectedBiome.species().first()
+    var selectedSpecies: Species? = null
 
     fun runSimulation() {
         running = true
@@ -55,7 +55,7 @@ object Game {
     }
 
     fun getEvolveOptions(): List<Feature> {
-        return treeOfLife.getEvolvableFeatures(*selectedSpecies.features.toTypedArray()).toList()
+        return treeOfLife.getEvolvableFeatures(*(selectedSpecies?.features ?: emptyList()).toTypedArray()).toList()
     }
 
     fun getEvolveOptions(species: Species): List<Feature> {
@@ -66,7 +66,7 @@ object Game {
         return selectedBiome.getRelations()
     }
 
-    fun getTraitsOfSelectedSpecies(): List<Trait> = selectedSpecies.traits().toList()
+    fun getTraitsOfSelectedSpecies(): List<Trait> = (selectedSpecies?.traits() ?: emptyList()).toList()
     fun getSpecies(speciesName: String): Species {
         return biomes.values
             .map { it.species().filter { species -> species.name == speciesName } }
