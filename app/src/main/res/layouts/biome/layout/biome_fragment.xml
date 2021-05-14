@@ -42,20 +42,4 @@
         app:layout_constraintTop_toBottomOf="@+id/textBiomeView"
         tools:layout="@layout/fragment_species_list"/>
 
-
-    <com.otaliastudios.zoom.ZoomLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:hasClickableChildren="true">
-
-        <de.blox.graphview.GraphView
-            android:id="@+id/graph"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:lineColor="@android:color/holo_blue_dark"
-            app:lineThickness="2dp"
-            app:useMaxSize="true"/>
-    </com.otaliastudios.zoom.ZoomLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,9 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import de.blox.graphview.GraphView
-import de.blox.graphview.tree.BuchheimWalkerAlgorithm
-import de.blox.graphview.tree.BuchheimWalkerConfiguration
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
 import de.moyapro.idleworldsim.domain.Biome
@@ -28,20 +25,7 @@ class BiomeFragment : Fragment() {
     ): View? {
         biome = Game.getBiome(UUID.fromString(args.biome))!!
         val layout = inflater.inflate(R.layout.biome_fragment, container, false)
-        val graphView = layout.findViewById<GraphView>(R.id.graph)
-        graphView.adapter = FoodChainGraphAdapter(biome.getFoodChainGraph())
-
-        // set the algorithm here
-        val configuration: BuchheimWalkerConfiguration = BuchheimWalkerConfiguration.Builder()
-            .setSiblingSeparation(100)
-            .setLevelSeparation(300)
-            .setSubtreeSeparation(300)
-            .setOrientation(BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM)
-            .build()
-        graphView.setLayout(BuchheimWalkerAlgorithm(configuration))
-
-
-        Log.i(this::class.simpleName, biome.foodChain.asDotNotation())
+        Log.d(this::class.simpleName, biome.foodChain.asDotNotation())
 
         return layout
     }

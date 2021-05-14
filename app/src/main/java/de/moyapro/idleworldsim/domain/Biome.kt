@@ -52,9 +52,6 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
         return foodChain.getRelations()
     }
 
-    fun getFoodChainGraph() = foodChain.generateGraph()
-
-
     /**
      * Get difference in population per species. This should be the same changes as process but not applied to the biome
      */

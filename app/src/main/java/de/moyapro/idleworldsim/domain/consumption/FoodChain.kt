@@ -1,8 +1,5 @@
 package de.moyapro.idleworldsim.domain.consumption
 
-import de.blox.graphview.Edge
-import de.blox.graphview.Graph
-import de.blox.graphview.Node
 import de.moyapro.idleworldsim.domain.Species
 
 /**
@@ -69,7 +66,8 @@ class FoodChain {
         producers: List<FoodChainEdge>
     ) {
         producers.forEach { producerEdge ->
-            producerEdge.consumerPreference = consumer.calculatePreferenceIndex(producerEdge.producer, producerEdge.consumeFactor)
+            producerEdge.consumerPreference =
+                consumer.calculatePreferenceIndex(producerEdge.producer, producerEdge.consumeFactor)
         }
     }
 
@@ -157,31 +155,20 @@ class FoodChain {
         node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
 
     fun getRelations(): List<FoodChainEdge> {
-        val unrelated = consumersWithoutProducers.map { consumerWithoutProducer -> FoodChainEdge(NoghingProducer, consumerWithoutProducer, 0.0, 0.0) }
+        val unrelated = consumersWithoutProducers.map { consumerWithoutProducer ->
+            FoodChainEdge(
+                NoghingProducer,
+                consumerWithoutProducer,
+                0.0,
+                0.0
+            )
+        }
         val related = nodes
             .map { it.consumers }
             .flatten()
 
         return unrelated + related
     }
-
-    fun generateGraph(): Graph {
-        val graph = Graph()
-        nodes.forEach { producerConsumerRelation ->
-            val producerNode = Node(producerConsumerRelation.producer)
-            graph.addNode(producerNode)
-            producerConsumerRelation.consumers.forEach { consumer ->
-                val consumerNode = Node(consumer.consumer)
-                graph.addNode(consumerNode)
-                graph.addEdge(Edge(producerNode, consumerNode))
-            }
-        }
-        consumersWithoutProducers.forEach {
-            graph.addNode(Node(it))
-        }
-        return graph
-    }
-
 }
 
 object NoghingProducer : Species("Nothing to Eat") {
@@ -223,7 +210,7 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
             .map { (consumer, _) -> consumer }
             .withIndex()
             .forEach { (rank, consumer) ->
-                foodChainNode[consumer]?.consumeFactor = calculateConsumeFactor(rank + 1)
+                foodChainNode[consumer].consumeFactor = calculateConsumeFactor(rank + 1)
             }
 
     }
