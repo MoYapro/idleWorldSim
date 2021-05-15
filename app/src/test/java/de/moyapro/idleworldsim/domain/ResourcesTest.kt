@@ -60,7 +60,7 @@ internal class ResourcesTest {
 
     @Test
     fun resourcesCannotBeNegative() {
-        assertThatExceptionOfType(IllegalStateException::class.java)
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
             .isThrownBy { emptyResources() - Resources(Resource(Water, 5.1)) }
     }
 

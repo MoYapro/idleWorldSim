@@ -84,7 +84,7 @@ internal class SpeciesTest {
         val initialPopulation = Population(10.0)
         val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
         val availableResources = Resources(Resource(Water, 1000))
-        species.consume(initialPopulation, availableResources)
+        species.consume(initialPopulation, availableResources * 100)
         val populationChange = species.grow(initialPopulation)
         assertThat(populationChange.changeSize).isGreaterThan(0.0)
     }
@@ -249,5 +249,31 @@ internal class SpeciesTest {
         )
     }
 
+    @Test
+    fun growNeedsResources1() {
+        val species = Species("one", Feature(ConsumerTrait(Minerals), NeedResource(Minerals)))
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Minerals, 1001)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((1.0))
+    }
+
+    @Test
+    fun growNeedsResources2() {
+        val species = Species("one", Feature(ConsumerTrait(Water), NeedResource(Water)))
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Water, 1002)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((2.0))
+    }
+
+    @Test
+    fun growNeedsResources_consumerHasNoNeeds() {
+        val species = Species("one")
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Minerals, 1002)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((0.0)) //no growth without consumption / needs
+    }
 
 }

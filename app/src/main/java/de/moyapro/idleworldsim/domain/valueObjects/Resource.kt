@@ -37,4 +37,6 @@ data class Resource(val resourceType: ResourceType, val amount: Double = 1.0) : 
         return "Resource[$resourceType=$amount]"
     }
 
+    fun isEmpty(): Boolean = 0 >= this.amount
+
 }

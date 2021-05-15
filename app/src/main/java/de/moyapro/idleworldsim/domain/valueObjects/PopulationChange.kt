@@ -5,6 +5,10 @@ import kotlin.math.abs
 data class PopulationChange(val changeSize: Double) : Comparable<PopulationChange> {
     constructor(populationSize: Int) : this(populationSize.toDouble())
 
+    init {
+        require(!changeSize.isNaN()) { "Change must have a value, but was: $changeSize" }
+    }
+
     companion object {
         val NO_CHANGE = PopulationChange(0)
     }

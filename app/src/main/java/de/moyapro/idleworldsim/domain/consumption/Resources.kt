@@ -21,6 +21,11 @@ data class Resources(
             .map { Resource(it, allAmounts) }
     )
 
+    init {
+        require(quantities.none { resource -> resource.value < 0 }) { "Resources must not be negative but were: $quantities" }
+        require(quantities.none { resource -> resource.value == Double.POSITIVE_INFINITY }) { "Resources must not be infinite" }
+    }
+
     fun canProvide(resources: Resources): Map<ResourceType, Boolean> {
         // negative value in resources means production
         return this.quantities
@@ -108,7 +113,7 @@ data class Resources(
     }
 
 
-    fun getQuantities(): Iterable<Resource> =
+    fun getQuantities(): Collection<Resource> =
         quantities.map { (resourceType, amount) -> Resource(resourceType, amount) }
 
     fun toList(): List<Resource> {

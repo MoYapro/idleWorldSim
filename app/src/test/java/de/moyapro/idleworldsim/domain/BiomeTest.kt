@@ -73,13 +73,13 @@ internal class BiomeTest {
 
     @Test
     fun consumerConsumesProducer() {
-        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals))))
-        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals))))
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals, Level(40)))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals), NeedResource(Minerals))))
         val biome = Biome()
-            .place(soil)
-            .settle(gras)
+            .place(soil, Population(1000))
+            .settle(gras, Population(8))
         val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
-        assertThat(populationDifference[gras]?.changeSize ?: -1.0).isGreaterThan(0.0)
+        assertThat(populationDifference[gras]?.changeSize ?: -1.123).isGreaterThan(0.0)
     }
 
     @Test

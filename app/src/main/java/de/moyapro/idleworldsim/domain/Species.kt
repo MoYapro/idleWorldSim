@@ -8,7 +8,7 @@ import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 
 open class Species(
     override val name: String,
@@ -49,11 +49,7 @@ open class Species(
     }
 
     override fun currentNeed(population: Population): List<Resource> {
-        val totalNeeds = Resources(traits().filterIsInstance<NeedResource>()
-            .groupBy { it.resourceType }
-            .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
-            .map { neededResourcePerIndivituum -> neededResourcePerIndivituum * population }
-        )
+        val totalNeeds = needsPerPopulation() * population
         return totalNeeds.toList().mapNotNull { resource ->
             val alreadyConsumed = resourcesConsumed[resource.resourceType]
             when {
@@ -61,6 +57,13 @@ open class Species(
                 else -> null // this resource is satisfied
             }
         }
+    }
+
+    private fun needsPerPopulation(): Resources {
+        return Resources(traits().filterIsInstance<NeedResource>()
+            .groupBy { it.resourceType }
+            .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
+        )
     }
 
     override fun equals(other: Any?): Boolean {
@@ -82,14 +85,66 @@ open class Species(
     }
 
     fun grow(speciesPopulation: Population): PopulationChange {
-        val needsPerPopulation = currentNeed(speciesPopulation)
-        val fullfilledPerResource = needsPerPopulation
+        val totalNeedOfPopulation = needsPerPopulation() * speciesPopulation
+        val numberOfUnfullfilledNeeds = calculateNumberOfUnfullfilledNeeds(totalNeedOfPopulation)
+        if (numberOfUnfullfilledNeeds > 0) {
+            return calculatePopulationStarvation(speciesPopulation, numberOfUnfullfilledNeeds)
+        }
+        return calculateNewPopulation(totalNeedOfPopulation, speciesPopulation)
+    }
+
+    private fun calculatePopulationStarvation(
+        speciesPopulation: Population,
+        numberOfUnfullfilledNeeds: Int
+    ): PopulationChange {
+        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+    }
+
+    private fun calculateNewPopulation(
+        totalNeedOfPopulation: Resources,
+        speciesPopulation: Population
+    ): PopulationChange {
+        val leftoverAfterCurrentPouplationHasEaten = resourcesConsumed - totalNeedOfPopulation
+        val mineralsNeededPerNewPopulation = needsPerPopulation()
+        val maxPossibleNewPopulation = calculateMaxNewPopulationBaseOnResources(
+            leftoverAfterCurrentPouplationHasEaten,
+            mineralsNeededPerNewPopulation
+        )
+        val maxGrowthFromGrothrate = speciesPopulation * MAX_GROWTH
+        resourcesConsumed = emptyResources() // reset for next turn
+        return minOf(maxPossibleNewPopulation, maxGrowthFromGrothrate)
+    }
+
+    private fun calculateMaxNewPopulationBaseOnResources(
+        resourcesAvailableForGrowth: Resources,
+        mineralsNeededPerNewPopulation: Resources
+    ): PopulationChange {
+        val changeSize = when {
+            resourcesAvailableForGrowth.getQuantities().isEmpty() -> 0.0
+            mineralsNeededPerNewPopulation.getQuantities().isEmpty() -> 0.0 // cannot grow without consumption
+            else -> resourcesAvailableForGrowth.getQuantities()
+                .mapNotNull { (resourceType, amount) ->
+                    when (val requiredPerPopulation = mineralsNeededPerNewPopulation[resourceType].amount) {
+                        0.0 -> null //ignore not required resource
+                        else -> amount / requiredPerPopulation
+                    }
+                }
+                .min() ?: 0.0
+        }
+        return PopulationChange(changeSize)
+    }
+
+
+    private fun calculateNumberOfUnfullfilledNeeds(totalNeed: Resources): Int {
+        val fullfilledPerResource = totalNeed.getQuantities()
             .map { neededResourceTotal ->
                 Pair(
                     neededResourceTotal.resourceType,
                     resourcesConsumed[neededResourceTotal.resourceType].amount >= neededResourceTotal.amount
                 )
             }
+
+        @Suppress("UnnecessaryVariable") // for clarification and debugging
         val numberOfUnfullfilledNeeds = fullfilledPerResource
             .sumBy { (_, hasNeedFullfilled) ->
                 when (hasNeedFullfilled) {
@@ -97,22 +152,21 @@ open class Species(
                     false -> 1
                 }
             }
-        resourcesConsumed = emptyResources() // reset for next turn
-        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+        return numberOfUnfullfilledNeeds
     }
-
 }
+
 
 fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
     return Species(
         name, Feature(
-            ConsumerTrait(ResourceType.Water),
-            ConsumerTrait(ResourceType.Minerals),
-            ConsumerTrait(ResourceType.Energy),
-            NeedResource(ResourceType.Water),
-            NeedResource(ResourceType.Minerals),
-            NeedResource(ResourceType.Energy),
-            ProduceResource(ResourceType.EvolutionPoints)
+            ConsumerTrait(Water),
+            ConsumerTrait(Minerals),
+            ConsumerTrait(Energy),
+            NeedResource(Water),
+            NeedResource(Minerals),
+            NeedResource(Energy),
+            ProduceResource(EvolutionPoints)
         )
     )
 }
