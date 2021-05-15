@@ -1,9 +1,6 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idleworldsim.domain.Species
-import de.moyapro.idleworldsim.domain.consumption.Consumption
-import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
+
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -40,7 +37,7 @@ internal class FeatureTest {
 
     @Test
     fun hasTraitMeaty() {
-        assertThat(Feature(Meaty).hasTrait(Meaty)).isTrue()
+        assertThat(Feature(Meaty()).hasTrait(Meaty())).isTrue()
     }
 
     @Test
@@ -51,21 +48,6 @@ internal class FeatureTest {
     @Test
     fun hasTraitNeed() {
         assertThat(Feature(NeedResource(Water)).hasTrait(NeedResource(Water))).isTrue()
-    }
-
-
-    @Test
-    fun featureInfluencesLikeTraits() {
-        val needs = Resources()
-            .setQuantity(
-                Resource(Water, 3.0)
-            )
-        val supply = Resources()
-            .setQuantity(Resource(Water, 100.0))
-        val usableWater = Feature(ConsumerTrait(Water))
-            .influenceConsumption(Consumption(Species("Consumer"), needs, supply))
-            .usableSupply[Water]
-        assertThat(usableWater.amount).isGreaterThan(0.0)
     }
 
 
@@ -90,14 +72,14 @@ internal class FeatureTest {
     @Test
     fun featuresWithTheDifferentTraitsAreNotEqual() {
         val trait1 = EnergySaver
-        val trait2 = Predator(Meaty)
+        val trait2 = Predator(Meaty())
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
     }
 
     @Test
     fun differentPredatorsAreNotEqual() {
-        val trait1 = Predator(Meaty)
+        val trait1 = Predator(Meaty())
         val trait2 = Predator(GrowthTrait)
         assertThat(Feature(trait1) == Feature(trait2)).isFalse()
         assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isFalse()
@@ -105,10 +87,10 @@ internal class FeatureTest {
 
     @Test
     fun samePredatorsAreEqual() {
-        val trait1 = Predator(Meaty)
-        val trait2 = Predator(Meaty)
-        assertThat(Feature(trait1) == Feature(trait2)).isTrue()
-        assertThat(Feature(trait1).hashCode() == Feature(trait2).hashCode()).isTrue()
+        val trait1 = Predator(Meaty())
+        val trait2 = Predator(Meaty())
+        assertThat(Feature(trait1)).isEqualTo(Feature(trait2))
+        assertThat(Feature(trait1).hashCode()).isEqualTo(Feature(trait2).hashCode())
     }
 
     @Test

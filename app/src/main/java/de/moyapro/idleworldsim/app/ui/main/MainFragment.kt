@@ -8,13 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.moyapro.idleworldsim.Game
 import de.moyapro.idleworldsim.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
-
-    private var running = false
 
     companion object {
         fun newInstance() = MainFragment()
@@ -32,20 +27,11 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        Game.init()
-        running = true
-        GlobalScope.launch {
-            while (running) {
-                delay(1000)
-                if (running) {
-                    Game.process()
-                }
-            }
-        }
+        Game.runSimulation()
     }
 
     override fun onDestroyView() {
-        running = false
+        Game.stopSimulation()
         super.onDestroyView()
     }
 }

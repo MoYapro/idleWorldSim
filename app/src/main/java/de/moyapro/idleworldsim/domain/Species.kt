@@ -1,95 +1,169 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Consumption
+import de.moyapro.idleworldsim.domain.consumption.ResourceConsumer
+import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.*
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
+import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
-import de.moyapro.idleworldsim.util.applyTo
 
-/**
- * Class representing a creature with some features consuming and producing resources according to those features
- */
-class Species(val name: String, private val features: MutableSet<Feature> = mutableSetOf()) {
-    constructor(name: String, feature: Feature) : this(name, mutableSetOf(feature))
-
-    private fun hungerRate() = features.applyTo(SpeciesConstants.HUNGER_RATE, Feature::influenceHungerRate)
-    private fun growthRate() = features.applyTo(SpeciesConstants.GROWTH_RATE, Feature::influenceGrowthRate)
-    private fun deathRate() = features.applyTo(SpeciesConstants.DEATH_RATE, Feature::influenceDyingRate)
-
-
-    fun needsPerIndividual() = features.applyTo(Resources(mutableMapOf()), Feature::influenceNeed)
-
-    fun getPopulationIn(biome: Biome): Population {
-        return biome.resources[this]
+open class Species(
+    override val name: String,
+    override val features: List<Feature> = emptyList()
+) : ResourceProducer, ResourceConsumer, TraitBearer {
+    companion object {
+        private const val MAX_GROWTH = 0.01
     }
 
-    fun process(totalSupplyFromBiome: Resources): Resources {
-        val needs = needsPerIndividual() * (totalSupplyFromBiome.populations[this] ?: Population(1.0))
-        val baseConsumption = Consumption(this, needs, totalSupplyFromBiome)
-        val modifiedConsumption = features.applyTo(baseConsumption, Feature::influenceConsumption)
-        return die(grow(modifiedConsumption))
+    private var resourcesConsumed: Resources = emptyResources()
+
+    constructor(name: String, vararg features: Feature) : this(name, listOf(*features))
+
+    override fun <T : TraitBearer> T.creator(): (String, Iterable<Feature>) -> TraitBearer {
+        return { name: String, features: Iterable<Feature> -> Species(name, features.toList()) }
     }
 
+    override fun canConsume(producer: ResourceProducer) = canHuntFood(producer) || canConsumeFood(producer)
 
-    fun evolve(vararg trait: Trait): Species {
-        features.add(Feature(*trait))
-        return this
-    }
-
-    fun evolve(vararg features: Feature): Species {
-        this.features += features
-        return this
-    }
-
-    private fun die(resources: Resources) = resources.updatePopulation(this, this.deathRate())
-
-    private fun grow(consumption: Consumption): Resources {
-        val provided = consumption.isProvided()
-        return when {
-            provided >= 1.0 -> {
-                val leftovers = consumption.consume()
-                leftovers.updatePopulation(consumption.consumer, this.growthRate())
-                leftovers
+    private fun canConsumeFood(producer: ResourceProducer): Boolean {
+        return traits()
+            .filterIsInstance<ConsumerTrait>()
+            .map { it.influencedResource }
+            .any { consumedResource ->
+                producer.asTraitBearer().traits().filterIsInstance<ProduceResource>().any { it.resourceType == consumedResource }
             }
-            provided >= 0.8 -> consumption.consume()
-            else -> {
-                consumption.supply.copy().updatePopulation(this, hungerRate())
+    }
+
+    private fun canHuntFood(producer: ResourceProducer): Boolean {
+        return traits()
+            .filterIsInstance<Predator>()
+            .map { it.preyTrait }
+            .any { it -> producer.asTraitBearer().traits().map { it::class.java }.contains(it::class.java) }
+    }
+
+    override fun consume(consumerPopulation: Population, availableResources: Resources) {
+        this.resourcesConsumed += availableResources
+    }
+
+    override fun currentNeed(population: Population): List<Resource> {
+        val totalNeeds = needsPerPopulation() * population
+        return totalNeeds.toList().mapNotNull { resource ->
+            val alreadyConsumed = resourcesConsumed[resource.resourceType]
+            when {
+                alreadyConsumed < resource -> (resource - alreadyConsumed)
+                else -> null // this resource is satisfied
             }
         }
     }
 
-    override fun toString(): String {
-        return "Species[$name | grow=${growthRate()}, die=${deathRate()}]"
+    private fun needsPerPopulation(): Resources {
+        return Resources(traits().filterIsInstance<NeedResource>()
+            .groupBy { it.resourceType }
+            .map { Resource(it.key, it.value.sumBy { needTrait -> needTrait.level.level }) }
+        )
     }
 
-    fun hasTrait(trait: Trait): Boolean {
-        return features.any { it.hasTrait(trait) }
+    override fun asTraitBearer(): TraitBearer {
+        return this
+    }
+
+    override fun getResourcesPerInstance(): Resources {
+        TODO("Not yet implemented")
     }
 
     override fun equals(other: Any?): Boolean {
-        if (null == other || other !is Species) {
-            return false
-        }
+        return if (null == other || other !is Species) {
+            false
+        } else {
+            this.name == other.name
+                    && this.traits() == other.traits()
 
-        val nameEqual = name == other.name
-        val featureCountEqual = features.size == other.features.size
-        val featuresEqual = features.containsAll(other.features)
-        return nameEqual && featureCountEqual && featuresEqual
+        }
     }
 
     override fun hashCode(): Int {
-        return name.hashCode() * 31 + features.sumBy { it.hashCode() * 5 }
+        return name.hashCode() * 13 + traits().sumBy { it.hashCode() * 23 }
     }
 
-    operator fun get(trait: Trait): Level {
-        return features
-            .map { it[trait] }
-            .maxBy { it.level }
-            ?: Level(0)
+    override fun toString(): String {
+        return "Species[$name, ${features.joinToString(",") { it.name }}]"
     }
 
+    fun grow(speciesPopulation: Population): PopulationChange {
+        val totalNeedOfPopulation = needsPerPopulation() * speciesPopulation
+        val numberOfUnfullfilledNeeds = calculateNumberOfUnfullfilledNeeds(totalNeedOfPopulation)
+        resourcesConsumed = emptyResources() // reset for next turn
+        if (numberOfUnfullfilledNeeds > 0) {
+            return calculatePopulationStarvation(speciesPopulation, numberOfUnfullfilledNeeds)
+        }
+        return calculateNewPopulation(totalNeedOfPopulation, speciesPopulation)
+    }
+
+    private fun calculatePopulationStarvation(
+        speciesPopulation: Population,
+        numberOfUnfullfilledNeeds: Int
+    ): PopulationChange {
+        return speciesPopulation * (MAX_GROWTH - (numberOfUnfullfilledNeeds / 100.0))
+    }
+
+    private fun calculateNewPopulation(
+        totalNeedOfPopulation: Resources,
+        speciesPopulation: Population
+    ): PopulationChange {
+        val leftoverAfterCurrentPouplationHasEaten = resourcesConsumed - totalNeedOfPopulation
+        val resourcesNeededPerNewPopulation = needsPerPopulation()
+        val maxPossibleNewPopulation = calculateMaxNewPopulationBaseOnResources(
+            leftoverAfterCurrentPouplationHasEaten,
+            resourcesNeededPerNewPopulation
+        )
+        val maxGrowthFromGrothrate = speciesPopulation * MAX_GROWTH
+        return minOf(maxPossibleNewPopulation, maxGrowthFromGrothrate)
+    }
+
+    private fun calculateMaxNewPopulationBaseOnResources(
+        resourcesAvailableForGrowth: Resources,
+        resourcesNeededPerNewPopulation: Resources
+    ): PopulationChange {
+        val changeSize = when {
+            resourcesAvailableForGrowth.getQuantities().isEmpty() -> 0.0
+            resourcesNeededPerNewPopulation.getQuantities().isEmpty() -> 0.0 // cannot grow without consumption
+            else -> resourcesAvailableForGrowth.getQuantities()
+                .mapNotNull { (resourceType, amount) ->
+                    when (val requiredPerPopulation = resourcesNeededPerNewPopulation[resourceType].amount) {
+                        0.0 -> null //ignore not required resource
+                        else -> amount / requiredPerPopulation
+                    }
+                }
+                .min() ?: 0.0 // possible growth from most rare resource
+        }
+        return PopulationChange(changeSize)
+    }
+
+
+    private fun calculateNumberOfUnfullfilledNeeds(totalNeed: Resources): Int {
+        val fullfilledPerResource = totalNeed.getQuantities()
+            .map { neededResourceTotal ->
+                Pair(
+                    neededResourceTotal.resourceType,
+                    resourcesConsumed[neededResourceTotal.resourceType].amount >= neededResourceTotal.amount
+                )
+            }
+
+        @Suppress("UnnecessaryVariable") // for clarification and debugging
+        val numberOfUnfullfilledNeeds = fullfilledPerResource
+            .sumBy { (_, hasNeedFullfilled) ->
+                when (hasNeedFullfilled) {
+                    true -> 0
+                    false -> 1
+                }
+            }
+        return numberOfUnfullfilledNeeds
+    }
 }
+
 
 fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
     return Species(
@@ -103,12 +177,4 @@ fun defaultSpecies(name: String = "DefaultSpecies${Math.random()}"): Species {
             ProduceResource(EvolutionPoints)
         )
     )
-}
-
-
-object SpeciesConstants {
-    val GROWTH_RATE = GrowthRate(1.1)
-    val DEATH_RATE = DeathRate(1.0)
-    val HUNGER_RATE = StarvationRate(.5)
-    val MINIMAL_POPULATION = Population(1E-6)
 }

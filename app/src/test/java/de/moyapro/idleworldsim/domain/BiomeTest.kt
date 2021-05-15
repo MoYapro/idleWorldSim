@@ -1,12 +1,15 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.consumption.emptyResources
 import de.moyapro.idleworldsim.domain.traits.*
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
+import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.Population
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 internal class BiomeTest {
@@ -17,130 +20,187 @@ internal class BiomeTest {
 
     @Test
     fun defaultBiomeIsStable() {
-        assertEquals(Biome(), Biome().process())
+        assertThat(Biome().population()).isEqualTo(Biome().process().population())
     }
 
     @Test
-    fun biomeResourceUpdateAfterGenerating() {
-        val biome = Biome().settle(defaultSpecies()).process()
-        assertNotEquals(
-            0,
-            biome.resources[EvolutionPoints],
-            "Species should change resources in biome"
-        )
+    fun addStaticResourceProdcuerToBiome() {
+        Biome()
+            .addResourceProducer(Species("Water").evolveTo(Feature(ProduceResource(Water))))
+            .process()
     }
 
     @Test
-    fun speciesGrowAndDie() {
+    fun populationSizeIsChanging() {
         val species = defaultSpecies()
-        val biome = Biome().settle(species)
-        val initialSpeciesSize = species.getPopulationIn(biome)
+        val waterSource = BiomeFeature("Water", Feature(ProduceResource(Water)))
+        val biome = Biome().settle(species).addResourceProducer(waterSource)
+        val initialSpeciesSize = biome[species]
         biome.process()
         assertNotEquals(
             initialSpeciesSize,
-            species.getPopulationIn(biome),
-            "Should update speciesSize when generating in biome"
+            biome[species],
+            "Should update speciesSize when processing biome"
         )
     }
 
-    @Test
-    fun speciesConsumeWater() {
-        val initialWaterLevel = Resource(Water, 100_000.0)
-        val biome = Biome(resources = Resources().setQuantity(initialWaterLevel))
-            .settle(defaultSpecies())
-            .process()
-        assertThat(biome.resources[Water].amount).isLessThan(initialWaterLevel.amount)
 
+    @Test
+    fun settle() {
+        val species = Species("X")
+        assertThat(Biome().settle(species, Population(3.0))[species]).isEqualTo(Population(3.0))
     }
 
     @Test
-    fun speciesShouldShrinkOnResourceShortage() {
-        val species1 = Species("I").evolve(NeedResource(Water), ConsumerTrait(Water))
-        val species2 = Species("II").evolve(NeedResource(Water), ConsumerTrait(Water))
-        val usualGrowthResult = Biome(resources = Resources(Water, 1000.0)).settle(species1).process().resources[species1]
-        val cappedGrowthResult = Biome(resources = emptyResources()).settle(species2).process().resources[species2]
-        assertThat(cappedGrowthResult.populationSize).isLessThan(usualGrowthResult.populationSize)
+    fun settleMultiple() {
+        val speciesX = Species("X")
+        val speciesU = Species("U")
+        val biome = Biome()
+            .settle(speciesX, Population(3.0))
+            .settle(speciesU, Population(99.0))
+        assertThat(biome[speciesX]).isEqualTo(Population(3.0))
+        assertThat(biome[speciesU]).isEqualTo(Population(99.0))
     }
 
     @Test
-    fun speciesShouldNotConsumeOnResourceShortage() {
-        val initialResources = Resources(values().map { Resource(it, 0.0) })
-        val resourcesAfterGeneration =
-            Biome(resources = initialResources)
-                .settle(defaultSpecies())
-                .process()
-                .resources
-        assertThat(initialResources.quantities.entries).containsExactlyInAnyOrder(*resourcesAfterGeneration.quantities.entries.toTypedArray())
+    fun addBasicResources() {
+        val producer = Species(
+            "WATER",
+            listOf(Feature(ProduceResource(Water, Level(3))))
+        )
+        assertThat(Biome().settle(producer)).isNotNull
     }
 
     @Test
-    fun biomeStatusText() {
-        val biomeName = "DefaultBiome${Math.random()}"
-        val expectedBiomeStatus = """
-            BiomeStatus: $biomeName
-            Resources(Minerals=999.0, Oxygen=1000.0, EvolutionPoints=1.0, Energy=999.0, Water=999.0)[[Species[Species2 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.0, Species[Species1 | grow=GrowthRate(rate=1.1), die=DeathRate(rate=1.0)]:1.1]]
-            Species1: 1.1M -> 1.21M
-            Species2: 1.0M -> 1.1M
-            """.trimIndent()
-        val biome = Biome(biomeName, Resources()).settle(defaultSpecies(name = "Species1")).process()
-            .settle(defaultSpecies("Species2"))
-        assertThat(biome.getStatusText()).isEqualTo(expectedBiomeStatus)
+    fun consumerConsumesProducer() {
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals, Level(40)))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals), NeedResource(Minerals))))
+        val biome = Biome()
+            .place(soil, Population(1000))
+            .settle(gras, Population(8))
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getLastPopulationChanges()
+        assertThat(populationDifference[gras]?.changeSize ?: -1.123).isGreaterThan(0.0)
+    }
+
+    @Test
+    fun biomeFeaturesDoNotChangeInPopulation() {
+        val soil = BiomeFeature("soil", listOf(Feature(ProduceResource(Minerals))))
+        val gras = Species("gras", listOf(Feature(ConsumerTrait(Minerals))))
+        val biome = Biome()
+            .place(soil)
+            .settle(gras)
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getLastPopulationChanges()
+        assertThat(populationDifference[soil]).isNull()
     }
 
     @Test
     fun speciesCanEatEachOther() {
-        val initialResources = Resources(DoubleArray(values().size) { 2.0 })
-        val predator = defaultSpecies("Predator")
-        predator.evolve(Predator(Meaty))
-        val prey = defaultSpecies("Prey").evolve(Meaty)
-        val biome = Biome(resources = initialResources)
+        val predator = Species("Predator", Feature(Predator(Meaty()), NeedResource(Minerals)))
+        val prey = Species("Prey", Feature(Meaty(), ProduceResource(Minerals)))
+        val biome = Biome()
             .settle(predator)
             .settle(prey)
             .process()
-        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
-        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(1.1)
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(1.0)
     }
 
     @Test
-    fun speciesEatsAnotherSpecies() {
-        val predator = defaultSpecies("Eater").evolve(Predator(Meaty))
-        val prey = defaultSpecies("Food").evolve(Meaty)
-        val uninvolved = defaultSpecies("Uninvolved")
-        val biome = Biome("Earth", Resources())
-            .settle(predator)
-            .settle(prey)
-            .settle(uninvolved)
+    fun predatorEatsOnlySomeSpecies() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Food", Feature(Meaty()))
+        val uninvolved = Species("Uninvolved")
+        val biome = Biome()
+            .settle(predator, Population(1))
+            .settle(prey, Population(100))
+            .settle(uninvolved, Population(100))
             .process()
-        assertThat(predator.getPopulationIn(biome).populationSize).isGreaterThan(1.0)
-        assertThat(prey.getPopulationIn(biome).populationSize).isLessThan(uninvolved.getPopulationIn(biome).populationSize)
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(biome[uninvolved].populationSize)
+    }
+
+
+    @Test
+    fun predatorEatsUntilSatisfied() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
+        val lesserPrey = Species("Food", Feature(Meaty(), ProduceResource(Minerals)))
+        val biome = Biome()
+            .settle(predator, Population(1))
+            .settle(prey, Population(1000))
+            .settle(lesserPrey, Population(1000))
+            .process()
+        assertThat(biome[predator].populationSize).isGreaterThan(1.0)
+        assertThat(biome[prey].populationSize).isLessThan(biome[lesserPrey].populationSize)
     }
 
     @Test
-    fun biomeGeneratesResources() {
-        val empty = Resources()
-        val generation = Resources(DoubleArray(values().size) { 1.0 })
-        val biome = Biome(resources = empty, generation = generation).process()
-        assertThat(biome.resources[Minerals].amount).isGreaterThan(0.0)
+    fun twoPredatorHaveSamePray() {
+        val predator1 = Species("Eater1", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val predator2 = Species("Eater2", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
+        val biome = Biome()
+            .settle(predator1, Population(1))
+            .settle(predator2, Population(1))
+            .settle(prey, Population(1))
+            .process()
+        assertThat(biome[predator1].populationSize).isNotEqualTo(biome[predator2].populationSize)
     }
 
     @Test
-    fun biomeWithEqualGenerationAndConsumptionIsStable() {
-        val initial = Resources()
-        val generation = Resources(DoubleArray(values().size) { 1.0 })
-        val species = defaultSpecies()
-        val biome = Biome(resources = initial, generation = generation).settle(species).process()
-        val expectedResources = Resources(DoubleArray(values().size) { if (it == EvolutionPoints.ordinal) 2.0 else 1000.0 }) // 1EP from Biome and 1EP from Species
-        expectedResources[Oxygen] = Resource(Oxygen, 1001.0)
-        assertThat(biome.resources.quantities.entries).containsExactlyInAnyOrder(*expectedResources.quantities.entries.toTypedArray())
+    fun evolve() {
+        val originalSpecies = Species("x")
+        val biome = Biome().settle(originalSpecies)
+        assertThat(biome.species().size).isEqualTo(1)
+        val newSpecies = biome.evolve(originalSpecies, Feature.sunlightConsumer())
+        assertThat(biome.species().size).isEqualTo(2)
+        assertThat(biome.species()).contains(originalSpecies)
+        assertThat(biome.species()).contains(newSpecies)
     }
 
     @Test
-    fun biomeStoresResourcesGeneratedBySpecies() {
-        val empty = Resources()
-        val generation = Resources(DoubleArray(values().size) { 1.0 })
-        generation[Oxygen] = Resource(Oxygen, 0.0) // biome does not create oxygen
-        val species = defaultSpecies().evolve(Feature.sunlightConsumer())
-        val biome = Biome(resources = empty, generation = generation).settle(species).process()
-        assertThat(biome.resources[Oxygen].amount).`as`("Oxygen is generated by species with trait OxygenProducer").isGreaterThan(0.0)
+    fun speciesIsAddedToBiomeTwice_ShouldJustIncreasePopulation() {
+        val someSpecies = Species("X", Feature(Meaty()))
+        val sameSpecies = Species("X", Feature(Meaty()))
+        val population = Biome()
+            .settle(someSpecies)
+            .settle(sameSpecies)
+            .population()
+        assertThat(population.size).isEqualTo(1)
+        assertThat(population[someSpecies]?.populationSize).isEqualTo(2.0)
+        assertThat(population[sameSpecies]?.populationSize).isEqualTo(2.0)
     }
+
+    @Test
+    fun speciesShouldBeCappedByAvailableResources() {
+        val soil =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(10)), ProduceResource(Water, Level(10))))
+        val air = BiomeFeature(
+            "Air",
+            Feature(ProduceResource(ResourceType.Oxygen, Level(10)), ProduceResource(ResourceType.Carbon, Level(10)))
+        )
+        val grass = Species(
+            "Grass",
+            Feature(
+                NeedResource(Minerals),
+                NeedResource(Water),
+                NeedResource(ResourceType.Carbon),
+                ConsumerTrait(Minerals),
+                ConsumerTrait(Water),
+                ConsumerTrait(ResourceType.Carbon)
+            )
+        )
+        var biome = Biome()
+            .addResourceProducer(soil)
+            .addResourceProducer(air)
+            .settle(grass)
+        repeat(1000) {
+            biome = biome.process()
+        }
+
+        assertThat(biome[grass].populationSize).isLessThan(10.0)
+
+
+    }
+
 }

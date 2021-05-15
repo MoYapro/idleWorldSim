@@ -7,23 +7,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.moyapro.idleworldsim.R
-import de.moyapro.idleworldsim.app.ui.biome.ResourceFragment.OnResourceInteractionListener
+import de.moyapro.idleworldsim.app.ui.biome.ResourceListFragment.OnResourceInteractionListener
+import de.moyapro.idleworldsim.app.ui.observer.ViewTimer
 import de.moyapro.idleworldsim.domain.Biome
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 import de.moyapro.idleworldsim.util.toShortDecimalStr
-import kotlinx.android.synthetic.main.fragment_resource.view.*
+import kotlinx.android.synthetic.main.fragment_resource_list_item.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [ResourceType] and makes a call to the
  * specified [OnResourceInteractionListener].
  */
 class ResourceRecyclerViewAdapter(
-        val biome: Biome,
-        private val mListener: OnResourceInteractionListener?
+    val biome: Biome,
+    private val mListener: OnResourceInteractionListener?
 ) : RecyclerView.Adapter<ResourceRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
-    private val mUpdateHandler = BiomeViewUpdateHandler(biome, this)
+    private val mUpdateHandler = ViewTimer(biome, this, 0, 1000)
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -36,25 +37,25 @@ class ResourceRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_resource, parent, false)
+            .inflate(R.layout.fragment_resource_list_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        mUpdateHandler.startObservation()
+        mUpdateHandler.start()
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        mUpdateHandler.stopObservation()
+        mUpdateHandler.stop()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val resource = ResourceType.values()[position]
-        val quantity = biome.resources[resource]
+        val amount = 0.0 // biome.resources[resource].amount
         holder.mIdView.text = resource.displayName
-        holder.mContentView.text = quantity.amount.toShortDecimalStr()
+        holder.mContentView.text = amount.toShortDecimalStr()
 
         with(holder.mView) {
             tag = resource

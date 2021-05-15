@@ -1,10 +1,11 @@
 package de.moyapro.idleworldsim.domain
 
-import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
-import de.moyapro.idleworldsim.domain.traits.Feature
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Minerals
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.Water
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.consumption.emptyResources
+import de.moyapro.idleworldsim.domain.traits.*
+import de.moyapro.idleworldsim.domain.valueObjects.*
+import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 
@@ -22,9 +23,9 @@ internal class SpeciesTest {
     }
 
     @Test
-    fun defaultSpeciesShouldCreateDifferent() {
-        val species1 = defaultSpecies()
-        val species2 = defaultSpecies()
+    fun differentSpeciesAreDifferent() {
+        val species1 = Species("one")
+        val species2 = Species("two")
         assertThat(species1).isNotEqualTo(species2)
         assertThat(species1.hashCode()).isNotEqualTo(species2.hashCode())
     }
@@ -51,6 +52,228 @@ internal class SpeciesTest {
         val species2 = Species("same")
         assertThat(species1).isEqualTo(species2)
         assertThat(species1.hashCode()).isEqualTo(species2.hashCode())
+    }
+
+    @Test
+    fun getTraits() {
+        val species = Species("Testsubject", Feature(Vision(), SuperVision(), Hearing(), Predator(Meaty())))
+        assertThat(species[FindTrait::class]).isEqualTo(listOf(Vision(), SuperVision(), Hearing()))
+    }
+
+    @Test
+    fun getCounters() {
+        val traitsToCounter = listOf(Vision(), Hearing(), Predator(Meaty()))
+        val producer = Species("Producer", Feature(Stealth(), Meaty(), Smell()))
+        assertThat(producer.getCounters(traitsToCounter)).isEqualTo(listOf(Stealth()))
+    }
+
+    @Test
+    fun speciesShouldShrinkOnResourceShortage() {
+        val initialPopulation = Population(10.0)
+        val species = Species(
+            "I",
+            Feature(NeedResource(Water), NeedResource(Minerals), ConsumerTrait(Water), ConsumerTrait(Minerals))
+        )
+        species.consume(initialPopulation, Resources(Resource(Oxygen, 1000)))
+        val populationChange = species.grow(initialPopulation)
+        assertThat(populationChange.changeSize).isLessThan(initialPopulation.populationSize)
+    }
+
+    @Test
+    fun speciesShouldGrowOnResourceSurplus() {
+        val initialPopulation = Population(10.0)
+        val species = Species("I", Feature(NeedResource(Water), ConsumerTrait(Water)))
+        val availableResources = Resources(Resource(Water, 1000))
+        species.consume(initialPopulation, availableResources * 100)
+        val populationChange = species.grow(initialPopulation)
+        assertThat(populationChange.changeSize).isGreaterThan(0.0)
+    }
+
+
+    @Test
+    fun speciesResourcesPerInstance_zero_size0_noTraits() {
+        assertThat(
+            Species("tiny")
+                .getResourcesPerInstance()
+        ).isEqualTo(emptyResources())
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_one_size1_noTraits() {
+        assertThat(
+            Species("small", Feature(Size(1)))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    values()
+                        .map { Resource(it, 1) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size1_meatyTraits() {
+        assertThat(
+            Species("small", Feature(Size(1), Meaty(Level(1))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    values()
+                        .map { Resource(it, 11) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraits() {
+        assertThat(
+            Species("small", Feature(Size(2), Meaty(Level(1))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    values()
+                        .map { Resource(it, 22) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraitsWithScaling() {
+        assertThat(
+            Species("small", Feature(Size(1), Meaty(Level(2))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    values()
+                        .map { Resource(it, 21) }
+                )
+            )
+    }
+
+    @Test
+    fun speciesResourcesPerInstance_size2_meatyTraitsWithSizeScaling() {
+        assertThat(
+            Species("small", Feature(Size(2), Meaty(Level(2))))
+                .getResourcesPerInstance()
+        )
+            .isEqualTo(
+                Resources(
+                    values()
+                        .map { Resource(it, 42) }
+                )
+            )
+    }
+
+    @Test
+    fun newTraitCanRemoveOldTrait() {
+
+    }
+
+    @Test
+    fun traitsCanBeUpgraded() {
+
+    }
+
+    @Test
+    fun speciesCanFullfillNeedFromDifferentSpecies() {
+        val soil =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
+        val air =
+            BiomeFeature("Air", Feature(ProduceResource(Oxygen, Level(1000)), ProduceResource(Carbon, Level(1000))))
+        val grass = Species(
+            "Grass",
+            Feature(
+                NeedResource(Minerals),
+                NeedResource(Water),
+                NeedResource(Carbon),
+                ConsumerTrait(Minerals),
+                ConsumerTrait(Water),
+                ConsumerTrait(Carbon)
+            )
+        )
+        val biome = Biome()
+            .addResourceProducer(soil)
+            .addResourceProducer(air)
+            .settle(grass)
+            .process()
+        assertThat(biome[grass].populationSize).isGreaterThan(1.0)
+    }
+
+    @Test
+    fun needs() {
+        val requiredResources: Set<ResourceType> = setOf(Minerals, Water, Carbon)
+        val consumesResources: Set<Trait> = setOf(ConsumerTrait(Minerals), ConsumerTrait(Water), ConsumerTrait(Carbon))
+        val grass =
+            Species("Grass", Feature("Needy", requiredResources.map { NeedResource(it) }.toSet() + consumesResources))
+        val grassNeeds = grass.currentNeed(Population(1))
+        assertThat(grassNeeds.map { it.resourceType }).containsExactlyInAnyOrder(*requiredResources.toTypedArray())
+    }
+
+    @Test
+    fun neededUntilSatisfied() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val predatorPopulation = Population(1)
+        val prey = Species("Tasty Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
+        assertThat(prey.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))).isEqualTo(
+            PopulationChange(
+                -1
+            )
+        )
+    }
+
+    @Test
+    fun neededUntilSatisfied_scalesWithPredatorPopulation() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Oxygen)))
+        val predatorPopulation = Population(1337)
+        val food =
+            BiomeFeature("Soil", Feature(ProduceResource(Oxygen), ProduceResource(Water)))
+        val predatorWantsToEatThisPopulationOfFood =
+            food.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))
+        assertThat(predatorWantsToEatThisPopulationOfFood).isEqualTo(PopulationChange(-1337))
+    }
+
+    @Test
+    fun neededUntilSatisfied_emptyProducer() {
+        val predator = Species("Eater", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Oxygen)))
+        val predatorPopulation = Population(1)
+        val food =
+            BiomeFeature("Soil", Feature(ProduceResource(Minerals, Level(1000)), ProduceResource(Water, Level(1000))))
+        assertThat(food.calculateNeededUntilSatisfied(predator.currentNeed(predatorPopulation))).isEqualTo(
+            PopulationChange(
+                Double.NEGATIVE_INFINITY
+            )
+        )
+    }
+
+    @Test
+    fun growNeedsResources1() {
+        val species = Species("one", Feature(ConsumerTrait(Minerals), NeedResource(Minerals)))
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Minerals, 1001)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((1.0))
+    }
+
+    @Test
+    fun growNeedsResources2() {
+        val species = Species("one", Feature(ConsumerTrait(Water), NeedResource(Water)))
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Water, 1002)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((2.0))
+    }
+
+    @Test
+    fun growNeedsResources_consumerHasNoNeeds() {
+        val species = Species("one")
+        val startPopulation = Population(1000)
+        species.consume(startPopulation, Resources(Resource(Minerals, 1002)))
+        val change = species.grow(startPopulation)
+        assertThat(change.changeSize).isEqualTo((0.0)) //no growth without consumption / needs
     }
 
 }

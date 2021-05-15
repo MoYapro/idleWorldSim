@@ -1,111 +1,126 @@
 package de.moyapro.idleworldsim.domain
 
+import de.moyapro.idleworldsim.domain.consumption.FoodChain
+import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
+import de.moyapro.idleworldsim.domain.consumption.ResourceProducer
 import de.moyapro.idleworldsim.domain.consumption.Resources
-import de.moyapro.idleworldsim.domain.consumption.emptyResources
-import de.moyapro.idleworldsim.domain.traits.AquireResource
-import de.moyapro.idleworldsim.domain.traits.ConsumerTrait
-import de.moyapro.idleworldsim.domain.traits.NeedResource
+import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
-import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
-import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.values
-import de.moyapro.idleworldsim.util.toShortDecimalStr
-import java.lang.Integer.max
+import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import java.util.*
 
-data class Biome(
-    val name: String = "DefaultBiome",
-    var resources: Resources = emptyResources(),
-    var generation: Resources = emptyResources(),
-    private val speciesList: MutableCollection<Species> = mutableListOf()
-) {
-    class BiomeProcessObservable : Observable() {
-        fun notifyChange() {
-            setChanged()
-            notifyObservers()
-        }
-    }
+class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
+    val foodChain = FoodChain()
+    private var lastPopulations: MutableMap<Species, Population> = mutableMapOf()
+    private val populations: MutableMap<Species, Population> = mutableMapOf()
+    private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
+    var lastChanges: Map<TraitBearer, PopulationChange> = mapOf()
 
-    val onBiomeProcess = BiomeProcessObservable()
 
     fun process(): Biome {
-        this.resources += generation
-//        calculate Map<Species, Map<ResourceType,  AquireSkill>> to distribute available resources
-//        determin Map<Species, Resources> how much is the species able to consume
-
-        val availableResourcePerSpecies: Map<Species, Resources> = getAquiredResourcesPerSpecies()
-        speciesList
-            .forEach {
-                val available = availableResourcePerSpecies[it] ?: emptyResources()
-                available.populations = resources.populations
-                val leftovers = it.process(available)
-                val used = available - leftovers
-                resources -= used
+        this.lastPopulations = HashMap(this.populations)
+        val sortedByConsumerPreference = foodChain.getRelations()
+            .sortedByDescending { it.consumerPreference }
+        sortedByConsumerPreference
+            .forEach { relation ->
+                this.battle(relation)?.let { (producer, populationEaten) ->
+                    if (producer is Species) {
+                        this.populations[producer]?.plus(populationEaten).let {
+                            this.populations.put(producer, it ?: Population(0))
+                        }
+                    }
+                }
             }
-        onBiomeProcess.notifyChange()
+        this.populations.forEach { (species, population) ->
+            population.plus(species.grow(population))
+        }
         return this
     }
 
-    fun getAquiredResourcesPerSpecies(): Map<Species, Resources> {
-        val resultMap = resources.getSpecies().associateWithTo(mutableMapOf()) { emptyResources() }
-        for (resourceType in values()) {
-            val needPerSpecies: Map<Species, Resource> = resources.populations
-                .filter { it.key.hasTrait(ConsumerTrait(resourceType)) && it.key.hasTrait(NeedResource(resourceType)) }
-                .map { (species, population) -> Pair(species, species.needsPerIndividual()[resourceType] * population) }
-                .associate { it }
-            val totalAvailable: Resource = resources[resourceType]
-            val totalNeed = Resource(resourceType, needPerSpecies.values.sumByDouble { it.amount })
-            if (totalNeed <= totalAvailable) {
-                distributeWithSurplus(resultMap, needPerSpecies)
-            } else {
-                distributeWithShortage(resultMap, resourceType, totalAvailable)
-            }
-        }
-        return resultMap
+
+    fun settle(species: Species, population: Population = Population(1.0)): Biome {
+        val currentPopulation = populations[species] ?: Population(0.0)
+        populations[species] = currentPopulation + population
+        foodChain.add(species)
+        return this
     }
 
-    private fun distributeWithShortage(resultMap: MutableMap<Species, Resources>, resourceType: ResourceType, totalAvailable: Resource) {
-        if (totalAvailable.isNone()) {
-            return
-        }
-        val maxAquireSkill = max(1, resources.populations.keys.map { it[AquireResource(resourceType)].level }.max() ?: 1)
-        val relativeAquireValuePerSpecies = resources.populations.keys
-            .map { Pair(it, calculateRelativeAquireValue(maxAquireSkill - it[AquireResource(resourceType)].level)) }
-        relativeAquireValuePerSpecies
-            .forEach { (s, relativeAquired) -> resultMap[s]!![resourceType] = totalAvailable * (relativeAquired / maxAquireSkill) }
+    operator fun get(species: Species): Population {
+        return populations[species] ?: Population(0.0)
     }
 
-    private fun distributeWithSurplus(resultMap: MutableMap<Species, Resources>, needPerSpecies: Map<Species, Resource>) {
-        needPerSpecies.forEach { (s, r) -> resultMap[s]!![r.resourceType] = r }
+    fun getRelations(): List<FoodChainEdge> {
+        return foodChain.getRelations()
     }
 
     /**
-     * This determins how much falloff there is when species is 'rank' levels behind the best
+     * actual consumption process where producers are converted into resources for the consumer
      */
-    private fun calculateRelativeAquireValue(rank: Int) = 1.0 / ((rank) * 2)
+    private fun battle(battleRelation: FoodChainEdge): Pair<ResourceProducer, PopulationChange>? {
+        val producerPopulation = populations[battleRelation.producer] ?: Population(1.0)
+        val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
+        val producerPopulationEaten: PopulationChange =
+            battleRelation.producer.getEaten(
+                producerPopulation,
+                consumerPopulation,
+                battleRelation.consumer,
+                battleRelation.consumeFactor
+            )
+        val resourcesAquiredByConsumer: Resources =
+            battleRelation.producer.getResourcesForConsumption(producerPopulationEaten)
+        battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
-    fun settle(species: Species, population: Population = Population(1.0)): Biome {
-        this.speciesList.add(species)
-        this.resources.setPopulation(species, population)
-        onBiomeProcess.notifyChange()
+        return Pair(
+            battleRelation.producer,
+            producerPopulationEaten
+        )
+    }
+
+    fun addResourceProducer(producer: ResourceProducer): Biome {
+        foodChain.add(producer)
         return this
     }
 
-    fun getStatusText(): String {
-        val sb = StringBuilder("BiomeStatus: $name")
-        sb.append("\n")
-        sb.append(resources)
-        speciesList.forEach {
-            sb.append("\n")
-            sb.append(getStatusText(it))
+    fun population(): Map<Species, Population> {
+        return populations.map { Pair(it.key, it.value) }
+            .associate { it }
+    }
+
+    fun place(biomeFeature: BiomeFeature, population: Population = Population(1.0)): Biome {
+        foodChain.add(biomeFeature)
+        biomeFeatures[biomeFeature] = population
+        return this
+    }
+
+    fun species(): List<Species> {
+        return this.population().map { it.key }
+    }
+
+    inline fun <reified T : TraitBearer> evolve(traitBearerToEvolve: T, newFeature: Feature): T {
+        val newTraitBearer = traitBearerToEvolve.evolveTo(newFeature)
+        when (newTraitBearer) {
+            is Species -> settle(newTraitBearer)
+            is ResourceProducer -> addResourceProducer(newTraitBearer)
         }
-        return sb.toString()
+        return newTraitBearer
     }
 
-    private fun getStatusText(species: Species): String {
-        return species.name + ": " + (species.getPopulationIn(this)).toShortDecimalStr(1E6) +
-                " -> " + (species.process(this.resources)[species]).toShortDecimalStr(1E6)
+    fun getLastPopulationChanges(): Map<Species, PopulationChange> {
+        val result = this.populations
+            .map { (species, population) ->
+                Pair(
+                    species,
+                    PopulationChange(population.populationSize - (lastPopulations[species]?.populationSize ?: 0.0))
+                )
+            }.associate { it }
+            .toMutableMap()
+        result.putAll(
+            lastPopulations
+                .filterNot { this.populations.containsKey(it.key) }
+                .map { (species, population) ->
+                    Pair(species, PopulationChange(-population.populationSize))
+                }
+        )
+        return result
     }
-
-    fun getSpecies() = resources.getSpecies()
 }

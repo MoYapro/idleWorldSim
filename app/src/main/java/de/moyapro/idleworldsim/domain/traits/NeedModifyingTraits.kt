@@ -1,10 +1,11 @@
 package de.moyapro.idleworldsim.domain.traits
 
 import de.moyapro.idleworldsim.domain.consumption.Resources
+import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType
 
-abstract class NeedModifyingTrait(val resourceType: ResourceType) : Trait() {
+abstract class NeedModifyingTrait(val resourceType: ResourceType, level: Level = Level(1)) : Trait(level) {
     abstract fun influenceNeed(need: Resources): Resources
 
     override fun equals(other: Any?): Boolean {
@@ -21,22 +22,42 @@ abstract class NeedModifyingTrait(val resourceType: ResourceType) : Trait() {
     }
 }
 
-class NeedResource(resourceType: ResourceType) : NeedModifyingTrait(resourceType) {
+class NeedResource(resourceType: ResourceType, level: Level = Level(1)) : NeedModifyingTrait(resourceType, level) {
     override fun influenceNeed(need: Resources): Resources {
-        need[resourceType] = Resource(resourceType, 1.0)
-        return need
+        return Resources(
+            need.quantities
+                .map { Pair(it.key, if (it.key == resourceType) 1.0 else it.value) }
+                .associate { it }
+        )
     }
 }
 
-class ProduceResource(resourceType: ResourceType) : NeedModifyingTrait(resourceType) {
-    override fun influenceNeed(need: Resources): Resources {
-        need[resourceType] = Resource(resourceType, -1.0)
-        return need
+class ProduceResource(val resourceType: ResourceType, level: Level = Level(1)) : Trait(level) {
+    override fun toString(): String {
+        return "ProduceResource[$resourceType]"
     }
 
-    override fun toString(): String {
-        return "NeedResource[$resourceType]"
+    override fun getConsumptionResources(size: Size?): Resources {
+        return Resources(
+            Resource(
+                this.resourceType,
+                this.level.level * (size ?: Size(1)).level.level.toDouble()
+            )
+        )
     }
+
+    override fun equals(other: Any?): Boolean {
+        return when {
+            super.equals(other) -> true // same instance
+            other is ProduceResource
+                    && other.resourceType == this.resourceType
+                    && other.level == this.level -> true
+            else -> false
+        }
+    }
+
+    override fun hashCode(): Int = 31 * super.hashCode() + resourceType.hashCode()
+
 
 }
 

@@ -1,6 +1,6 @@
 package de.moyapro.idleworldsim.domain.traits
 
-import de.moyapro.idleworldsim.domain.consumption.Consumption
+
 import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.valueObjects.DeathRate
 import de.moyapro.idleworldsim.domain.valueObjects.GrowthRate
@@ -12,14 +12,14 @@ import de.moyapro.idleworldsim.util.applyTo
  * Collection of traits.
  * Features containing the same traits are equal
  */
-open class Feature(private val name: String = "GenericFeature", private var traits: Set<Trait> = setOf()) {
-    constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", setOf(*traits))
+open class Feature(val name: String = "GenericFeature", private val traits: Set<Trait> = setOf()) {
+    constructor(vararg traits: Trait) : this("GenericFeatureFromTraits", *traits)
+    constructor(name: String, vararg traits: Trait) : this(name, setOf(*traits))
 
     companion object
 
-    fun influenceConsumption(consumption: Consumption): Consumption {
-        val availableConsumption = traits.applyTo(consumption, SupplyModifyingTrait::influence)
-        return traits.applyTo(availableConsumption, ConsumptionModifyingTrait::influence)
+    fun getTraits(): Set<Trait> {
+        return traits
     }
 
     fun influenceGrowthRate(growthRate: GrowthRate): GrowthRate {
@@ -65,9 +65,9 @@ open class Feature(private val name: String = "GenericFeature", private var trai
 
     operator fun get(trait: Trait): Level {
         return this.traits
-            .filter { it::class == trait::class }
+            .filterIsInstance(trait::class.javaObjectType)
             .map { it.level }
-            .maxBy { it.level }
+            .maxByOrNull { it.level }
             ?: Level(0)
     }
 }
