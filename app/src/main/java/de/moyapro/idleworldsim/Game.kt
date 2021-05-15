@@ -7,6 +7,7 @@ import de.moyapro.idleworldsim.domain.consumption.FoodChainEdge
 import de.moyapro.idleworldsim.domain.skillTree.TreeOfLife
 import de.moyapro.idleworldsim.domain.traits.*
 import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.ResourceType.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -25,7 +26,7 @@ object Game {
         running = true
         GlobalScope.launch {
             while (running) {
-                delay(1000)
+                delay(10)
                 if (running)
                     biomes.forEach { it.value.process() }
             }
@@ -87,13 +88,41 @@ object Game {
 
 }
 
-private val autotrophic = Feature("Autotrophic", ConsumerTrait(Water), ConsumerTrait(Minerals), NeedResource(Water), NeedResource(Minerals))
-private val photosynthesis = Feature("Photosynthesis", ProduceResource(Oxygen), NeedResource(Water), NeedResource(Carbon))
-private val vertebrate = Feature("Spinal Cord")
-private val herbivore = Feature("Herbivore", Meaty(), Predator(ProduceResource(Oxygen)))
+private val autotrophic =
+    Feature("Autotrophic", ConsumerTrait(Water), ConsumerTrait(Minerals), NeedResource(Water), NeedResource(Minerals))
+private val photosynthesis = Feature(
+    "Photosynthesis",
+    ProduceResource(Oxygen),
+    ProduceResource(Minerals),
+    NeedResource(Water),
+    NeedResource(Carbon),
+    ConsumerTrait(Water),
+    ConsumerTrait(Carbon)
+)
+private val vertebrate = Feature("Spinal Cord", Meaty())
+private val herbivore = Feature(
+    "Herbivore",
+    Predator(ConsumerTrait(Oxygen)),
+    NeedResource(Oxygen),
+    ConsumerTrait(Minerals),
+    NeedResource(Minerals)
+)
 private val carnivore = Feature("Carnivore", Predator(Meaty()))
-private val smallPlant = Feature("Small Plant", ProduceResource(Oxygen, Level(2)), NeedResource(Water, Level(2)), NeedResource(Carbon))
-private val largePlant = Feature("Large Plant", ProduceResource(Oxygen, Level(10)), NeedResource(Water, Level(5)), NeedResource(Carbon, Level(5)))
+private val smallPlant = Feature(
+    "Small Plant",
+    ProduceResource(Oxygen, Level(2)),
+    ProduceResource(Minerals, Level(2)),
+    NeedResource(Water, Level(2)),
+    NeedResource(Carbon)
+)
+private val largePlant = Feature(
+    "Large Plant",
+    ProduceResource(Oxygen, Level(10)),
+    ProduceResource(Minerals, Level(8)),
+    NeedResource(Water, Level(5)),
+    NeedResource(Carbon, Level(5))
+)
+
 private fun defaultTreeOfLife(): TreeOfLife<Feature> {
     return TreeOfLife.build(autotrophic) {
         branchInto(photosynthesis) {
@@ -109,27 +138,27 @@ private fun defaultTreeOfLife(): TreeOfLife<Feature> {
 
 private fun createStartingBiomes() = mutableMapOf<UUID, Biome>().apply {
     val biome = Biome("initial biome")
-        .settle(Species("Origin of life", autotrophic))
-        .settle(Species("Algae", photosynthesis))
-        .settle(Species("Small Plant", photosynthesis, smallPlant))
-        .settle(Species("Large Plant", photosynthesis, largePlant))
-        .settle(Species("Stone eater", autotrophic, vertebrate))
-        .settle(Species("Herbivore", vertebrate, herbivore))
-        .settle(Species("Carnivore", vertebrate, carnivore))
+        .settle(Species("Origin of life", autotrophic), Population(10))
+        .settle(Species("Algae", photosynthesis), Population(10))
+        .settle(Species("Small Plant", photosynthesis, smallPlant), Population(10))
+        .settle(Species("Large Plant", photosynthesis, largePlant), Population(10))
+        .settle(Species("Stone eater", autotrophic, vertebrate), Population(10))
+        .settle(Species("Herbivore", vertebrate, herbivore), Population(10))
+        .settle(Species("Carnivore", vertebrate, carnivore), Population(10))
         .addResourceProducer(
             BiomeFeature(
                 "Ocean", Feature(
-                    Size(10),
-                    ProduceResource(Water, Level(99)),
-                    ProduceResource(Minerals, Level(1)),
-                    ProduceResource(Carbon, Level(1))
+                    Size(100),
+                    ProduceResource(Water, Level(1000)),
+                    ProduceResource(Minerals, Level(100)),
+                    ProduceResource(Carbon, Level(100))
                 )
             )
         )
         .addResourceProducer(
             BiomeFeature(
                 "Ocean Floor", Feature(
-                    Size(3),
+                    Size(3000),
                     ProduceResource(Minerals, Level(25))
                 )
             )

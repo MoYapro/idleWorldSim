@@ -7,6 +7,7 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
+import de.moyapro.idleworldsim.domain.valueObjects.combineWith
 import de.moyapro.idleworldsim.domain.valueObjects.removeUnchanged
 import de.moyapro.idleworldsim.util.sumUsing
 import java.util.*
@@ -65,7 +66,7 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
 
         val populationGrown: Map<TraitBearer, PopulationChange> = species()
             .associateBy({ species -> species }, { species -> species.grow(this[species]) })
-        val allChanges: Map<TraitBearer, PopulationChange> = populationGrown + populationEaten
+        val allChanges: Map<TraitBearer, PopulationChange> = populationGrown.combineWith(populationEaten)
         return allChanges.removeUnchanged()
 
     }
