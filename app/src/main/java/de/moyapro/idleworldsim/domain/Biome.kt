@@ -7,36 +7,31 @@ import de.moyapro.idleworldsim.domain.consumption.Resources
 import de.moyapro.idleworldsim.domain.traits.Feature
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
-import de.moyapro.idleworldsim.domain.valueObjects.combineWith
-import de.moyapro.idleworldsim.domain.valueObjects.removeUnchanged
-import de.moyapro.idleworldsim.util.sumUsing
 import java.util.*
 
 class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     val foodChain = FoodChain()
+    private var lastPopulations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
     var lastChanges: Map<TraitBearer, PopulationChange> = mapOf()
 
 
     fun process(): Biome {
-        val changes = getPopulationChanges()
-        lastChanges = changes
-        updatePopulations(populations, changes)
+        this.lastPopulations = HashMap(this.populations)
+        val sortedByConsumerPreference = foodChain.getRelations()
+            .sortedByDescending { it.consumerPreference }
+        sortedByConsumerPreference
+            .forEach { relation ->
+                this.battle(relation)?.let { (species, populationEaten) ->
+                    this.populations[species]?.plus(populationEaten).let {
+                        this.populations.put(species, it ?: Population(0))
+                    }
+                }
+            }
         return this
     }
 
-    private fun updatePopulations(
-        populations: MutableMap<TraitBearer, Population>,
-        changes: Map<TraitBearer, PopulationChange>
-    ) {
-        changes.forEach { (traitBearer, populationChange) ->
-            val oldPopulation = populations.getOrDefault(traitBearer, Population(0))
-            val newPopulation =
-                oldPopulation.plus(populationChange)
-            populations[traitBearer] = newPopulation
-        }
-    }
 
     fun settle(species: Species, population: Population = Population(1.0)): Biome {
         val currentPopulation = populations[species] ?: Population(0.0)
@@ -54,27 +49,9 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     }
 
     /**
-     * Get difference in population per species. This should be the same changes as process but not applied to the biome
-     */
-    fun getPopulationChanges(): Map<TraitBearer, PopulationChange> {
-        val sortedByConsumerPreference = foodChain.getRelations()
-            .sortedByDescending { it.consumerPreference }
-        val populationEaten: Map<TraitBearer, PopulationChange> = sortedByConsumerPreference
-            .map { battle(it) }
-            .sumUsing({ t1, t2 -> t1 + t2 }, { mutableMapOf() })
-            ?: emptyMap()
-
-        val populationGrown: Map<TraitBearer, PopulationChange> = species()
-            .associateBy({ species -> species }, { species -> species.grow(this[species]) })
-        val allChanges: Map<TraitBearer, PopulationChange> = populationGrown.combineWith(populationEaten)
-        return allChanges.removeUnchanged()
-
-    }
-
-    /**
      * actual consumption process where producers are converted into resources for the consumer
      */
-    private fun battle(battleRelation: FoodChainEdge): Map<TraitBearer, PopulationChange> {
+    private fun battle(battleRelation: FoodChainEdge): Pair<ResourceProducer, PopulationChange>? {
         val producerPopulation = populations[battleRelation.producer] ?: Population(1.0)
         val consumerPopulation = populations[battleRelation.consumer] ?: Population(0.0)
         val producerPopulationEaten: PopulationChange =
@@ -89,13 +66,12 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
         battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
         return when (battleRelation.producer) {
-            is BiomeFeature -> emptyMap()
-            else -> mapOf(
+            is BiomeFeature -> null
+            else ->
                 Pair(
                     battleRelation.producer,
                     producerPopulationEaten
                 )
-            )
         }
     }
 
@@ -126,5 +102,24 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
             is ResourceProducer -> addResourceProducer(newTraitBearer)
         }
         return newTraitBearer
+    }
+
+    fun getLastPopulationChanges(): Map<TraitBearer, PopulationChange> {
+        val result = this.populations
+            .map { (species, population) ->
+                Pair(
+                    species,
+                    PopulationChange(population.populationSize - (lastPopulations[species]?.populationSize ?: 0.0))
+                )
+            }.associate { it }
+            .toMutableMap()
+        result.putAll(
+            lastPopulations
+                .filterNot { this.populations.containsKey(it.key) }
+                .map { (species, population) ->
+                    Pair(species, PopulationChange(-population.populationSize))
+                }
+        )
+        return result
     }
 }

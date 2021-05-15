@@ -8,6 +8,8 @@ class Population(val populationSize: Double) : Comparable<Population> {
     }
 
     override operator fun compareTo(other: Population) = populationSize.compareTo(other.populationSize)
+
+    @Deprecated("This should be an change")
     operator fun plus(other: Population) = Population(this.populationSize + other.populationSize)
     operator fun plus(other: PopulationChange): Population {
         return when (other.changeSize) {
@@ -27,8 +29,6 @@ class Population(val populationSize: Double) : Comparable<Population> {
             else -> PopulationChange(populationSize * deathRate.rate)
         }
     }
-
-    operator fun div(divider: Double) = Population(populationSize / divider)
 
     override fun equals(other: Any?): Boolean {
         return other is Population && populationSize.equals(other.populationSize)

@@ -78,7 +78,7 @@ internal class BiomeTest {
         val biome = Biome()
             .place(soil, Population(1000))
             .settle(gras, Population(8))
-        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getLastPopulationChanges()
         assertThat(populationDifference[gras]?.changeSize ?: -1.123).isGreaterThan(0.0)
     }
 
@@ -89,7 +89,7 @@ internal class BiomeTest {
         val biome = Biome()
             .place(soil)
             .settle(gras)
-        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getPopulationChanges()
+        val populationDifference: Map<TraitBearer, PopulationChange> = biome.getLastPopulationChanges()
         assertThat(populationDifference[soil]).isNull()
     }
 
@@ -132,6 +132,19 @@ internal class BiomeTest {
             .process()
         assertThat(biome[predator].populationSize).isGreaterThan(1.0)
         assertThat(biome[prey].populationSize).isLessThan(biome[lesserPrey].populationSize)
+    }
+
+    @Test
+    fun twoPredatorHaveSamePray() {
+        val predator1 = Species("Eater1", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val predator2 = Species("Eater2", Feature(Predator(Meaty()), NeedResource(Water), NeedResource(Minerals)))
+        val prey = Species("Food", Feature(Meaty(Level(10)), ProduceResource(Water), ProduceResource(Minerals)))
+        val biome = Biome()
+            .settle(predator1, Population(1))
+            .settle(predator2, Population(1))
+            .settle(prey, Population(1))
+            .process()
+        assertThat(biome[predator1].populationSize).isNotEqualTo(biome[predator2].populationSize)
     }
 
     @Test

@@ -105,10 +105,10 @@ open class Species(
         speciesPopulation: Population
     ): PopulationChange {
         val leftoverAfterCurrentPouplationHasEaten = resourcesConsumed - totalNeedOfPopulation
-        val mineralsNeededPerNewPopulation = needsPerPopulation()
+        val resourcesNeededPerNewPopulation = needsPerPopulation()
         val maxPossibleNewPopulation = calculateMaxNewPopulationBaseOnResources(
             leftoverAfterCurrentPouplationHasEaten,
-            mineralsNeededPerNewPopulation
+            resourcesNeededPerNewPopulation
         )
         val maxGrowthFromGrothrate = speciesPopulation * MAX_GROWTH
         resourcesConsumed = emptyResources() // reset for next turn
@@ -117,19 +117,19 @@ open class Species(
 
     private fun calculateMaxNewPopulationBaseOnResources(
         resourcesAvailableForGrowth: Resources,
-        mineralsNeededPerNewPopulation: Resources
+        resourcesNeededPerNewPopulation: Resources
     ): PopulationChange {
         val changeSize = when {
             resourcesAvailableForGrowth.getQuantities().isEmpty() -> 0.0
-            mineralsNeededPerNewPopulation.getQuantities().isEmpty() -> 0.0 // cannot grow without consumption
+            resourcesNeededPerNewPopulation.getQuantities().isEmpty() -> 0.0 // cannot grow without consumption
             else -> resourcesAvailableForGrowth.getQuantities()
                 .mapNotNull { (resourceType, amount) ->
-                    when (val requiredPerPopulation = mineralsNeededPerNewPopulation[resourceType].amount) {
+                    when (val requiredPerPopulation = resourcesNeededPerNewPopulation[resourceType].amount) {
                         0.0 -> null //ignore not required resource
                         else -> amount / requiredPerPopulation
                     }
                 }
-                .min() ?: 0.0
+                .min() ?: 0.0 // possible growth from most rare resource
         }
         return PopulationChange(changeSize)
     }
