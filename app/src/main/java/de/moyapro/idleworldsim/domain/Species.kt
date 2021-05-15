@@ -33,7 +33,7 @@ open class Species(
             .filterIsInstance<ConsumerTrait>()
             .map { it.influencedResource }
             .any { consumedResource ->
-                producer.traits().filterIsInstance<ProduceResource>().any { it.resourceType == consumedResource }
+                producer.asTraitBearer().traits().filterIsInstance<ProduceResource>().any { it.resourceType == consumedResource }
             }
     }
 
@@ -41,7 +41,7 @@ open class Species(
         return traits()
             .filterIsInstance<Predator>()
             .map { it.preyTrait }
-            .any { it -> producer.traits().map { it::class.java }.contains(it::class.java) }
+            .any { it -> producer.asTraitBearer().traits().map { it::class.java }.contains(it::class.java) }
     }
 
     override fun consume(consumerPopulation: Population, availableResources: Resources) {
@@ -66,6 +66,14 @@ open class Species(
         )
     }
 
+    override fun asTraitBearer(): TraitBearer {
+        return this
+    }
+
+    override fun getResourcesPerInstance(): Resources {
+        TODO("Not yet implemented")
+    }
+
     override fun equals(other: Any?): Boolean {
         return if (null == other || other !is Species) {
             false
@@ -87,6 +95,7 @@ open class Species(
     fun grow(speciesPopulation: Population): PopulationChange {
         val totalNeedOfPopulation = needsPerPopulation() * speciesPopulation
         val numberOfUnfullfilledNeeds = calculateNumberOfUnfullfilledNeeds(totalNeedOfPopulation)
+        resourcesConsumed = emptyResources() // reset for next turn
         if (numberOfUnfullfilledNeeds > 0) {
             return calculatePopulationStarvation(speciesPopulation, numberOfUnfullfilledNeeds)
         }
@@ -111,7 +120,6 @@ open class Species(
             resourcesNeededPerNewPopulation
         )
         val maxGrowthFromGrothrate = speciesPopulation * MAX_GROWTH
-        resourcesConsumed = emptyResources() // reset for next turn
         return minOf(maxPossibleNewPopulation, maxGrowthFromGrothrate)
     }
 

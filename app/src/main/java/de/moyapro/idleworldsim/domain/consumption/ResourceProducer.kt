@@ -1,13 +1,15 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.TraitBearer
-import de.moyapro.idleworldsim.domain.traits.Size
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.PopulationChange
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
 import kotlin.math.ceil
 
-interface ResourceProducer : TraitBearer {
+interface ResourceProducer {
+
+    @Deprecated("FoodChain should not depend on TraitBearer")
+    fun asTraitBearer(): TraitBearer
 
     /**
      * The resourceProducer gets eaten!
@@ -41,12 +43,7 @@ interface ResourceProducer : TraitBearer {
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun getResourcesPerInstance(): Resources =
-        traits()
-            .map { it.getConsumptionResources(this[Size::class].firstOrNull()) }
-            .reduceOrNull { resources1, resources2 -> resources1 + resources2 }
-            ?: emptyResources()
+    fun getResourcesPerInstance(): Resources
 
     fun getResourcesForConsumption(producerPopulationEaten: PopulationChange): Resources =
         getResourcesPerInstance() * (producerPopulationEaten * -1)

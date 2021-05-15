@@ -11,8 +11,8 @@ import java.util.*
 
 class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     val foodChain = FoodChain()
-    private var lastPopulations: MutableMap<TraitBearer, Population> = mutableMapOf()
-    private val populations: MutableMap<TraitBearer, Population> = mutableMapOf()
+    private var lastPopulations: MutableMap<Species, Population> = mutableMapOf()
+    private val populations: MutableMap<Species, Population> = mutableMapOf()
     private val biomeFeatures: MutableMap<BiomeFeature, Population> = mutableMapOf()
     var lastChanges: Map<TraitBearer, PopulationChange> = mapOf()
 
@@ -23,12 +23,17 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
             .sortedByDescending { it.consumerPreference }
         sortedByConsumerPreference
             .forEach { relation ->
-                this.battle(relation)?.let { (species, populationEaten) ->
-                    this.populations[species]?.plus(populationEaten).let {
-                        this.populations.put(species, it ?: Population(0))
+                this.battle(relation)?.let { (producer, populationEaten) ->
+                    if (producer is Species) {
+                        this.populations[producer]?.plus(populationEaten).let {
+                            this.populations.put(producer, it ?: Population(0))
+                        }
                     }
                 }
             }
+        this.populations.forEach { (species, population) ->
+            population.plus(species.grow(population))
+        }
         return this
     }
 
@@ -65,14 +70,10 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
             battleRelation.producer.getResourcesForConsumption(producerPopulationEaten)
         battleRelation.consumer.consume(consumerPopulation, resourcesAquiredByConsumer)
 
-        return when (battleRelation.producer) {
-            is BiomeFeature -> null
-            else ->
-                Pair(
-                    battleRelation.producer,
-                    producerPopulationEaten
-                )
-        }
+        return Pair(
+            battleRelation.producer,
+            producerPopulationEaten
+        )
     }
 
     fun addResourceProducer(producer: ResourceProducer): Biome {
@@ -81,7 +82,7 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
     }
 
     fun population(): Map<Species, Population> {
-        return populations.filter { it.key is Species }.map { Pair(it.key as Species, it.value) }
+        return populations.map { Pair(it.key, it.value) }
             .associate { it }
     }
 
@@ -104,7 +105,7 @@ class Biome(val name: String = "Biome", val id: UUID = UUID.randomUUID()) {
         return newTraitBearer
     }
 
-    fun getLastPopulationChanges(): Map<TraitBearer, PopulationChange> {
+    fun getLastPopulationChanges(): Map<Species, PopulationChange> {
         val result = this.populations
             .map { (species, population) ->
                 Pair(

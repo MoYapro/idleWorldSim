@@ -1,6 +1,14 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.Species
+import de.moyapro.idleworldsim.domain.traits.CatchTrait
+import de.moyapro.idleworldsim.domain.traits.FindTrait
+import de.moyapro.idleworldsim.domain.traits.KillTrait
+import de.moyapro.idleworldsim.domain.traits.Trait
+import de.moyapro.idleworldsim.domain.valueObjects.Level
+import de.moyapro.idleworldsim.domain.valueObjects.sum
+import kotlin.math.pow
+import kotlin.reflect.KClass
 
 /**
  * Implement the food chain of a given set of producers and consumers.
@@ -19,12 +27,12 @@ class FoodChain {
 
     operator fun get(consumer: ResourceConsumer): List<FoodChainEdge> {
         return nodes
-            .filter { node -> nodeConatinsConsumer(node, consumer) }
+            .filter { node -> nodeContainsConsumer(node, consumer) }
             .map { it.consumers }
             .flatten()
     }
 
-    private fun nodeConatinsConsumer(
+    private fun nodeContainsConsumer(
         it: FoodChainNode,
         consumer: ResourceConsumer
     ) = it.consumers.any { it.consumer == consumer }
@@ -152,7 +160,7 @@ class FoodChain {
      * Represent a node in dot notation
      */
     private fun asDotNotation(node: FoodChainNode): Iterable<String> =
-        node.consumers.map { "${node.producer.name} -> ${it.consumer.name}" }
+        node.consumers.map { "${node.producer.asTraitBearer().name} -> ${it.consumer.asTraitBearer().name}" }
 
     fun getRelations(): List<FoodChainEdge> {
         val unrelated = consumersWithoutProducers.map { consumerWithoutProducer ->
@@ -193,11 +201,12 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
         return this
     }
 
+
     private fun updateConsumerWeights(foodChainNode: FoodChainNode) {
         val absoluteConsumeSkill = foodChainNode.consumers
             .associateBy(
                 { it.consumer },
-                { it.consumer.consumePowerFactor(foodChainNode.producer) }
+                { consumePowerFactor(foodChainNode.producer, it.consumer) }
             )
         val maxConsumeSkill = absoluteConsumeSkill.values.max() ?: 0.0
 
@@ -213,6 +222,37 @@ private data class FoodChainNode(private val foodChain: FoodChain, val producer:
                 foodChainNode[consumer].consumeFactor = calculateConsumeFactor(rank + 1)
             }
 
+    }
+
+    fun levelDifferenceToFactor(producer: ResourceProducer, consumer: ResourceConsumer, trait: KClass<out Trait>) =
+        levelDifferenceToFactor(
+            sum(producer.asTraitBearer()[trait]),
+            sum(consumer.asTraitBearer().getCounters(producer.asTraitBearer()[trait]))
+        )
+
+    fun levelDifferenceToFactor(actionLevel: Level, counterLevel: Level): Double {
+        val maxChance = 0.99
+        val medianChance = 0.5
+        val actionValue = actionLevel.level
+        val counterValue = counterLevel.level
+        val graphStretchFactor = 1.6
+        return when {
+            0 == counterValue -> maxChance
+            actionValue == counterValue -> medianChance
+            actionValue > counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
+            actionValue < counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
+            else -> throw IllegalStateException("Missed a case when calculating levelDifferenceToFactor for actionLevel: $actionLevel and counterLevel: $counterLevel")
+        }
+    }
+
+    /**
+     * Calculate an index indicating how good the consume can find/hunt/eat the producer
+     */
+    fun consumePowerFactor(producer: ResourceProducer, consumer: ResourceConsumer): Double {
+        val findFactor = levelDifferenceToFactor(producer, consumer, FindTrait::class)
+        val catchFactor = levelDifferenceToFactor(producer, consumer, CatchTrait::class)
+        val killFactor = levelDifferenceToFactor(producer, consumer, KillTrait::class)
+        return findFactor * catchFactor * killFactor
     }
 
     private operator fun get(consumer: ResourceConsumer): FoodChainEdge =

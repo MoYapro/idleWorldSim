@@ -1,33 +1,18 @@
 package de.moyapro.idleworldsim.domain.consumption
 
 import de.moyapro.idleworldsim.domain.TraitBearer
-import de.moyapro.idleworldsim.domain.traits.CatchTrait
-import de.moyapro.idleworldsim.domain.traits.FindTrait
-import de.moyapro.idleworldsim.domain.traits.KillTrait
-import de.moyapro.idleworldsim.domain.traits.Trait
-import de.moyapro.idleworldsim.domain.valueObjects.Level
 import de.moyapro.idleworldsim.domain.valueObjects.Population
 import de.moyapro.idleworldsim.domain.valueObjects.Resource
-import de.moyapro.idleworldsim.domain.valueObjects.sum
-import kotlin.math.pow
-import kotlin.reflect.KClass
 
 
-interface ResourceConsumer: TraitBearer {
+interface ResourceConsumer {
     val minimumFactor: Double
         get() = 0.01
 
-    fun canConsume(producer: ResourceProducer): Boolean
+    @Deprecated("FoodChain should not depend on TraitBearer")
+    fun asTraitBearer(): TraitBearer
 
-    /**
-     * Calculate an index indicating how good the consume can find/hunt/eat the producer
-     */
-    fun consumePowerFactor(producer: ResourceProducer): Double {
-        val findFactor = levelDifferenceToFactor(producer, FindTrait::class)
-        val catchFactor = levelDifferenceToFactor(producer, CatchTrait::class)
-        val killFactor = levelDifferenceToFactor(producer, KillTrait::class)
-        return findFactor * catchFactor * killFactor
-    }
+    fun canConsume(producer: ResourceProducer): Boolean
 
     fun calculatePreferenceIndex(producer: ResourceProducer, consumePowerFactor: Double): Double {
         return when (canConsume(producer)) {
@@ -42,25 +27,6 @@ interface ResourceConsumer: TraitBearer {
          */
     }
 
-
-    fun levelDifferenceToFactor(producer: ResourceProducer, trait: KClass<out Trait>) =
-        levelDifferenceToFactor(sum(producer[trait]), sum(producer.getCounters(this[trait])))
-
-
-    fun levelDifferenceToFactor(actionLevel: Level, counterLevel: Level): Double {
-        val maxChance = 0.99
-        val medianChance = 0.5
-        val actionValue = actionLevel.level
-        val counterValue = counterLevel.level
-        val graphStretchFactor = 1.6
-        return when {
-            0 == counterValue -> maxChance
-            actionValue == counterValue -> medianChance
-            actionValue > counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
-            actionValue < counterValue -> 1 / (1 + graphStretchFactor.pow(-(actionValue - counterValue)))
-            else -> throw IllegalStateException("Missed a case when calculating levelDifferenceToFactor for actionLevel: $actionLevel and counterLevel: $counterLevel")
-        }
-    }
 
     /**
      * consume available resources and may update its populations
